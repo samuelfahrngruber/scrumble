@@ -1,4 +1,5 @@
 # scrumble
+## Overview
 Scrumble is an application used for issue tracking.
 
 It is designed for agile software development.
@@ -13,5 +14,5 @@ with various utilities to simplify project development.
 * Webhofer Gabriel
 
 ## Links
-[Overview](https://docs.google.com/document/d/1vgrrGldILusFZukWhuFxPKrlXpXGgOuYFxEKtS-2n1E/edit?usp=sharing) (important information about the project)
+[Details](https://docs.google.com/document/d/1vgrrGldILusFZukWhuFxPKrlXpXGgOuYFxEKtS-2n1E/edit?usp=sharing) (important information about the project)
 
