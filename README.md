@@ -20,6 +20,8 @@ with various utilities to simplify project development.
 
 [Architecture](https://drive.google.com/file/d/1YIi5ONN6RXLwBg_hGWoYYh-4-1DUeQ-p/view?usp=sharing) (basic architecture)
 
+[Daily-Scrum Protocol](https://docs.google.com/spreadsheets/d/1t_5jstsjgp5X96Bj1UjHfc2r9S3Zre9wwdr6FJAflk0/edit?usp=sharing)
+
 Data model:
 * [Relational Concept](https://drive.google.com/file/d/1IUcQMx_k_iGSqM7_8woLZzctV2SF7k3R/view?usp=sharing)
 * [MongoDB Concept](https://drive.google.com/file/d/1No-tgxvGDaXy5VZoPew_oyJBf0xctDWK/view?usp=sharing)
