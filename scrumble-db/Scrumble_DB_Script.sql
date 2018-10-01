@@ -10,13 +10,7 @@ create Table sc_User(
  Username varchar2(30),
  Password varchar2(30)
 );
-create Table sc_Sprint(
-  id number Primary Key,
-  SprintNumber number,
-  StartDate date,
-  Deadline date,
-  idProject number
-);
+
 create Table sc_UserStory(
  id number Primary Key,
  idResponsible number,
@@ -28,16 +22,22 @@ create Table sc_UserStory(
  Position number,
  idSprint number,
  constraint fk_userstory_responsible foreign key(idResponsible) references sc_User(id),
-  constraint fk_userstory_verify foreign key(idVerify) references sc_User(id),
-  constraint fk_userstory_sprint foreign key(idSprint) references sc_Sprint(id)
+  constraint fk_userstory_verify foreign key(idVerify) references sc_User(id)
 );
 create Table sc_Project(
  id number Primary Key,
  Name varchar2(30),
  idProductowner number,
  idCurrentSprint number,
- constraint fk_project_user foreign key(idProductowner) references sc_User(id),
- constraint fk_project_sprint foreign key(idCurrentSprint) references sc_Sprint(id)  
+ constraint fk_project_user foreign key(idProductowner) references sc_User(id) 
+);
+create Table sc_Sprint(
+  id number Primary Key,
+  SprintNumber number,
+  StartDate date,
+  Deadline date,
+  idProject number,
+  constraint fk_Sprint_Project foreign key(idProject) references sc_Project(id)
 );
 create Table sc_Teammember(
  idUser number,
@@ -54,6 +54,7 @@ create Table sc_ProjectLogEntry(
   constraint fk_ProjectLogEntry_Project foreign key(idProject) references sc_project(id)
 );
 
-Alter Table sc_sprint
-  add constraint fk_Sprint_Project foreign key(idProject) references sc_Project(id);
-
+Alter Table sc_Project
+  add constraint fk_project_sprint foreign key(idCurrentSprint) references sc_Sprint(id);
+Alter Table sc_UserStory
+  add  constraint fk_userstory_sprint foreign key(idSprint) references sc_Sprint(id);
