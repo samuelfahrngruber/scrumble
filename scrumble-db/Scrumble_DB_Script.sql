@@ -22,8 +22,9 @@ create Table sc_UserStory(
  Position number,
  idSprint number,
  constraint fk_userstory_responsible foreign key(idResponsible) references sc_User(id),
-  constraint fk_userstory_verify foreign key(idVerify) references sc_User(id)
+ constraint fk_userstory_verify foreign key(idVerify) references sc_User(id)
 );
+
 create Table sc_Project(
  id number Primary Key,
  Name varchar2(30),
@@ -31,6 +32,7 @@ create Table sc_Project(
  idCurrentSprint number,
  constraint fk_project_user foreign key(idProductowner) references sc_User(id) 
 );
+
 create Table sc_Sprint(
   id number Primary Key,
   SprintNumber number,
@@ -39,6 +41,7 @@ create Table sc_Sprint(
   idProject number,
   constraint fk_Sprint_Project foreign key(idProject) references sc_Project(id)
 );
+
 create Table sc_Teammember(
  idUser number,
  idProject number,
@@ -46,6 +49,7 @@ create Table sc_Teammember(
  constraint fk_Teammember_User foreign key(idUser) references sc_User(id),
  constraint fk_Teammember_Project foreign key(idProject) references sc_Project(id)
 );
+
 create Table sc_ProjectLogEntry(
   id number primary key,
   Entrydate date,
