@@ -20,9 +20,10 @@ create Table sc_UserStory(
  Rejections number,
  State varchar2(20) check(State = 'PRODUCT_BACKLOG' OR State = 'SPRINT_BACKLOG' or State = 'IN_PROGRESS' or State = 'TO_VERIFY' or State = 'DONE'),
  Position number,
- idSprint number check((idSprint is null and State = 'PRODUCT_BACKLOG') or (idSprint is not null and State != 'PRODUCT_BACKLOG')),
+ idSprint number,
  constraint fk_userstory_responsible foreign key(idResponsible) references sc_User(id),
- constraint fk_userstory_verify foreign key(idVerify) references sc_User(id)
+ constraint fk_userstory_verify foreign key(idVerify) references sc_User(id),
+ check((idSprint is null and State = 'PRODUCT_BACKLOG') or (idSprint is not null and State != 'PRODUCT_BACKLOG'))
 );
 
 create Table sc_Project(
