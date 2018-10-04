@@ -22,6 +22,8 @@ with various utilities to simplify project development.
 
 [Daily-Scrum Protocol](https://docs.google.com/spreadsheets/d/1t_5jstsjgp5X96Bj1UjHfc2r9S3Zre9wwdr6FJAflk0/edit?usp=sharing)
 
+[Webservice Description](https://docs.google.com/document/d/1n7DMO2ZAo60nKiIRyApaHwPvQansGYB_qu9Vq15YLac/edit?usp=sharing) (Definition of the webservice calls and shor description of the functionality)
+
 Data model:
 * [Relational Concept](https://drive.google.com/file/d/1IUcQMx_k_iGSqM7_8woLZzctV2SF7k3R/view?usp=sharing)
 * [MongoDB Concept](https://drive.google.com/file/d/1No-tgxvGDaXy5VZoPew_oyJBf0xctDWK/view?usp=sharing)
