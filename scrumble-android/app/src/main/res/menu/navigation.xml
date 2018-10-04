@@ -2,18 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/title_home" />
+        android:id="@+id/navigation_my_tasks"
+        android:icon="@drawable/sc_nav_my_tasks"
+        android:title="@string/title_my_tasks" />
 
     <item
-        android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/title_dashboard" />
+        android:id="@+id/navigation_scrum_board"
+        android:icon="@drawable/sc_nav_scrum_board"
+        android:title="@string/title_scrum_board" />
 
     <item
-        android:id="@+id/navigation_notifications"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/title_notifications" />
+        android:id="@+id/navigation_daily_scrum"
+        android:icon="@drawable/sc_nav_daily_scrum"
+        android:title="@string/title_daily_scrum" />
+
+    <item
+        android:id="@+id/navigation_project_overview"
+        android:icon="@drawable/sc_nav_projects"
+        android:title="@string/title_project_overview" />
 
 </menu>

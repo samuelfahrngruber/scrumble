@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">scrumble</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_my_tasks">My Tasks</string>
+    <string name="title_scrum_board">Scrum Board</string>
+    <string name="title_daily_scrum">Daily Scrum</string>
+    <string name="title_project_overview">Projects</string>
 </resources>
