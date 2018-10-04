@@ -32,12 +32,14 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    //advanced recyclerView
-    implementation ('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.11.0@aar'){
-        transitive=true
-    }
     //dragView
     implementation 'com.github.woxthebox:draglistview:1.6.2'
     //cardView
     implementation 'com.android.support:cardview-v7:27.1.1'
+    //dialog
+    implementation 'com.github.michael-rapp:android-material-dialog:4.3.4'
+    //spinner
+    implementation 'com.weiwangcn.betterspinner:library-material:1.1.0'
+    //toggleButton
+    implementation 'com.llollox:androidtoggleswitch:2.0.1'
 }

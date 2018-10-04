@@ -1,7 +1,23 @@
 <resources>
     <string name="app_name">scrumble</string>
+
     <string name="title_my_tasks">My Tasks</string>
     <string name="title_scrum_board">Scrum Board</string>
     <string name="title_daily_scrum">Daily Scrum</string>
     <string name="title_project_overview">Projects</string>
+
+    <string name="popup_responsible">Responsible:</string>
+    <string name="popup_verify">Verify:</string>
+    <string name="popup_rejections">Rejection%1$s:</string>
+
+    <string name="menu_add_user_story">Add User Story</string>
+
+    <string name="add_user_story_name_hint">Name</string>
+    <string name="add_user_story_info_hint">Info</string>
+
+    <string name="spinner_responsible_hint">Responsible</string>
+    <string name="spinner_verify_hint">Verify</string>
+
+    <string name="toggle_current_sprint">Current Sprint</string>
+    <string name="toggle_product_backlog">Product Backlog</string>
 </resources>
