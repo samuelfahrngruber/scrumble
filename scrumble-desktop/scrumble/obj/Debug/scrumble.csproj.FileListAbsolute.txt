@@ -1,0 +1,2 @@
+C:\Users\Samuel\Desktop\BSD\scrumble\scrumble\bin\Debug\scrumble.exe.config
+C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\bin\Debug\scrumble.exe.config

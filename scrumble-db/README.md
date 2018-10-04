@@ -1,0 +1,2 @@
+# scrumble-db
+Database scripts
