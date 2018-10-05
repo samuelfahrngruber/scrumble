@@ -21,6 +21,7 @@ create Table sc_UserStory(
  State varchar2(20) check(State = 'PRODUCT_BACKLOG' OR State = 'SPRINT_BACKLOG' or State = 'IN_PROGRESS' or State = 'TO_VERIFY' or State = 'DONE'),
  Position number,
  idSprint number,
+ idProject number,
  constraint fk_userstory_responsible foreign key(idResponsible) references sc_User(id),
  constraint fk_userstory_verify foreign key(idVerify) references sc_User(id),
  check((idSprint is null and State = 'PRODUCT_BACKLOG') or (idSprint is not null and State != 'PRODUCT_BACKLOG'))
@@ -63,3 +64,5 @@ Alter Table sc_Project
   add constraint fk_project_sprint foreign key(idCurrentSprint) references sc_Sprint(id);
 Alter Table sc_UserStory
   add  constraint fk_userstory_sprint foreign key(idSprint) references sc_Sprint(id);
+Alter Table sc_UserStory
+  add  constraint fk_userstory_project foreign key(idproject) references sc_project(id);

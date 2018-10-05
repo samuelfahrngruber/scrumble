@@ -24,13 +24,12 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val fragments = mutableListOf<Fragment>()
-    private lateinit var selectedFragment: Fragment
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         var res = true
+        var selectedFragment = fragments[0]
         when (item.itemId) {
             R.id.navigation_my_tasks -> {
-                selectedFragment = fragments[0]
                 setupTitle("My Tasks")
             }
             R.id.navigation_scrum_board -> {

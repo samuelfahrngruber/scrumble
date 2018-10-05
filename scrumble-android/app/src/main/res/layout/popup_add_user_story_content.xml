@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/popup_add_user_story_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/popup_margin_side"
+        android:layout_marginEnd="@dimen/popup_margin_side"
+        android:layout_marginBottom="@dimen/popup_margin_between_text_views"
+        android:hint="@string/add_user_story_name_hint"
+        app:met_floatingLabel="highlight"
+        app:met_primaryColor="@color/colorAccent"/>
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/popup_add_user_story_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/popup_margin_side"
+        android:layout_marginEnd="@dimen/popup_margin_side"
+        android:layout_marginBottom="@dimen/popup_margin_between_text_views"
+        android:hint="@string/add_user_story_info_hint"
+        app:met_floatingLabel="highlight"
+        app:met_primaryColor="@color/colorAccent" />
+
+    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+        android:id="@+id/popup_add_user_story_responsible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/popup_margin_between_text_views"
+        android:layout_marginStart="@dimen/popup_margin_side"
+        android:layout_marginEnd="@dimen/popup_margin_side"
+        android:hint="@string/spinner_responsible_hint"
+        app:met_floatingLabel="highlight"
+        app:met_primaryColor="@color/colorAccent" />
+
+    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+        android:id="@+id/popup_add_user_story_verify"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/popup_margin_between_text_views"
+        android:layout_marginStart="@dimen/popup_margin_side"
+        android:layout_marginEnd="@dimen/popup_margin_side"
+        android:hint="@string/spinner_verify_hint"
+        app:met_floatingLabel="highlight"
+        app:met_primaryColor="@color/colorAccent" />
+
+    <com.llollox.androidtoggleswitch.widgets.ToggleSwitch
+        android:id="@+id/popup_add_user_story_toggle_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/popup_margin_side"
+        android:layout_marginEnd="@dimen/popup_margin_side"
+        app:textToggleLeft="@string/toggle_current_sprint"
+        app:textToggleRight="@string/toggle_product_backlog"
+        app:checkedBackgroundColor="@color/colorAccent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/colorAccent"
+        android:layout_marginStart="@dimen/popup_margin_side"
+        android:layout_marginEnd="@dimen/popup_margin_side"
+        android:layout_marginBottom="@dimen/popup_margin_side"/>
+</LinearLayout>
