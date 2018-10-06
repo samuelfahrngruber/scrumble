@@ -5,4 +5,5 @@
 
     <dimen name="twenty_four_dp">24dp</dimen>
     <dimen name="twelve_dp">12dp</dimen>
+    <dimen name="fife_dp">5dp</dimen>
 </resources>
