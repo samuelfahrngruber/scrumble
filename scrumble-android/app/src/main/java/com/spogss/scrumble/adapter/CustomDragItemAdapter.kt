@@ -2,32 +2,29 @@ package com.spogss.scrumble.adapter
 
 import android.content.Context
 import android.view.View
-import android.widget.Toast
 import android.widget.TextView
 import com.spogss.scrumble.R
-import com.spogss.scrumble.data.UserStory
+import com.spogss.scrumble.data.Task
 import com.woxthebox.draglistview.DragItemAdapter
 import android.support.annotation.NonNull
 import android.support.v4.content.ContextCompat
-import android.text.Html
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import de.mrapp.android.dialog.MaterialDialog
-import java.lang.StringBuilder
 import android.text.style.StyleSpan
 import de.mrapp.android.dialog.ScrollableArea
 
 
 class CustomDragItemAdapter
-    : DragItemAdapter<Pair<Int, UserStory>, CustomDragItemAdapter.ViewHolder> {
+    : DragItemAdapter<Pair<Int, Task>, CustomDragItemAdapter.ViewHolder> {
     private var res = 0
     private var mGrabHandleId = 0
     private var mDragOnLongPress = false
-    private lateinit var context: Context
+    private var context: Context
 
-    constructor(list: MutableList<Pair<Int, UserStory>>, res: Int, mGrabHandleId: Int, mDragOnLongPress: Boolean, context: Context) {
+    constructor(list: MutableList<Pair<Int, Task>>, res: Int, mGrabHandleId: Int, mDragOnLongPress: Boolean, context: Context) {
         this.res = res
         this.mGrabHandleId = mGrabHandleId
         this.mDragOnLongPress = mDragOnLongPress
@@ -56,7 +53,7 @@ class CustomDragItemAdapter
         var text: TextView = itemView.findViewById(R.id.column_item_text_view)
 
         override fun onItemClicked(view: View) {
-            val userStory = view.tag as UserStory
+            val userStory = view.tag as Task
 
             setupPopup(userStory)
         }
@@ -65,27 +62,27 @@ class CustomDragItemAdapter
             return true
         }
 
-        private fun setupPopup(userStory: UserStory) {
+        private fun setupPopup(task: Task) {
             val dialogBuilder = MaterialDialog.Builder(context)
-            dialogBuilder.setTitle(userStory.name)
+            dialogBuilder.setTitle(task.name)
             dialogBuilder.setTitleColor(ContextCompat.getColor(context, R.color.colorAccent))
-            dialogBuilder.setMessage(userStory.info)
-            dialogBuilder.setPositiveButton("Close", null)
+            dialogBuilder.setMessage(task.info)
+            dialogBuilder.setPositiveButton(R.string.close, null)
             dialogBuilder.setButtonTextColor(ContextCompat.getColor(context, R.color.colorAccent))
 
-            val responsible = context.resources.getString(R.string.popup_responsible)
-            val verify = context.resources.getString(R.string.popup_verify)
-            val rejections = context.resources.getString(R.string.popup_rejections, if(userStory.rejections != 1) "s" else "")
+            val responsible = context.resources.getString(R.string.responsible_double_dot)
+            val verify = context.resources.getString(R.string.verify_double_dot)
+            val rejections = context.resources.getString(R.string.rejections_double_dot, if(task.rejections != 1) "s" else "")
 
             val boldSpan = StyleSpan(android.graphics.Typeface.BOLD)
-            val responsibleString = SpannableStringBuilder().append("$responsible ").append(userStory.responsible.username, boldSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            val verifyString  = SpannableStringBuilder().append("$verify ").append(userStory.verify.username, boldSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            val rejectionString = SpannableStringBuilder().append("$rejections ").append(userStory.rejections.toString(), boldSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            val responsibleString = SpannableStringBuilder().append("$responsible ").append(task.responsible.username, boldSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            val verifyString  = SpannableStringBuilder().append("$verify ").append(task.verify.username, boldSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            val rejectionString = SpannableStringBuilder().append("$rejections ").append(task.rejections.toString(), boldSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-            val customView = View.inflate(context, R.layout.popup_user_story_content, null)
-            (customView.findViewById(R.id.popup_user_story_text_view_responsible) as TextView).text = responsibleString
-            (customView.findViewById(R.id.popup_user_story_text_view_verify) as TextView).text = verifyString
-            (customView.findViewById(R.id.popup_user_story_text_view_rejections) as TextView).text = rejectionString
+            val customView = View.inflate(context, R.layout.popup_task, null)
+            (customView.findViewById(R.id.popup_view_task_responsible) as TextView).text = responsibleString
+            (customView.findViewById(R.id.popup_view_task_verify) as TextView).text = verifyString
+            (customView.findViewById(R.id.popup_view_task_rejection) as TextView).text = rejectionString
 
             dialogBuilder.setView(customView)
             dialogBuilder.setScrollableArea(ScrollableArea.Area.CONTENT)

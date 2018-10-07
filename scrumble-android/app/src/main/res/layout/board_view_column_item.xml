@@ -16,7 +16,7 @@
         android:layout_gravity="center"
         android:duplicateParentState="true"
         android:foreground="@drawable/sc_card_view_selector"
-        card_view:cardBackgroundColor="#ffffff"
+        card_view:cardBackgroundColor="@color/colorPrimary"
         card_view:cardCornerRadius="4dp"
         card_view:cardElevation="2dp"
         card_view:cardPreventCornerOverlap="true"

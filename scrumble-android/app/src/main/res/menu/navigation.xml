@@ -4,21 +4,21 @@
     <item
         android:id="@+id/navigation_my_tasks"
         android:icon="@drawable/sc_nav_my_tasks"
-        android:title="@string/title_my_tasks" />
+        android:title="@string/my_tasks" />
 
     <item
         android:id="@+id/navigation_scrum_board"
         android:icon="@drawable/sc_nav_scrum_board"
-        android:title="@string/title_scrum_board" />
+        android:title="@string/scrum_board" />
 
     <item
         android:id="@+id/navigation_daily_scrum"
         android:icon="@drawable/sc_nav_daily_scrum"
-        android:title="@string/title_daily_scrum" />
+        android:title="@string/daily_scrum" />
 
     <item
         android:id="@+id/navigation_project_overview"
         android:icon="@drawable/sc_nav_projects"
-        android:title="@string/title_project_overview" />
+        android:title="@string/projects" />
 
 </menu>
