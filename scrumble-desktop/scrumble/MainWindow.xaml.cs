@@ -14,6 +14,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CefSharp;
+using System.IO;
+using CefSharp.Wpf;
+using CefSharp.SchemeHandler;
 
 namespace scrumble
 {
@@ -24,6 +28,7 @@ namespace scrumble
     {
         public MainWindow()
         {
+            testInitBrowser();
             InitializeComponent();
 
             testInit();
@@ -54,45 +59,26 @@ namespace scrumble
                 "[2018-10-04 19:30] Added Daily Scrum Table in Gui";
             textBox_projectLog.Text = projectLog;
 
-            testInitDailyScrumTable();
         }
 
-        private void testInitDailyScrumTable()
+        private void testInitBrowser()
         {
-            double[,] _dataArray;
-            DataView _dataView;
-
-            _dataArray = new double[2, 2] { { 10, 15 }, { 20, 25 } };
-
-            var array = _dataArray;
-            var rows = array.GetLength(0);
-            var rowHeaders = new string[rows];
-            for(int i = 0; i < rows; i++)
+            CefSettings settings = new CefSettings();
+            settings.RegisterScheme(new CefCustomScheme()
             {
-                rowHeaders[i] = "row" + i;
-            }
-            var columns = array.GetLength(1);
-            var t = new DataTable();
-            // Add columns with name "0", "1", "2", ...
-            t.Columns.Add(new DataColumn("."));
+                SchemeName = "scrumboard",
+                SchemeHandlerFactory = new CefSharp.SchemeHandler.FolderSchemeHandlerFactory("./Scrumboard/html")
+            });
+            //chromiumWebBrowser_scrumBoard.ResourceHandlerFactory = new ScrumBoardResourceHandlerFactory();
+            Cef.Initialize(settings);
+        }
 
-            for (var c = 0; c < columns; c++)
+        private void chromiumWebBrowser_scrumBoard_IsBrowserInitializedChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (chromiumWebBrowser_scrumBoard.IsBrowserInitialized)
             {
-                t.Columns.Add(new DataColumn("column" + c.ToString()));
+                //chromiumWebBrowser_scrumBoard.LoadHtml(File.ReadAllText("./Scrumboard/sbMarkup.html"));
             }
-            // Add data to DataTable
-            for (var r = 0; r < rows; r++)
-            {
-                var newRow = t.NewRow();
-                for (var c = 1; c < columns; c++)
-                {
-                    newRow[0] = rowHeaders[r];
-                    newRow[c] = array[r, c];
-                }
-                t.Rows.Add(newRow);
-            }
-            _dataView = t.DefaultView;
-            dataGrid_DailyScrumTable.ItemsSource = _dataView;
         }
     }
 }

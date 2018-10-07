@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:scrumble"
+        xmlns:cefSharp="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         mc:Ignorable="d"
         Title="scrumble" Height="700" Width="1244">
     <Grid>
@@ -79,9 +80,11 @@
             </StackPanel>
 
             <!-- Scrum Board -->
-            <WebBrowser Grid.Column="1" Grid.Row="0" Source="http://scrumblr.ca/scrumble"/>
+            <!--WebBrowser x:Name="webBrowser_scrumBoard" Grid.Column="1" Grid.Row="0" Source="http://scrumblr.ca/scrumble"/-->
+            <cefSharp:ChromiumWebBrowser x:Name="chromiumWebBrowser_scrumBoard" Grid.Column="1" Grid.Row="0" IsBrowserInitializedChanged="chromiumWebBrowser_scrumBoard_IsBrowserInitializedChanged" Address="scrumboard://index.html" />
 
-            <!-- My Tasks -->
+
+                <!-- my tasks -->
             <Grid Grid.Column="2" Grid.Row="0" Grid.RowSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"></ColumnDefinition>
@@ -151,6 +154,13 @@
                         <TextBox x:Name="textBox_projectLog" Padding="5px" FontFamily="Consolas" BorderThickness="0" TextWrapping="Wrap" Margin="0" IsReadOnly="True" />
                     </TabItem>
                     <TabItem Padding="5" Header="Daily Scrum Table">
+                        <DataGrid HeadersVisibility="All">
+                            <DataGridColumnHeader Content="Today"></DataGridColumnHeader>
+                            <DataGridColumnHeader Content="Yesterday"></DataGridColumnHeader>
+
+                            <DataGridRowHeader Content="Sam"></DataGridRowHeader>
+                            <DataGridRowHeader Content="Sam"></DataGridRowHeader>
+                        </DataGrid>
                     </TabItem>
                 </TabControl>
             </Grid>

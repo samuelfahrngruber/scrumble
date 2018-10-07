@@ -1,17 +1,1 @@
 C:\Users\Samuel\Desktop\BSD\scrumble\scrumble\bin\Debug\scrumble.exe.config
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\bin\Debug\scrumble.exe.config
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\bin\Debug\scrumble.exe
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\bin\Debug\scrumble.pdb
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\obj\Debug\scrumble.csprojResolveAssemblyReference.cache
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\obj\Debug\MainWindow.g.cs
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\obj\Debug\App.g.cs
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\obj\Debug\scrumble_MarkupCompile.cache
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\obj\Debug\scrumble_MarkupCompile.lref
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\obj\Debug\MainWindow.baml
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\obj\Debug\scrumble.g.resources
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\obj\Debug\scrumble.Properties.Resources.resources
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\obj\Debug\scrumble.csproj.GenerateResource.Cache
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\obj\Debug\scrumble.exe
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\obj\Debug\scrumble.pdb
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\bin\Debug\ScrumbleLib.dll
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\scrumble\bin\Debug\ScrumbleLib.pdb

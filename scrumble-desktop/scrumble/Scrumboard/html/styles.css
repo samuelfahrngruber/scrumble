@@ -1,0 +1,41 @@
+﻿ body {
+ 	font-family:helvetica, arial;
+	 font-size:12px
+  }
+.scrumboard{
+	margin:0 auto;
+	width:835px;
+}
+h1{
+	margin-left:20px;
+	font-size:2rem;
+}
+  .column {
+    width: 200px;
+    float: left;
+		border: solid 4px black;
+		height:100vh;
+  }
+  .portlet {
+    margin: 0 1em 1em 0;
+    padding: 0.3em;
+  }
+  .portlet-header {
+    padding: 0.2em 0.3em;
+    margin-bottom: 0.5em;
+    position: relative;
+  }
+  .portlet-toggle {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    margin-top: -8px;
+  }
+  .portlet-content {
+    padding: 0.4em;
+  }
+  .portlet-placeholder {
+    border: 1px dotted black;
+    margin: 0 1em 1em 0;
+    height: 50px;
+  }
