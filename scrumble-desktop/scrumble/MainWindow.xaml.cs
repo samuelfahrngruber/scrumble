@@ -37,14 +37,14 @@ namespace scrumble
 
         private void testInit()
         {
-            List<UserStory> toDo = new List<UserStory>();
-            toDo.Add(new UserStory("hello"));
-            toDo.Add(new UserStory("world"));
+            List<ScrumbleLib.Task> toDo = new List<ScrumbleLib.Task>();
+            toDo.Add(new ScrumbleLib.Task("hello"));
+            toDo.Add(new ScrumbleLib.Task("world"));
             treeViewItem_sprintBacklog.ItemsSource = toDo;
 
-            List<UserStory> productBacklog = new List<UserStory>();
-            productBacklog.Add(new UserStory("hello_pbl"));
-            productBacklog.Add(new UserStory("world_pbl"));
+            List<ScrumbleLib.Task> productBacklog = new List<ScrumbleLib.Task>();
+            productBacklog.Add(new ScrumbleLib.Task("hello_pbl"));
+            productBacklog.Add(new ScrumbleLib.Task("world_pbl"));
             treeViewItem_productBacklog.ItemsSource = productBacklog;
 
             List<User> teamMembers = new List<User>();
