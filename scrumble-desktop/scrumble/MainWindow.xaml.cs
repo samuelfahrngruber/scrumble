@@ -79,7 +79,7 @@ namespace scrumble
         {
             if (chromiumWebBrowser_scrumBoard.IsBrowserInitialized)
             {
-                //chromiumWebBrowser_scrumBoard.LoadHtml(File.ReadAllText("./Scrumboard/sbMarkup.html"));
+                //stopProgress();
             }
         }
 
@@ -196,6 +196,23 @@ namespace scrumble
                 RowHeaders = new List<string>();
                 TableColumns = new List<TableColumn>();
             }
+        }
+
+        private void startProgress(string indicator)
+        {
+            textBlock_statusBarIndicator.Text = indicator;
+            progressBar_statusBar.Visibility = Visibility.Visible;
+        }
+
+        private void stopProgress()
+        {
+            textBlock_statusBarIndicator.Text = "";
+            progressBar_statusBar.Visibility = Visibility.Collapsed;
+        }
+
+        private void chromiumWebBrowser_scrumBoard_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
+        {
+            Dispatcher.Invoke(stopProgress);
         }
     }
 }

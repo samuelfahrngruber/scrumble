@@ -12,6 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"></ColumnDefinition>
@@ -82,7 +83,7 @@
 
             <!-- Scrum Board -->
             <!--WebBrowser x:Name="webBrowser_scrumBoard" Grid.Column="1" Grid.Row="0" Source="http://scrumblr.ca/scrumble"/-->
-            <cefSharp:ChromiumWebBrowser x:Name="chromiumWebBrowser_scrumBoard" Grid.Column="1" Grid.Row="0" IsBrowserInitializedChanged="chromiumWebBrowser_scrumBoard_IsBrowserInitializedChanged" Address="scrumboard://index.html" />
+            <cefSharp:ChromiumWebBrowser x:Name="chromiumWebBrowser_scrumBoard" Grid.Column="1" Grid.Row="0" IsBrowserInitializedChanged="chromiumWebBrowser_scrumBoard_IsBrowserInitializedChanged" Address="scrumboard://index.html" FrameLoadEnd="chromiumWebBrowser_scrumBoard_FrameLoadEnd" />
 
 
             <!-- my tasks -->
@@ -184,7 +185,7 @@
                                                                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                                                                     <ColumnDefinition Width="5*"></ColumnDefinition>
                                                                 </Grid.ColumnDefinitions>
-                                                                <Border Margin="5" Padding="5" BorderThickness="1" BorderBrush="Blue" CornerRadius="10">
+                                                                <Border Margin="5" Padding="5" BorderThickness="1" CornerRadius="10" Background="#a5d3f7">
                                                                     <TextBlock Grid.Column="0" Text="{Binding TaskId}" FontSize="10" FontFamily="Consolas" VerticalAlignment="Center"></TextBlock>
                                                                 </Border>
                                                                 <TextBox Grid.Column="1" Text="{Binding Text}" BorderThickness="0" VerticalAlignment="Center"></TextBox>
@@ -207,5 +208,9 @@
                 </TabControl>
             </Grid>
         </Grid>
+        <StatusBar Grid.Row="2" FontSize="15" FontWeight="Light" Padding="2">
+            <TextBlock x:Name="textBlock_statusBarIndicator" Text="Initializing Scrum Board..."></TextBlock>
+            <ProgressBar x:Name="progressBar_statusBar" IsIndeterminate="True" Width="100" Height="15"></ProgressBar>
+        </StatusBar>
     </Grid>
 </Window>
