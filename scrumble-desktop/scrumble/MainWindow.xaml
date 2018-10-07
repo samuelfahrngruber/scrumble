@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:scrumble"
+        xmlns:dailyscrumtable="clr-namespace:scrumble.DailyScrumTable"
         xmlns:cefSharp="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         mc:Ignorable="d"
         Title="scrumble" Height="700" Width="1244">
@@ -84,7 +85,7 @@
             <cefSharp:ChromiumWebBrowser x:Name="chromiumWebBrowser_scrumBoard" Grid.Column="1" Grid.Row="0" IsBrowserInitializedChanged="chromiumWebBrowser_scrumBoard_IsBrowserInitializedChanged" Address="scrumboard://index.html" />
 
 
-                <!-- my tasks -->
+            <!-- my tasks -->
             <Grid Grid.Column="2" Grid.Row="0" Grid.RowSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"></ColumnDefinition>
@@ -154,13 +155,54 @@
                         <TextBox x:Name="textBox_projectLog" Padding="5px" FontFamily="Consolas" BorderThickness="0" TextWrapping="Wrap" Margin="0" IsReadOnly="True" />
                     </TabItem>
                     <TabItem Padding="5" Header="Daily Scrum Table">
-                        <DataGrid HeadersVisibility="All">
-                            <DataGridColumnHeader Content="Today"></DataGridColumnHeader>
-                            <DataGridColumnHeader Content="Yesterday"></DataGridColumnHeader>
-
-                            <DataGridRowHeader Content="Sam"></DataGridRowHeader>
-                            <DataGridRowHeader Content="Sam"></DataGridRowHeader>
-                        </DataGrid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="1*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl x:Name="itemsControl_DailyScrumDays" >
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal"></StackPanel>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="{Binding Header}" FontWeight="Medium" HorizontalAlignment="Center"></TextBlock>
+                                                <ItemsControl ItemsSource="{Binding Entries}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Vertical"></StackPanel>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.Resources>
+                                                        <DataTemplate DataType="{x:Type dailyscrumtable:DailyScrumEntry}">
+                                                            <Grid Width="200px" Height="40px" Margin="2">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                                    <ColumnDefinition Width="5*"></ColumnDefinition>
+                                                                </Grid.ColumnDefinitions>
+                                                                <Border Margin="5" Padding="5" BorderThickness="1" BorderBrush="Blue" CornerRadius="10">
+                                                                    <TextBlock Grid.Column="0" Text="{Binding TaskId}" FontSize="10" FontFamily="Consolas" VerticalAlignment="Center"></TextBlock>
+                                                                </Border>
+                                                                <TextBox Grid.Column="1" Text="{Binding Text}" BorderThickness="0" VerticalAlignment="Center"></TextBox>
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                        <DataTemplate DataType="{x:Type dailyscrumtable:DailyScrumRowHeader}">
+                                                            <Grid Height="40px" Margin="2">
+                                                                <TextBox Padding="10,0,20,0" Text="{Binding Text}" BorderThickness="0" VerticalAlignment="Center" FontWeight="Medium"></TextBox>
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ItemsControl.Resources>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
                     </TabItem>
                 </TabControl>
             </Grid>
