@@ -137,19 +137,19 @@ namespace scrumble.DailyScrumTable
             model.Set(pauli, DateTime.Parse("2018-10-01"), new DailyScrumEntry() { Text = "STARTUP" });
             model.Set(simon, DateTime.Parse("2018-10-01"), new DailyScrumEntry() { Text = "STARTUP" });
 
-            model.Set(sam, DateTime.Parse("2018-10-02"), new DailyScrumEntry() { Text = "create c# project" });
+            model.Set(sam, DateTime.Parse("2018-10-02"), new DailyScrumEntry() { Text = "create c# project", TaskId="#20" });
             model.Set(webi, DateTime.Parse("2018-10-02"), new DailyScrumEntry() { Text = "create database" });
             model.Set(pauli, DateTime.Parse("2018-10-02"), new DailyScrumEntry() { Text = "create android project" });
             model.Set(simon, DateTime.Parse("2018-10-02"), new DailyScrumEntry() { Text = "create database" });
 
-            model.Set(pauli, DateTime.Parse("2018-10-04"), new DailyScrumEntry() { Text = "added scrumboard to app" });
+            model.Set(pauli, DateTime.Parse("2018-10-04"), new DailyScrumEntry() { Text = "added scrumboard to app", TaskId = "#20" });
 
-            model.Set(sam, DateTime.Parse("2018-10-05"), new DailyScrumEntry() { Text = "design wpf" });
+            model.Set(sam, DateTime.Parse("2018-10-05"), new DailyScrumEntry() { Text = "design wpf", TaskId = "#20" });
             model.Set(pauli, DateTime.Parse("2018-10-05"), new DailyScrumEntry() { Text = "add task, view task" });
-            model.Set(simon, DateTime.Parse("2018-10-05"), new DailyScrumEntry() { Text = "webservice description" });
+            model.Set(simon, DateTime.Parse("2018-10-05"), new DailyScrumEntry() { Text = "webservice description", TaskId = "#20" });
 
             model.Set(sam, DateTime.Parse("2018-10-08"), new DailyScrumEntry() { Text = "wpf: scrumboard, dailyscrum, improvements" });
-            model.Set(webi, DateTime.Parse("2018-10-08"), new DailyScrumEntry() { Text = "webservice init" });
+            model.Set(webi, DateTime.Parse("2018-10-08"), new DailyScrumEntry() { Text = "webservice init", TaskId = "#20" });
             model.Set(pauli, DateTime.Parse("2018-10-08"), new DailyScrumEntry() { Text = "MISSING" });
             model.Set(simon, DateTime.Parse("2018-10-08"), new DailyScrumEntry() { Text = "webservice init" });
 

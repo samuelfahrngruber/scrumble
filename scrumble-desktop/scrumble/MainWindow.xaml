@@ -48,7 +48,10 @@
             <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
                 <TextBlock Text="Project Overview" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
                 <Separator Margin="20, 0"></Separator>
-                <TreeView Margin="5" BorderThickness="0" FontSize="18" FontWeight="Light" >
+                <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"><Run Text="Project Name: "></Run><Run FontWeight="Medium" Text="Scrumble"></Run></TextBlock>
+                <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"><Run Text="Current Sprint: "></Run><Run FontWeight="Medium" Text="#1"></Run></TextBlock>
+                <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"><Run Text="Sprint Deadline: "></Run><Run FontWeight="Medium" Text="Mi., 31.10.2018"></Run></TextBlock>
+                <TreeView Margin="5" BorderThickness="0" FontSize="18" FontWeight="Light">
 
 
 
@@ -162,6 +165,10 @@
             </Grid>
         </Grid>
         <StatusBar Grid.Row="2" FontSize="15" FontWeight="Light" Padding="2">
+            <TextBlock Text="Project: Scrumble"></TextBlock>
+            <Separator Margin="5"></Separator>
+            <TextBlock Text="Sprint: #1"></TextBlock>
+            <Separator Margin="5"></Separator>
             <TextBlock x:Name="textBlock_statusBarIndicator" Text="Initializing Scrum Board..."></TextBlock>
             <ProgressBar x:Name="progressBar_statusBar" IsIndeterminate="True" Width="100" Height="15"></ProgressBar>
         </StatusBar>
