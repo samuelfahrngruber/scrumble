@@ -1,6 +1,6 @@
 drop table sc_user cascade constraints;
 drop table sc_Sprint cascade constraints;
-drop table sc_UserStory cascade constraints;
+drop table sc_task cascade constraints;
 drop table sc_Project cascade constraints;
 drop table sc_Teammember cascade constraints;
 drop table sc_ProjectLogEntry cascade constraints;
@@ -11,7 +11,7 @@ create Table sc_User(
  Password varchar2(30)
 );
 
-create Table sc_UserStory(
+create Table sc_Task(
  id number Primary Key,
  idResponsible number,
  idVerify number,
@@ -62,7 +62,7 @@ create Table sc_ProjectLogEntry(
 
 Alter Table sc_Project
   add constraint fk_project_sprint foreign key(idCurrentSprint) references sc_Sprint(id);
-Alter Table sc_UserStory
+Alter Table sc_Task
   add  constraint fk_userstory_sprint foreign key(idSprint) references sc_Sprint(id);
-Alter Table sc_UserStory
+Alter Table sc_Task
   add  constraint fk_userstory_project foreign key(idproject) references sc_project(id);
