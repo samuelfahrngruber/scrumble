@@ -19,6 +19,7 @@ using System.IO;
 using CefSharp.Wpf;
 using CefSharp.SchemeHandler;
 using scrumble.DailyScrumTable;
+using ScrumbleLib.Data;
 
 namespace scrumble
 {
@@ -37,14 +38,14 @@ namespace scrumble
 
         private void testInit()
         {
-            List<ScrumbleLib.Task> toDo = new List<ScrumbleLib.Task>();
-            toDo.Add(new ScrumbleLib.Task("hello"));
-            toDo.Add(new ScrumbleLib.Task("world"));
+            List<ScrumbleLib.Data.Task> toDo = new List<ScrumbleLib.Data.Task>();
+            toDo.Add(new ScrumbleLib.Data.Task("hello"));
+            toDo.Add(new ScrumbleLib.Data.Task("world"));
             treeViewItem_sprintBacklog.ItemsSource = toDo;
 
-            List<ScrumbleLib.Task> productBacklog = new List<ScrumbleLib.Task>();
-            productBacklog.Add(new ScrumbleLib.Task("hello_pbl"));
-            productBacklog.Add(new ScrumbleLib.Task("world_pbl"));
+            List<ScrumbleLib.Data.Task> productBacklog = new List<ScrumbleLib.Data.Task>();
+            productBacklog.Add(new ScrumbleLib.Data.Task("hello_pbl"));
+            productBacklog.Add(new ScrumbleLib.Data.Task("world_pbl"));
             treeViewItem_productBacklog.ItemsSource = productBacklog;
 
             List<User> teamMembers = new List<User>();

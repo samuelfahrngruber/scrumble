@@ -1,4 +1,5 @@
 ﻿using ScrumbleLib;
+using ScrumbleLib.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -170,7 +171,7 @@ namespace scrumble.DailyScrumTable
             dayCol.Header = "";
             foreach (User user in model.Users)
             {
-                dayCol.Entries.Add(new DailyScrumRowHeader() { Text = user.Name });
+                dayCol.Entries.Add(new DailyScrumRowHeader() { Text = user.Username });
             }
             table.Add(dayCol);
             foreach (DateTime date in model.Dates.OrderByDescending(date => date))

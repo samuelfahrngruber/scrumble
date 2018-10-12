@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ScrumbleLib
+namespace ScrumbleLib.Data
 {
-    public class User
+    public class Task
     {
         public string Name { get; set; }
-        public User(String name)
+        public Task(String name)
         {
             Name = name;
         }
