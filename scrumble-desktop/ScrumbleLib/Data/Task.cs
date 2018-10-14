@@ -6,10 +6,16 @@ using System.Threading.Tasks;
 
 namespace ScrumbleLib.Data
 {
-    public class Task
+    public class Task : IIndexable
     {
+        public int Id { get; set; }
         public string Name { get; set; }
-        public Task(String name)
+        public string Info { get; set; }
+        public int Rejections { get; set; }
+        public User ResponsibleUser { get; set; }
+        public User VerifyingUser { get; set; }
+
+        public Task(string name)
         {
             Name = name;
         }

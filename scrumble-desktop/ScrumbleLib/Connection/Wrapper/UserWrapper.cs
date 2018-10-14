@@ -7,23 +7,30 @@ using System.Threading.Tasks;
 
 namespace ScrumbleLib.Connection.Wrapper
 {
-    public class UserWrapper
+    public class UserWrapper : DataWrapper<User>
     {
-        public User Value { get; set; }
-        public ScrumbleConnection Connection { get; private set; }
+        public UserWrapper(User wrappedValue) : base(wrappedValue)
+        {
+
+        }
 
         public string Username
         {
             get
             {
-                return Value.Username;
+                return WrappedValue.Username;
             }
 
             set
             {
-                Value.Username = value;
-                Connection.Update(Value);
+                WrappedValue.Username = value;
+                ScrumbleConnection.Update(this);
             }
+        }
+
+        public override User Unwrap()
+        {
+            throw new NotImplementedException();
         }
     }
 }

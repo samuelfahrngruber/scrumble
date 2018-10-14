@@ -49,9 +49,9 @@ namespace scrumble
             treeViewItem_productBacklog.ItemsSource = productBacklog;
 
             List<User> teamMembers = new List<User>();
-            teamMembers.Add(new User("pauli"));
-            teamMembers.Add(new User("simsi"));
-            teamMembers.Add(new User("webi"));
+            teamMembers.Add(new User(10, "pauli", ""));
+            teamMembers.Add(new User(11, "simsi", ""));
+            teamMembers.Add(new User(12, "webi", ""));
             treeViewItem_teamMembers.ItemsSource = teamMembers;
 
             string projectLog = "" +

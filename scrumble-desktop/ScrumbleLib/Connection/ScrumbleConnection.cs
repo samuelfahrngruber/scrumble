@@ -8,16 +8,29 @@ using System.Threading.Tasks;
 
 namespace ScrumbleLib.Connection
 {
-    public class ScrumbleConnection
+    public static class ScrumbleConnection
     {
-        public void Update(UserWrapper user)
+        public static void Update<WrappedType>(DataWrapper<WrappedType> wrapper)
         {
-
+            string json = wrapper.ToJson();
         }
-        public void Update(SprintWrapper user)
+
+        public static ProjectWrapper GetProject(int projectId)
         {
-            // PUT
-            // {
+            string json = "{" +
+                "\"Id\":" + projectId + "," +
+                "\"Name\":\"SCRUMBLE" + projectId + "\"" +
+                "}";
+            return ProjectWrapper.FromJson<ProjectWrapper>(json);
+        }
+
+        public static ProjectWrapper GetUser(int projectId)
+        {
+            string json = "{" +
+                "\"Id\":" + projectId + "," +
+                "\"Name\":\"SCRUMBLE" + projectId + "\"" +
+                "}";
+            return ProjectWrapper.FromJson<ProjectWrapper>(json);
         }
     }
 }

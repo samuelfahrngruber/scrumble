@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ScrumbleLib.Data
 {
-    public class User
+    public class User : IIndexable
     {
-        public int Id { get; private set; }
+        public int Id { get; set; }
         public string Username { get; set; }
         private string Password { get; set; }
 
