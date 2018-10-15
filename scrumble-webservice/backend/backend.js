@@ -14,8 +14,20 @@ app.use(function(req, res, next) {
 var port = 8080;
 process.env.HOST = process.env.HOST || "http://localhost:" + port;
 
+// ROUTERS
+// =============================================================================
 var defaultRouter = require("./defaultRouter");
-app.use('/api', defaultRouter);
+var userRouter = require("./userRouter");
+var projectRouter = require("./projectRouter");
 
+// REGISTER OUR ROUTES
+// =============================================================================
+app.use('/scrumble', defaultRouter);
+defaultRouter.use('/user', userRouter)
+defaultRouter.use('/project', projectRouter);
+app.get('/', (req, res) => res.redirect("views"));
+
+// START THE SERVER
+// =============================================================================
 app.listen(port);
 console.log('Server started on port ' + port);
