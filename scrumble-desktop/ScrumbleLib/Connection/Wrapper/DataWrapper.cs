@@ -13,7 +13,7 @@ namespace ScrumbleLib.Connection.Wrapper
     public abstract class DataWrapper<DataType>
     {
         [JsonIgnore]
-        public DataType WrappedValue { get; private set; }
+        public DataType WrappedValue { get; set; }
 
         public string ToJson()
         {

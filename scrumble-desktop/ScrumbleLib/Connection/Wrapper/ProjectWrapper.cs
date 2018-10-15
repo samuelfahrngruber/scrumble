@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace ScrumbleLib.Connection.Wrapper
 {
-    public class ProjectWrapper : DataWrapper<Project>
+    public class ProjectWrapper : DataWrapper<Project>, IIndexable
     {
+        // wrapping methods and constructors
         public static ProjectWrapper Wrap(Project project)
         {
             return new ProjectWrapper(project);
@@ -21,9 +22,9 @@ namespace ScrumbleLib.Connection.Wrapper
         }
 
         // Unwrapping Methods and Constructors
-        public static ProjectWrapper Unwrap(int id, string name, int productOwner)
+        public static ProjectWrapper Unwrap(int id, string name, int productOwner, int currentSprint)
         {
-            return new ProjectWrapper(id, name, productOwner);
+            return new ProjectWrapper(id, name, productOwner, currentSprint);
         }
 
         public static ProjectWrapper FromJson(JObject jsonObject)
@@ -35,8 +36,8 @@ namespace ScrumbleLib.Connection.Wrapper
             return FromJson(JObject.Parse(json));
         }
 
-        public ProjectWrapper(int id, string name, int productOwner)
-            : base(new Project(id, name, ScrumbleController.GetUser(productOwner)))
+        public ProjectWrapper(int id, string name, int productOwner, int currentSprint)
+            : base(new Project(id, name, ScrumbleController.GetUser(productOwner), ScrumbleController.GetSprint(currentSprint)))
         {
 
         }
@@ -44,14 +45,78 @@ namespace ScrumbleLib.Connection.Wrapper
         public ProjectWrapper(JObject jsonObject) : this(
             (int)jsonObject["id"],
             (string)jsonObject["project"],
-            (int)jsonObject["productowner"])
+            (int)jsonObject["productowner"],
+            (int)jsonObject["currentsprint"])
         {
 
         }
 
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public User ProductOwner { get; set; }
-        public HashSet<User> Team { get; set; }
+        public int Id
+        {
+            get
+            {
+                return WrappedValue.Id;
+            }
+            set
+            {
+                // todo inspect
+                WrappedValue.Id = value;
+            }
+        }
+
+
+        public string Name
+        {
+            get
+            {
+                return WrappedValue.Name;
+            }
+            set
+            {
+                WrappedValue.Name = value;
+                ScrumbleConnection.Update(this);
+            }
+        }
+
+        public int ProductOwner
+        {
+            get
+            {
+                return WrappedValue.ProductOwner == null ? -1 : WrappedValue.ProductOwner.Id;
+                //return WrappedValue.Project.Id;
+            }
+            set
+            {
+                WrappedValue.ProductOwner = ScrumbleController.GetUser(value);
+                ScrumbleConnection.Update(this);
+            }
+        }
+
+        public int CurrentSprint
+        {
+            get
+            {
+                return WrappedValue.CurrentSprint == null ? -1 : WrappedValue.CurrentSprint.Id;
+                //return WrappedValue.Project.Id;
+            }
+            set
+            {
+                WrappedValue.CurrentSprint = ScrumbleController.GetSprint(value);
+                ScrumbleConnection.Update(this);
+            }
+        }
+
+        public HashSet<User> Team
+        {
+            get
+            {
+                return WrappedValue.Team;
+            }
+            set
+            {
+                WrappedValue.Team = value;
+                ScrumbleConnection.Update(this);
+            }
+        }
     }
 }

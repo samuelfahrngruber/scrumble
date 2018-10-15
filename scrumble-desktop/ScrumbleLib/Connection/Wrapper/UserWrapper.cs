@@ -11,6 +11,10 @@ namespace ScrumbleLib.Connection.Wrapper
     public class UserWrapper : DataWrapper<User>
     {
         // wrapping methods and constructors
+        public static UserWrapper Wrap(User user)
+        {
+            return new UserWrapper(user);
+        }
         public UserWrapper(User wrappedValue) : base(wrappedValue)
         {
 
@@ -18,14 +22,22 @@ namespace ScrumbleLib.Connection.Wrapper
         // unwrapping methods and constructors
         public static UserWrapper FromJson(JObject jsonObject)
         {
-            return new Wrapper.UserWrapper(jsonObject);
+            return new UserWrapper(jsonObject);
         }
         public static UserWrapper FromJson(string json)
         {
             return FromJson(JObject.Parse(json));
         }
 
-        public UserWrapper(JObject jsonObject) : this(new User(9, "nm", "pw"))
+        public UserWrapper(int id, string username)
+            : base(new User(id, username, null))
+        {
+
+        }
+
+        public UserWrapper(JObject jsonObject) : this(
+            (int)jsonObject["id"],
+            (string)jsonObject["username"])
         {
 
         }

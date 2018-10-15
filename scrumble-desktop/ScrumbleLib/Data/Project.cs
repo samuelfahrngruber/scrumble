@@ -12,14 +12,15 @@ namespace ScrumbleLib.Data
         public string Name { get; set; }
         public User ProductOwner { get; set; }
         public HashSet<User> Team { get; set; }
+        public Sprint CurrentSprint { get; set; }
 
-        public Project(int id, string name = default(string), User productOwner = default(User))
+        public Project(int id, string name = default(string), User productOwner = default(User), Sprint currentSprint = default(Sprint))
         {
             this.Id = id;
             this.Name = name;
             this.ProductOwner = productOwner;
-
             this.Team = new HashSet<User>();
+            this.CurrentSprint = currentSprint;
         }
 
         public bool AddMember(User member)

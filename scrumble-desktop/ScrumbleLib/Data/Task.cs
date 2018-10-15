@@ -14,10 +14,17 @@ namespace ScrumbleLib.Data
         public int Rejections { get; set; }
         public User ResponsibleUser { get; set; }
         public User VerifyingUser { get; set; }
+        public Sprint Sprint { get; set; }
 
-        public Task(string name)
+        public Task(int id, string name = default(string), string info = default(string), int rejections = default(int), User responsibleUser = default(User), User verifyingUser = default(User), Sprint sprint = default(Sprint))
         {
-            Name = name;
+            this.Id = id;
+            this.Name = name;
+            this.Info = info;
+            this.Rejections = rejections;
+            this.VerifyingUser = verifyingUser;
+            this.ResponsibleUser = responsibleUser;
+            this.Sprint = sprint;
         }
 
         public override string ToString()

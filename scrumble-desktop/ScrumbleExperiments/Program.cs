@@ -1,4 +1,5 @@
-﻿using ScrumbleLib.Connection.Wrapper;
+﻿using ScrumbleLib.Connection;
+using ScrumbleLib.Connection.Wrapper;
 using ScrumbleLib.Data;
 using System;
 using System.Collections.Generic;
@@ -12,18 +13,23 @@ namespace ScrumbleExperiments
     {
         static void Main(string[] args)
         {
-            Project scrumble = new Project(22, "scrumble");
-            ProjectWrapper scrumbleW = new ProjectWrapper(scrumble);
-            Sprint s = new Sprint(0, scrumble);
-            SprintWrapper sw = new SprintWrapper(s);
-            string json = sw.ToJson();
+            ////Project scrumble = new Project(22, "scrumble");
+            ////ProjectWrapper scrumbleW = new ProjectWrapper(scrumble);
+            ////Sprint s = new Sprint(0, scrumble);
+            ////SprintWrapper sw = new SprintWrapper(s);
+            ////string json = sw.ToJson();
 
-            Console.WriteLine(json);
+            ////Console.WriteLine(json);
 
-            Console.WriteLine();
+            ////sw.Project = 100;
 
-            SprintWrapper newSW = SprintWrapper.FromJson(json);
-            Console.WriteLine(newSW.ToJson());
+            ////Console.WriteLine();
+
+            ////SprintWrapper newSW = SprintWrapper.FromJson(json);
+            ////Console.WriteLine(newSW.ToJson());
+
+            TaskWrapper tw = ScrumbleConnection.GetTask(3);
+
         }
     }
 }

@@ -39,13 +39,13 @@ namespace scrumble
         private void testInit()
         {
             List<ScrumbleLib.Data.Task> toDo = new List<ScrumbleLib.Data.Task>();
-            toDo.Add(new ScrumbleLib.Data.Task("hello"));
-            toDo.Add(new ScrumbleLib.Data.Task("world"));
+            //toDo.Add(new ScrumbleLib.Data.Task("hello"));
+            //toDo.Add(new ScrumbleLib.Data.Task("world"));
             treeViewItem_sprintBacklog.ItemsSource = toDo;
 
             List<ScrumbleLib.Data.Task> productBacklog = new List<ScrumbleLib.Data.Task>();
-            productBacklog.Add(new ScrumbleLib.Data.Task("hello_pbl"));
-            productBacklog.Add(new ScrumbleLib.Data.Task("world_pbl"));
+            //productBacklog.Add(new ScrumbleLib.Data.Task("hello_pbl"));
+            //productBacklog.Add(new ScrumbleLib.Data.Task("world_pbl"));
             treeViewItem_productBacklog.ItemsSource = productBacklog;
 
             List<User> teamMembers = new List<User>();
