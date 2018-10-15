@@ -18,19 +18,20 @@ namespace ScrumbleLib.Connection
         public static ProjectWrapper GetProject(int projectId)
         {
             string json = "{" +
-                "\"Id\":" + projectId + "," +
-                "\"Name\":\"SCRUMBLE" + projectId + "\"" +
+                "\"id\":" + projectId + "," +
+                "\"name\":\"SCRUMBLE" + projectId + "\"" +
+                "\"productowner\":" + projectId * 2 + "," +
                 "}";
-            return ProjectWrapper.FromJson<ProjectWrapper>(json);
+            return ProjectWrapper.FromJson(json);
         }
 
-        public static ProjectWrapper GetUser(int projectId)
+        public static UserWrapper GetUser(int userId)
         {
             string json = "{" +
-                "\"Id\":" + projectId + "," +
-                "\"Name\":\"SCRUMBLE" + projectId + "\"" +
+                "\"id\":" + userId + "," +
+                "\"name\":\"USER" + userId + "\"" +
                 "}";
-            return ProjectWrapper.FromJson<ProjectWrapper>(json);
+            return UserWrapper.FromJson(json);
         }
     }
 }

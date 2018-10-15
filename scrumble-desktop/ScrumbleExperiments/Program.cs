@@ -22,7 +22,7 @@ namespace ScrumbleExperiments
 
             Console.WriteLine();
 
-            SprintWrapper newSW = DataWrapper<Sprint>.FromJson<SprintWrapper>(json);
+            SprintWrapper newSW = SprintWrapper.FromJson(json);
             Console.WriteLine(newSW.ToJson());
         }
     }

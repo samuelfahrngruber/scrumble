@@ -1,4 +1,5 @@
-﻿using ScrumbleLib.Data;
+﻿using Newtonsoft.Json.Linq;
+using ScrumbleLib.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,10 +33,23 @@ namespace ScrumbleLib.Connection.Wrapper
 
         }
 
-        // todo remove unwrap
-        public override Sprint Unwrap()
+        public static SprintWrapper FromJson(JObject jsonObject)
         {
-            return new Sprint(this.Id, ScrumbleController.GetProject(this.Project), this.Number, this.Start, this.Deadline);
+            return new Wrapper.SprintWrapper(jsonObject);
+        }
+        public static SprintWrapper FromJson(string json)
+        {
+            return FromJson(JObject.Parse(json));
+        }
+
+        public SprintWrapper(JObject jsonObject) : this(
+            (int)jsonObject["id"],
+            (int)jsonObject["project"],
+            (int)jsonObject["number"],
+            DateTime.Parse((string)jsonObject["start"]),
+            DateTime.Parse((string)jsonObject["deadline"]))
+        {
+
         }
 
         public int Id

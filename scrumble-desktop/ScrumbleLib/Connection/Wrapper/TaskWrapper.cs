@@ -12,10 +12,5 @@ namespace ScrumbleLib.Connection.Wrapper
         {
 
         }
-
-        public override Task Unwrap()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
