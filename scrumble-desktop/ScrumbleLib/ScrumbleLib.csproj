@@ -66,6 +66,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Extensions" />
@@ -79,6 +83,7 @@
   <ItemGroup>
     <Compile Include="Connection\ConnectionMock.cs" />
     <Compile Include="Connection\IndexSet.cs" />
+    <Compile Include="Connection\Json\LowercaseContractResolver.cs" />
     <Compile Include="Connection\ScrumbleConnection.cs" />
     <Compile Include="Connection\ScrumbleController.cs" />
     <Compile Include="Connection\Wrapper\DataWrapper.cs" />
@@ -94,7 +99,9 @@
     <Compile Include="Data\User.cs" />
     <Compile Include="Data\Task.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

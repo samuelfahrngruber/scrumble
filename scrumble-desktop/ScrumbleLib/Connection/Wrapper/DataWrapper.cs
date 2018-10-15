@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using ScrumbleLib.Connection.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,28 +12,20 @@ namespace ScrumbleLib.Connection.Wrapper
 {
     public abstract class DataWrapper<DataType>
     {
-        [ScriptIgnore]
+        [JsonIgnore]
         public DataType WrappedValue { get; private set; }
 
         public string ToJson()
         {
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            return serializer.Serialize(this);
-        }
-
-        public static WrapperType FromJson<WrapperType>(string json) where WrapperType : DataWrapper<DataType>
-        {
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            WrapperType wrapper = serializer.Deserialize<WrapperType>(json);
-            wrapper.WrappedValue = wrapper.Unwrap();
-            return wrapper;
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.ContractResolver = new LowercaseContractResolver();
+            string json = JsonConvert.SerializeObject(this, Formatting.Indented, settings);
+            return json;
         }
 
         public DataWrapper(DataType wrappedValue)
         {
             WrappedValue = wrappedValue;
         }
-
-        public abstract DataType Unwrap();
     }
 }
