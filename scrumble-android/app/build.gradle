@@ -32,6 +32,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
+    //async
+    implementation 'org.jetbrains.anko:anko-common:0.9'
+    //gson
+    implementation 'com.google.code.gson:gson:2.8.5'
     //dragView
     implementation 'com.github.woxthebox:draglistview:1.6.2'
     //cardView
@@ -42,4 +46,6 @@ dependencies {
     implementation 'com.weiwangcn.betterspinner:library-material:1.1.0'
     //toggleButton
     implementation 'com.llollox:androidtoggleswitch:2.0.1'
+    //timeLine
+    implementation 'com.github.sangcomz:StickyTimeLine:v0.0.17'
 }

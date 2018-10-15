@@ -5,21 +5,15 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import com.spogss.scrumble.R
 import com.spogss.scrumble.fragment.DailyScrumFragment
 import com.spogss.scrumble.fragment.MyTasksFragment
 import com.spogss.scrumble.fragment.ProjectsFragment
 import com.spogss.scrumble.fragment.ScrumBoardFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import android.text.Spannable
-import android.text.style.ForegroundColorSpan
-import android.text.SpannableString
-import com.spogss.scrumble.data.Project
-import com.spogss.scrumble.data.Sprint
-import com.spogss.scrumble.data.User
-import com.spogss.scrumble.data.UserStory
-import com.spogss.scrumble.enums.UserStoryState
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {

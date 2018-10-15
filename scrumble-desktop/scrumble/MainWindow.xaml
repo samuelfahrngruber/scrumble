@@ -4,9 +4,173 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:scrumble"
+        xmlns:dailyscrumtable="clr-namespace:scrumble.DailyScrumTable"
+        xmlns:cefSharp="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="scrumble" Height="700" Width="1244">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Menu FontSize="15" FontWeight="Light" Padding="2">
+            <MenuItem Header="Project">
+                <MenuItem Header="New" />
+                <MenuItem Header="Switch to">
+                    <MenuItem Header="scrumble" />
+                    <MenuItem Header="Sportify" />
+                    <MenuItem Header="BLOBExplorer" />
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="Connection">
+
+            </MenuItem>
+        </Menu>
+        <Grid Grid.Row="1" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="3*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <GridSplitter Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" ShowsPreview="True" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" />
+            <GridSplitter Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" ShowsPreview="True" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
+            <GridSplitter Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="1" ShowsPreview="True" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
+
+            <!-- Project Overview -->
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
+                <TextBlock Text="Project Overview" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                <Separator Margin="20, 0"></Separator>
+                <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"><Run Text="Project Name: "></Run><Run FontWeight="Medium" Text="Scrumble"></Run></TextBlock>
+                <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"><Run Text="Current Sprint: "></Run><Run FontWeight="Medium" Text="#1"></Run></TextBlock>
+                <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"><Run Text="Sprint Deadline: "></Run><Run FontWeight="Medium" Text="Mi., 31.10.2018"></Run></TextBlock>
+                <TreeView Margin="5" BorderThickness="0" FontSize="18" FontWeight="Light">
+
+
+
+                    <TreeView.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                      Color="Transparent" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"
+                      Color="Black" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                      Color="Transparent" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
+                      Color="Black" />
+                    </TreeView.Resources>
+
+
+                    <TreeViewItem x:Name="treeViewItem_teamMembers" IsExpanded="True" Margin="5" HorizontalContentAlignment="Stretch">
+                        <TreeViewItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Team Members" FontWeight="Light" />
+                            </StackPanel>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                    <TreeViewItem x:Name="treeViewItem_productBacklog" IsExpanded="True" Margin="5" HorizontalContentAlignment="Stretch">
+                        <TreeViewItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Product Backlog" FontWeight="Light" />
+                            </StackPanel>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                </TreeView>
+            </StackPanel>
+
+            <!-- Scrum Board -->
+            <!--WebBrowser x:Name="webBrowser_scrumBoard" Grid.Column="1" Grid.Row="0" Source="http://scrumblr.ca/scrumble"/-->
+            <cefSharp:ChromiumWebBrowser x:Name="chromiumWebBrowser_scrumBoard" Grid.Column="1" Grid.Row="0" IsBrowserInitializedChanged="chromiumWebBrowser_scrumBoard_IsBrowserInitializedChanged" Address="scrumboard://index.html" FrameLoadEnd="chromiumWebBrowser_scrumBoard_FrameLoadEnd" />
+
+
+            <!-- my tasks -->
+            <Grid Grid.Column="2" Grid.Row="0" Grid.RowSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"></RowDefinition>
+                    <RowDefinition Height="1*"></RowDefinition>
+                </Grid.RowDefinitions>
+
+
+                <GridSplitter Grid.Column="0" Grid.Row="0" ShowsPreview="True" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
+                    <TextBlock Text="My Tasks" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                    <Separator Margin="20, 0"></Separator>
+                    <TreeView Margin="5" BorderThickness="0" FontSize="18" FontWeight="Light" >
+                        <TreeViewItem x:Name="treeViewItem_sprintBacklog" IsExpanded="True" Margin="5">
+                            <TreeViewItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Sprint Backlog" FontWeight="Light" />
+                                </StackPanel>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                        <TreeViewItem IsExpanded="True" Margin="5">
+                            <TreeViewItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="In Progress" FontWeight="Light" />
+                                </StackPanel>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                        <TreeViewItem IsExpanded="True" Margin="5">
+                            <TreeViewItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="To Verify" FontWeight="Light" />
+                                </StackPanel>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                        <TreeViewItem IsExpanded="True" Margin="5">
+                            <TreeViewItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Done" FontWeight="Light" />
+                                </StackPanel>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                    </TreeView>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical">
+                    <TextBlock Text="Selected Task" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                    <Separator Margin="20, 0"></Separator>
+                    <TextBlock Text="hello" FontSize="18" Margin="20, 10" HorizontalAlignment="Stretch" FontWeight="Medium"/>
+                    <TextBlock Text="this user story only says hello. it does absolutely nothing else" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
+                    <TextBlock FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"><Run Text="Responsible: "></Run><Run FontWeight="Medium" Text="Sam"></Run></TextBlock>
+                    <TextBlock FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"><Run Text="Verify: "></Run><Run FontWeight="Medium" Text="Paul"></Run></TextBlock>
+                    <TextBlock FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"><Run Text="Rejections: "></Run><Run FontWeight="Medium" Text="3"></Run></TextBlock>
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Row="1" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="1*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="Documentation" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                <TabControl Margin="5" FontWeight="Light" FontSize="15" Grid.Column="0" Grid.Row="1" VerticalAlignment="Stretch" TabStripPlacement="Top">
+                    <TabItem Padding="5" Header="Project Log">
+                        <TextBox x:Name="textBox_projectLog" Padding="5px" FontFamily="Consolas" BorderThickness="0" TextWrapping="Wrap" Margin="0" IsReadOnly="True" />
+                    </TabItem>
+                    <TabItem Padding="5" Header="Daily Scrum Table">
+                        <dailyscrumtable:DailyScrumTable></dailyscrumtable:DailyScrumTable>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Grid>
+        <StatusBar Grid.Row="2" FontSize="15" FontWeight="Light" Padding="2">
+            <TextBlock Text="Project: Scrumble"></TextBlock>
+            <Separator Margin="5"></Separator>
+            <TextBlock Text="Sprint: #1"></TextBlock>
+            <Separator Margin="5"></Separator>
+            <TextBlock x:Name="textBlock_statusBarIndicator" Text="Initializing Scrum Board..."></TextBlock>
+            <ProgressBar x:Name="progressBar_statusBar" IsIndeterminate="True" Width="100" Height="15"></ProgressBar>
+        </StatusBar>
     </Grid>
 </Window>
