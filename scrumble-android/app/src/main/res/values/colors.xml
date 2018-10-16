@@ -5,4 +5,5 @@
     <color name="colorAccent">@android:color/holo_blue_dark</color>
 
     <color name="colorLightRed">#ff8983</color>
+    <color name="colorLightOrange">#ffd754</color>
 </resources>

@@ -1,8 +1,8 @@
 package com.spogss.scrumble.viewItem
 
 import android.content.Context
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.cardview.widget.CardView
 import android.view.View
 import com.woxthebox.draglistview.DragItem
 import android.widget.TextView

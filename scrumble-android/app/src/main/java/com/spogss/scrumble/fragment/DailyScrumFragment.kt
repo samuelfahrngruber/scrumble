@@ -1,17 +1,17 @@
 package com.spogss.scrumble.fragment
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.spogss.scrumble.R
 import com.spogss.scrumble.adapter.CustomTimeLineAdapter
 import com.spogss.scrumble.data.DailyScrum
 import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.data.User
-import com.spogss.scrumble.enums.DailyScrumState
 import com.spogss.scrumble.enums.UserStoryState
 import kotlinx.android.synthetic.main.fragment_daily_scrum.*
 import xyz.sangcomz.stickytimelineview.RecyclerSectionItemDecoration
@@ -21,6 +21,7 @@ import java.util.*
 
 
 class DailyScrumFragment: Fragment() {
+    //TODO: remove when webservice call is possible
     private val dailyScrumEntries = mutableListOf<DailyScrum>()
     private val users = mutableListOf<User>()
     private var userStories = mutableListOf<Task>()
@@ -37,7 +38,7 @@ class DailyScrumFragment: Fragment() {
     }
 
     private fun setupTimeLine() {
-        time_line.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        time_line.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         time_line.addItemDecoration(getSectionCallback(dailyScrumEntries))
         time_line.adapter = CustomTimeLineAdapter(layoutInflater, dailyScrumEntries, R.layout.time_line_item)
     }
@@ -60,7 +61,7 @@ class DailyScrumFragment: Fragment() {
     }
 
 
-
+    //TODO: remove when webservice call is possible
     private fun createTestData() {
         users.clear()
         dailyScrumEntries.clear()
@@ -97,22 +98,22 @@ class DailyScrumFragment: Fragment() {
 
         val today = Calendar.getInstance()
 
-        val ds1 = DailyScrum(0, sam, today.time, DailyScrumState.PRESENT, scrumbleGUI, "doing nothing, lol")
-        val ds2 = DailyScrum(1, pauli, today.time, DailyScrumState.PRESENT, scrumbleGUI, "webservice")
-        val ds3 = DailyScrum(2, simon, today.time, DailyScrumState.ABSENT, null, "implementierung des clientseitigen was weiß ich was")
-        val ds4 = DailyScrum(3, webi, today.time, DailyScrumState.PRESENT, scrumblePlaning)
+        val ds1 = DailyScrum(0, sam, today.time, "")
+        val ds2 = DailyScrum(1, pauli, today.time, "MISSING")
+        val ds3 = DailyScrum(2, simon, today.time, "database scripts schreiben", scrumbleDB)
+        val ds4 = DailyScrum(3, webi, today.time, "backend programmieren. Um genau zu sein, eigentlich gar nichts tun")
 
         today.add(Calendar.DAY_OF_YEAR, -1)
-        val ds5 = DailyScrum(4, sam, today.time, DailyScrumState.PRESENT, scrumbleDB, "hier steht text zum testen")
-        val ds6 = DailyScrum(5, pauli, today.time, DailyScrumState.ABSENT, scrumbleTesting, "lali bringt die milch zum grinsen")
-        val ds7 = DailyScrum(6, simon, today.time, DailyScrumState.PRESENT, scrumbleDB, "datenbank scripts schreiben")
-        val ds8 = DailyScrum(7, webi, today.time, DailyScrumState.ABSENT, null, "1, 2, sxtn kommt vorbei, 3, 4, klopft an deine tür")
+        val ds5 = DailyScrum(4, sam, today.time, "webservce schnittstelle schreiben", scrumblePlaning)
+        val ds6 = DailyScrum(5, pauli, today.time, "chillen")
+        val ds7 = DailyScrum(6, simon, today.time, "auch irgendwas im backend", scrumbleWebservice)
+        val ds8 = DailyScrum(7, webi, today.time, "connection testen", scrumbleTesting)
 
         today.add(Calendar.DAY_OF_YEAR, -1)
-        val ds9 = DailyScrum(4, sam, today.time, DailyScrumState.PRESENT, null, "5, 6, jetzt gibts wieder stress")
-        val ds10 = DailyScrum(5, pauli, today.time, DailyScrumState.PRESENT, scrumblePlaning)
-        val ds11 = DailyScrum(6, simon, today.time, DailyScrumState.PRESENT, scrumblePlaning, "blablabla hahah lol rofl xd lmao")
-        val ds12 = DailyScrum(7, webi, today.time, DailyScrumState.PRESENT, scrumbleDB, "hallo leute")
+        val ds9 = DailyScrum(4, sam, today.time, "chef-arbeiten erledigen")
+        val ds10 = DailyScrum(5, pauli, today.time, "")
+        val ds11 = DailyScrum(6, simon, today.time, "MISSING")
+        val ds12 = DailyScrum(7, webi, today.time, "boardview designen", scrumbleGUI)
 
         dailyScrumEntries.add(ds1)
         dailyScrumEntries.add(ds2)

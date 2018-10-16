@@ -6,8 +6,8 @@ import android.widget.TextView
 import com.spogss.scrumble.R
 import com.spogss.scrumble.data.Task
 import com.woxthebox.draglistview.DragItemAdapter
-import android.support.annotation.NonNull
-import android.support.v4.content.ContextCompat
+import androidx.annotation.NonNull
+import androidx.core.content.ContextCompat
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.view.LayoutInflater
@@ -31,6 +31,8 @@ class CustomDragItemAdapter
         this.context = context
         itemList = list
     }
+
+
 
     @NonNull
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomDragItemAdapter.ViewHolder {
