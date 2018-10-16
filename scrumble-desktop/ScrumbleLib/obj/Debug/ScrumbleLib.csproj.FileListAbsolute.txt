@@ -1,4 +1,0 @@
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\ScrumbleLib\bin\Debug\ScrumbleLib.dll
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\ScrumbleLib\bin\Debug\ScrumbleLib.pdb
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\ScrumbleLib\obj\Debug\ScrumbleLib.dll
-C:\Users\Samuel\scrumble\scrumble\scrumble-desktop\ScrumbleLib\obj\Debug\ScrumbleLib.pdb

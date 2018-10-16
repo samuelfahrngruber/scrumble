@@ -8,11 +8,11 @@ BEGIN
 END;
 /
 
-CREATE OR REPLACE TRIGGER sc_trg_userstory
-  BEFORE INSERT ON sc_userstory
+CREATE OR REPLACE TRIGGER sc_trg_task
+  BEFORE INSERT ON sc_task
   FOR EACH ROW
 BEGIN
-  SELECT sc_seq_userstory.nextval
+  SELECT sc_seq_task.nextval
   INTO :new.id
   FROM dual;
 END;

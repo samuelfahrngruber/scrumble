@@ -28,3 +28,8 @@ with various utilities to simplify project development.
 Data model:
 * [Relational Concept](https://drive.google.com/file/d/1IUcQMx_k_iGSqM7_8woLZzctV2SF7k3R/view?usp=sharing)
 * [MongoDB Concept](https://drive.google.com/file/d/1No-tgxvGDaXy5VZoPew_oyJBf0xctDWK/view?usp=sharing)
+
+## Reports
+[2018-10-08](https://docs.google.com/document/d/1GIx_nPy6as6BWanGzhu7H6GL-lOTfZIBhx789N2Ldmw/edit?usp=sharing)
+
+[2018-10-15](https://docs.google.com/document/d/1Gon0d3dsv2NabF_IYOM2_ienjwpz0SYARF6-fLzsgok/edit?usp=sharing)

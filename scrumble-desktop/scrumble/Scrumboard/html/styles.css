@@ -1,0 +1,58 @@
+﻿ body {
+   font-family: 'Segoe UI', 'helvetica', 'arial';
+   font-size: 12px
+ }
+
+ .scrumboard {
+   margin: 0 auto;
+   width: 100%;
+ }
+
+ h1 {
+
+   margin-left: 20px;
+   font-weight: lighter;
+ }
+
+ .column {
+   box-sizing: border-box;
+   width: 25%;
+   float: left;
+   border-right: 1px solid lightgrey;
+   border-left: 1px solid lightgrey;
+   height: 100vh;
+ }
+
+ .portlet {
+  font-family: 'Segoe UI', 'helvetica', 'arial';
+
+   margin: 1em 1em 1em 1em;
+   padding: 0.3em;
+ }
+
+ .portlet-header {
+    font-family: 'Segoe UI', 'helvetica', 'arial';
+    font-weight: medium;
+    font-size: 15px;
+    cursor: move;
+   padding: 0.2em 0.3em;
+   margin-bottom: 0.5em;
+   position: relative;
+ }
+
+ .portlet-toggle {
+   position: absolute;
+   top: 50%;
+   right: 0;
+   margin-top: -8px;
+ }
+
+ .portlet-content {
+   padding: 0.4em;
+ }
+
+ .portlet-placeholder {
+   border: 2px dotted black;
+   margin: 1em 1em 1em 1em;
+   height: 50px;
+ }

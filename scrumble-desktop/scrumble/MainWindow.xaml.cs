@@ -14,6 +14,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CefSharp;
+using System.IO;
+using CefSharp.Wpf;
+using CefSharp.SchemeHandler;
+using scrumble.DailyScrumTable;
 
 namespace scrumble
 {
@@ -24,6 +29,7 @@ namespace scrumble
     {
         public MainWindow()
         {
+            testInitBrowser();
             InitializeComponent();
 
             testInit();
@@ -31,21 +37,20 @@ namespace scrumble
 
         private void testInit()
         {
-            List<UserStory> toDo = new List<UserStory>();
-            toDo.Add(new UserStory("hello"));
-            toDo.Add(new UserStory("world"));
+            List<ScrumbleLib.Task> toDo = new List<ScrumbleLib.Task>();
+            toDo.Add(new ScrumbleLib.Task("hello"));
+            toDo.Add(new ScrumbleLib.Task("world"));
             treeViewItem_sprintBacklog.ItemsSource = toDo;
 
-            List<UserStory> productBacklog = new List<UserStory>();
-            productBacklog.Add(new UserStory("hello_pbl"));
-            productBacklog.Add(new UserStory("world_pbl"));
+            List<ScrumbleLib.Task> productBacklog = new List<ScrumbleLib.Task>();
+            productBacklog.Add(new ScrumbleLib.Task("hello_pbl"));
+            productBacklog.Add(new ScrumbleLib.Task("world_pbl"));
             treeViewItem_productBacklog.ItemsSource = productBacklog;
 
             List<User> teamMembers = new List<User>();
             teamMembers.Add(new User("pauli"));
             teamMembers.Add(new User("simsi"));
             teamMembers.Add(new User("webi"));
-            teamMembers.Add(new User("sami"));
             treeViewItem_teamMembers.ItemsSource = teamMembers;
 
             string projectLog = "" +
@@ -54,45 +59,42 @@ namespace scrumble
                 "[2018-10-04 19:30] Added Daily Scrum Table in Gui";
             textBox_projectLog.Text = projectLog;
 
-            testInitDailyScrumTable();
         }
 
-        private void testInitDailyScrumTable()
+        private void testInitBrowser()
         {
-            double[,] _dataArray;
-            DataView _dataView;
-
-            _dataArray = new double[2, 2] { { 10, 15 }, { 20, 25 } };
-
-            var array = _dataArray;
-            var rows = array.GetLength(0);
-            var rowHeaders = new string[rows];
-            for(int i = 0; i < rows; i++)
+            CefSettings settings = new CefSettings();
+            settings.RegisterScheme(new CefCustomScheme()
             {
-                rowHeaders[i] = "row" + i;
-            }
-            var columns = array.GetLength(1);
-            var t = new DataTable();
-            // Add columns with name "0", "1", "2", ...
-            t.Columns.Add(new DataColumn("."));
+                SchemeName = "scrumboard",
+                SchemeHandlerFactory = new CefSharp.SchemeHandler.FolderSchemeHandlerFactory("./Scrumboard/html")
+            });
+            Cef.Initialize(settings);
+        }
 
-            for (var c = 0; c < columns; c++)
+        private void chromiumWebBrowser_scrumBoard_IsBrowserInitializedChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (chromiumWebBrowser_scrumBoard.IsBrowserInitialized)
             {
-                t.Columns.Add(new DataColumn("column" + c.ToString()));
+
             }
-            // Add data to DataTable
-            for (var r = 0; r < rows; r++)
-            {
-                var newRow = t.NewRow();
-                for (var c = 1; c < columns; c++)
-                {
-                    newRow[0] = rowHeaders[r];
-                    newRow[c] = array[r, c];
-                }
-                t.Rows.Add(newRow);
-            }
-            _dataView = t.DefaultView;
-            dataGrid_DailyScrumTable.ItemsSource = _dataView;
+        }
+
+        private void startProgress(string indicator)
+        {
+            textBlock_statusBarIndicator.Text = indicator;
+            progressBar_statusBar.Visibility = Visibility.Visible;
+        }
+
+        private void stopProgress()
+        {
+            textBlock_statusBarIndicator.Text = "";
+            progressBar_statusBar.Visibility = Visibility.Collapsed;
+        }
+
+        private void chromiumWebBrowser_scrumBoard_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
+        {
+            Dispatcher.Invoke(stopProgress);
         }
     }
 }
