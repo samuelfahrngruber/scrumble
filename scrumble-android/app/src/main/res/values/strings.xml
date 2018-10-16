@@ -9,16 +9,24 @@
     <string name="project">Project</string>
     <string name="sprint">Sprint</string>
 
+    <string name="name">Name</string>
+    <string name="info">Info</string>
     <string name="product_owner">Product Owner</string>
     <string name="team_member">Team Member</string>
+    <string name="sprint_number">Sprint Number</string>
+    <string name="start_date">Start Date</string>
+    <string name="deadline">Deadline</string>
+
+    <string name="current_sprint">Current Sprint</string>
+    <string name="product_backlog">Product Backlog</string>
+
+    <string name="responsible">Responsible</string>
+    <string name="verify">Verify</string>
 
     <string name="responsible_double_dot">Responsible:</string>
     <string name="verify_double_dot">Verify:</string>
     <string name="rejections_double_dot">Rejection%1$s:</string>
     <string name="task_double_dot">Task: %1$s</string>
-
-    <string name="name">Name</string>
-    <string name="info">Info</string>
 
     <string name="add_task">Add Task</string>
     <string name="add_project">Add Project</string>
@@ -26,17 +34,12 @@
     <string name="add_team_member">Add Team Member</string>
     <string name="close">Close</string>
 
-    <string name="responsible">Responsible</string>
-    <string name="verify">Verify</string>
-
-    <string name="current_sprint">Current Sprint</string>
-    <string name="product_backlog">Product Backlog</string>
-
     <string name="error_enter_name">Please enter a name</string>
     <string name="error_enter_info">Please enter some information about the task</string>
     <string name="error_select_team_member">Please select a team member</string>
-
     <string name="error_enter_product_owner">Please specify a product owner</string>
+    <string name="error_enter_sprint_number">Please specify a sprint number</string>
+    <string name="error_sprint_number_integer">The sprint number can only be a number</string>
 
     <string name="missing">MISSING</string>
 

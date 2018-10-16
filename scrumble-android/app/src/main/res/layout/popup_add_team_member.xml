@@ -6,28 +6,6 @@
     android:orientation="vertical">
 
     <com.rengwuxian.materialedittext.MaterialEditText
-        android:id="@+id/popup_add_project_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:layout_marginBottom="@dimen/twelve_dp"
-        android:hint="@string/name"
-        app:met_floatingLabel="highlight"
-        app:met_primaryColor="@color/colorAccent" />
-
-    <com.rengwuxian.materialedittext.MaterialEditText
-        android:id="@+id/popup_add_project_product_owner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:layout_marginBottom="@dimen/twelve_dp"
-        android:hint="@string/product_owner"
-        app:met_floatingLabel="highlight"
-        app:met_primaryColor="@color/colorAccent" />
-
-    <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/popup_add_team_member"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

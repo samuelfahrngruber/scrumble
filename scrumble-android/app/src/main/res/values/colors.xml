@@ -6,4 +6,7 @@
 
     <color name="colorLightRed">#ff8983</color>
     <color name="colorLightOrange">#ffd754</color>
+
+    <color name="datepicker_primary">@android:color/holo_blue_dark</color>
+    <color name="datepicker_primary_dark">@android:color/holo_blue_bright</color>
 </resources>
