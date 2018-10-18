@@ -10,36 +10,46 @@ namespace ScrumbleLib.Connection.Wrapper
 {
     public class UserWrapper : DataWrapper<User>
     {
-        // wrapping methods and constructors
-        public static UserWrapper Wrap(User user)
-        {
-            return new UserWrapper(user);
-        }
         public UserWrapper(User wrappedValue) : base(wrappedValue)
         {
 
         }
-        // unwrapping methods and constructors
-        public static UserWrapper FromJson(JObject jsonObject)
-        {
-            return new UserWrapper(jsonObject);
-        }
-        public static UserWrapper FromJson(string json)
-        {
-            return FromJson(JObject.Parse(json));
-        }
 
-        public UserWrapper(int id, string username)
-            : base(new User(id, username, null))
+        public UserWrapper(int id)
+            : base(ScrumbleController.GetUser(id))
         {
 
         }
 
-        public UserWrapper(JObject jsonObject) : this(
-            (int)jsonObject["id"],
-            (string)jsonObject["username"])
+        public void ApplyFields(int id, string username)
         {
+            WrappedValue.Id = id;
+            WrappedValue.Username = username;
+        }
 
+        public void ApplyJson(JObject jsonObject)
+        {
+            ApplyFields(
+                (int)jsonObject["id"],
+                (string)jsonObject["username"]);
+        }
+
+        public void ApplyJson(string json)
+        {
+            ApplyJson(JObject.Parse(json));
+        }
+
+        public int Id
+        {
+            get
+            {
+                return WrappedValue.Id;
+            }
+            set
+            {
+                // todo inspect
+                WrappedValue.Id = value;
+            }
         }
 
         public string Username

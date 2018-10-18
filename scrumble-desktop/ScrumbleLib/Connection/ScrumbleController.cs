@@ -21,9 +21,10 @@ namespace ScrumbleLib.Connection
             {
                 return Projects[id];
             }
-            Project p = ScrumbleConnection.GetProject(id).WrappedValue;
-            if(p != null) Projects.Add(p);
-            return p;
+            Project project = new Project(id);
+            Projects.Add(project);
+            System.Threading.Tasks.Task.Run(() => ScrumbleConnection.GetProject(project));
+            return project;
         }
 
         public static User GetUser(int id)
@@ -32,9 +33,10 @@ namespace ScrumbleLib.Connection
             {
                 return Users[id];
             }
-            User u = ScrumbleConnection.GetUser(id).WrappedValue;
-            Users.Add(u);
-            return u;
+            User user = new User(id);
+            Users.Add(user);
+            System.Threading.Tasks.Task.Run(() => ScrumbleConnection.GetUser(user));
+            return user;
         }
 
         public static Data.Task GetTask(int id)
@@ -43,9 +45,10 @@ namespace ScrumbleLib.Connection
             {
                 return Tasks[id];
             }
-            Data.Task t = ScrumbleConnection.GetTask(id).WrappedValue;
-            Tasks.Add(t);
-            return t;
+            Data.Task task = new Data.Task(id);
+            Tasks.Add(task);
+            System.Threading.Tasks.Task.Run(() => ScrumbleConnection.GetTask(task));
+            return task;
         }
 
         public static Sprint GetSprint(int id)
@@ -54,9 +57,10 @@ namespace ScrumbleLib.Connection
             {
                 return Sprints[id];
             }
-            Sprint s = ScrumbleConnection.GetSprint(id).WrappedValue;
-            Sprints.Add(s);
-            return s;
+            Sprint sprint = new Sprint(id);
+            Sprints.Add(sprint);
+            System.Threading.Tasks.Task.Run(() => ScrumbleConnection.GetSprint(sprint));
+            return sprint;
         }
     }
 }

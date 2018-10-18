@@ -10,46 +10,39 @@ namespace ScrumbleLib.Connection.Wrapper
 {
     public class SprintWrapper : DataWrapper<Sprint>
     {
-        // Wrapping Methods and Constructors
-        public static SprintWrapper Wrap(Sprint sprint)
-        {
-            return new SprintWrapper(sprint);
-        }
-
         public SprintWrapper(Sprint wrappedValue) : base(wrappedValue)
         {
 
         }
 
-        // Unwrapping Methods and Constructors
-        public static SprintWrapper Unwrap(int id, int project, int number, DateTime start, DateTime deadline)
-        {
-            return new SprintWrapper(id, project, number, start, deadline);
-        }
-
-        public SprintWrapper(int id, int project, int number, DateTime start, DateTime deadline)
-            : base(new Sprint(id, ScrumbleController.GetProject(project), number, start, deadline))
+        public SprintWrapper(int id)
+            : base(ScrumbleController.GetSprint(id))
         {
 
         }
 
-        public static SprintWrapper FromJson(JObject jsonObject)
+        public void ApplyFields(int id, int project, int number, DateTime start, DateTime deadline)
         {
-            return new Wrapper.SprintWrapper(jsonObject);
-        }
-        public static SprintWrapper FromJson(string json)
-        {
-            return FromJson(JObject.Parse(json));
+            WrappedValue.Id = id;
+            WrappedValue.Project = ScrumbleController.GetProject(project); ;
+            WrappedValue.Number = number;
+            WrappedValue.Start = start;
+            WrappedValue.Deadline = deadline;
         }
 
-        public SprintWrapper(JObject jsonObject) : this(
-            (int)jsonObject["id"],
-            (int)jsonObject["project"],
-            (int)jsonObject["number"],
-            DateTime.Parse((string)jsonObject["start"]),
-            DateTime.Parse((string)jsonObject["deadline"]))
+        public void ApplyJson(JObject jsonObject)
         {
+            ApplyFields(
+                (int)jsonObject["id"],
+                (int)jsonObject["project"],
+                (int)jsonObject["number"],
+                DateTime.Parse((string)jsonObject["start"]),
+                DateTime.Parse((string)jsonObject["deadline"]));
+        }
 
+        public void ApplyJson(string json)
+        {
+            ApplyJson(JObject.Parse(json));
         }
 
         public int Id
@@ -69,7 +62,6 @@ namespace ScrumbleLib.Connection.Wrapper
             get
             {
                 return WrappedValue.Project == null ? -1 : WrappedValue.Project.Id;
-                //return WrappedValue.Project.Id;
             }
             set
             {

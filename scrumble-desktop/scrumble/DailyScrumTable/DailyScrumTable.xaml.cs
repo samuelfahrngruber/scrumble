@@ -124,10 +124,10 @@ namespace scrumble.DailyScrumTable
         {
             List<TableColumn> table;
 
-            User sam = new User(0, "sam", "");
-            User webi = new User(1, "webi", "");
-            User pauli = new User(2, "pauli", "");
-            User simon = new User(3, "simon", "");
+            User sam = new User(0, "sam");
+            User webi = new User(1, "webi");
+            User pauli = new User(2, "pauli");
+            User simon = new User(3, "simon");
 
             model.Users.Add(sam);
             model.Users.Add(webi);

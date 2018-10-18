@@ -10,13 +10,11 @@ namespace ScrumbleLib.Data
     {
         public int Id { get; set; }
         public string Username { get; set; }
-        private string Password { get; set; }
 
-        public User(int id, string name, string password)
+        public User(int id, string name = default(string))
         {
             Id = id;
             Username = name;
-            Password = password;
         }
 
         public override string ToString()

@@ -13,23 +13,31 @@ namespace ScrumbleExperiments
     {
         static void Main(string[] args)
         {
-            ////Project scrumble = new Project(22, "scrumble");
-            ////ProjectWrapper scrumbleW = new ProjectWrapper(scrumble);
-            ////Sprint s = new Sprint(0, scrumble);
-            ////SprintWrapper sw = new SprintWrapper(s);
-            ////string json = sw.ToJson();
+            string input = " ";
+            int id;
+            while (input != null && input != "")
+            {
+                Console.WriteLine(@"Create new wrapper for:
+task,
+project,
+sprint,
+user
 
-            ////Console.WriteLine(json);
-
-            ////sw.Project = 100;
-
-            ////Console.WriteLine();
-
-            ////SprintWrapper newSW = SprintWrapper.FromJson(json);
-            ////Console.WriteLine(newSW.ToJson());
-
-            TaskWrapper tw = ScrumbleConnection.GetTask(3);
-
+");
+                Console.Write("Your choice: ");
+                input = Console.ReadLine();
+                Console.Write("ID of " + input + ": ");
+                id = int.Parse(Console.ReadLine());
+                switch (input)
+                {
+                    case "project":
+                        ProjectWrapper pw = new ProjectWrapper(id);
+                        break;
+                    case "sprint":
+                        SprintWrapper sw = new SprintWrapper(id);
+                        break;
+                }
+            }
         }
     }
 }

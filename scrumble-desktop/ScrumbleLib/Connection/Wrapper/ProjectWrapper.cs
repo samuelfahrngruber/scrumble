@@ -10,45 +10,38 @@ namespace ScrumbleLib.Connection.Wrapper
 {
     public class ProjectWrapper : DataWrapper<Project>, IIndexable
     {
-        // wrapping methods and constructors
-        public static ProjectWrapper Wrap(Project project)
-        {
-            return new ProjectWrapper(project);
-        }
-
-        public ProjectWrapper(Project wrappedValue) : base(wrappedValue)
+        public ProjectWrapper(Project project)
+            : base(project)
         {
 
         }
 
-        // Unwrapping Methods and Constructors
-        public static ProjectWrapper Unwrap(int id, string name, int productOwner, int currentSprint)
-        {
-            return new ProjectWrapper(id, name, productOwner, currentSprint);
-        }
-
-        public static ProjectWrapper FromJson(JObject jsonObject)
-        {
-            return new ProjectWrapper(jsonObject);
-        }
-        public static ProjectWrapper FromJson(string json)
-        {
-            return FromJson(JObject.Parse(json));
-        }
-
-        public ProjectWrapper(int id, string name, int productOwner, int currentSprint)
-            : base(new Project(id, name, ScrumbleController.GetUser(productOwner), ScrumbleController.GetSprint(currentSprint)))
+        public ProjectWrapper(int id)
+            : base(ScrumbleController.GetProject(id))
         {
 
         }
 
-        public ProjectWrapper(JObject jsonObject) : this(
-            (int)jsonObject["id"],
-            (string)jsonObject["project"],
-            (int)jsonObject["productowner"],
-            (int)jsonObject["currentsprint"])
+        public void ApplyFields(int id, string name, int productOwner, int currentSprint)
         {
+            WrappedValue.Id = id;
+            WrappedValue.Name = name;
+            WrappedValue.ProductOwner = ScrumbleController.GetUser(productOwner);
+            WrappedValue.CurrentSprint = ScrumbleController.GetSprint(currentSprint);
+        }
 
+        public void ApplyJson(JObject jsonObject)
+        {
+            ApplyFields(
+                (int)jsonObject["id"],
+                (string)jsonObject["project"],
+                (int)jsonObject["productowner"],
+                (int)jsonObject["currentsprint"]);
+        }
+
+        public void ApplyJson(string json)
+        {
+            ApplyJson(JObject.Parse(json));
         }
 
         public int Id
@@ -83,7 +76,6 @@ namespace ScrumbleLib.Connection.Wrapper
             get
             {
                 return WrappedValue.ProductOwner == null ? -1 : WrappedValue.ProductOwner.Id;
-                //return WrappedValue.Project.Id;
             }
             set
             {
@@ -97,7 +89,6 @@ namespace ScrumbleLib.Connection.Wrapper
             get
             {
                 return WrappedValue.CurrentSprint == null ? -1 : WrappedValue.CurrentSprint.Id;
-                //return WrappedValue.Project.Id;
             }
             set
             {

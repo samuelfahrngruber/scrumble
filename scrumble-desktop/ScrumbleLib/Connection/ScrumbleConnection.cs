@@ -20,8 +20,10 @@ namespace ScrumbleLib.Connection
             Console.ForegroundColor = color;
         }
 
-        public static ProjectWrapper GetProject(int projectId)
+        public static void GetProject(Project project)
         {
+            ProjectWrapper wrapper = new ProjectWrapper(project);
+            int projectId = wrapper.Id;
             string json = "{" +
                 "\"id\":" + projectId + "," +
                 "\"name\":\"SCRUMBLE" + projectId + "\"," +
@@ -33,11 +35,13 @@ namespace ScrumbleLib.Connection
             Console.WriteLine("GET - Project:");
             Console.WriteLine(json);
             Console.ForegroundColor = color;
-            return ProjectWrapper.FromJson(json);
+            wrapper.ApplyJson(json);
         }
 
-        public static UserWrapper GetUser(int userId)
+        public static void GetUser(User user)
         {
+            UserWrapper wrapper = new UserWrapper(user);
+            int userId = wrapper.Id;
             string json = "{" +
                 "\"id\":" + userId + "," +
                 "\"username\":\"USER" + userId + "\"" +
@@ -47,11 +51,13 @@ namespace ScrumbleLib.Connection
             Console.WriteLine("GET - User:");
             Console.WriteLine(json);
             Console.ForegroundColor = color;
-            return UserWrapper.FromJson(json);
+            wrapper.ApplyJson(json);
         }
 
-        public static TaskWrapper GetTask(int taskId)
+        public static void GetTask(Data.Task task)
         {
+            TaskWrapper wrapper = new TaskWrapper(task);
+            int taskId = task.Id;
             string json = "{" +
                 "\"id\":" + taskId + "," +
                 "\"name\":\"Task" + taskId + "\"," +
@@ -66,11 +72,13 @@ namespace ScrumbleLib.Connection
             Console.WriteLine("GET - Task:");
             Console.WriteLine(json);
             Console.ForegroundColor = color;
-            return TaskWrapper.FromJson(json);
+            wrapper.ApplyJson(json);
         }
 
-        public static SprintWrapper GetSprint(int sprintId)
+        public static void GetSprint(Sprint sprint)
         {
+            SprintWrapper wrapper = new SprintWrapper(sprint);
+            int sprintId = wrapper.Id;
             string json = "{" +
                 "\"id\":" + sprintId + "," +
                 "\"project\":" + sprintId + "," +
@@ -83,7 +91,7 @@ namespace ScrumbleLib.Connection
             Console.WriteLine("GET - Sprint:");
             Console.WriteLine(json);
             Console.ForegroundColor = color;
-            return SprintWrapper.FromJson(json);
+            wrapper.ApplyJson(json);
         }
     }
 }

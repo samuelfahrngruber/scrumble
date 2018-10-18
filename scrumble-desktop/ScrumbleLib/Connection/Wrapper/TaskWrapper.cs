@@ -9,48 +9,42 @@ namespace ScrumbleLib.Connection.Wrapper
 {
     public class TaskWrapper : DataWrapper<Task>
     {
-        // Wrapping Methods and Constructors
-        public static TaskWrapper Wrap(Task task)
-        {
-            return new TaskWrapper(task);
-        }
-
         public TaskWrapper(Task wrappedValue) : base(wrappedValue)
         {
 
         }
 
-        // Unwrapping Methods and Constructors
-        public static TaskWrapper Unwrap(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int sprint)
-        {
-            return new TaskWrapper(id, name, info, rejections, responsibleUser, verifyingUser, sprint);
-        }
-
-        public TaskWrapper(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int sprint)
-            : base(new Task(id, name, info, rejections, ScrumbleController.GetUser(responsibleUser), ScrumbleController.GetUser(verifyingUser), ScrumbleController.GetSprint(sprint)))
+        public TaskWrapper(int id)
+            : base(ScrumbleController.GetTask(id))
         {
 
         }
-
-        public static TaskWrapper FromJson(JObject jsonObject)
+        public void ApplyJson(string json)
         {
-            return new TaskWrapper(jsonObject);
-        }
-        public static TaskWrapper FromJson(string json)
-        {
-            return FromJson(JObject.Parse(json));
+            ApplyJson(JObject.Parse(json));
         }
 
-        public TaskWrapper(JObject jsonObject) : this(
-            (int)jsonObject["id"],
-            (string)jsonObject["name"],
-            (string)jsonObject["info"],
-            (int)jsonObject["rejections"],
-            (int)jsonObject["responsibleuser"],
-            (int)jsonObject["verifyinguser"],
-            (int)jsonObject["sprint"])
+        public void ApplyJson(JObject jsonObject)
         {
+            ApplyFields(
+               (int)jsonObject["id"],
+               (string)jsonObject["name"],
+               (string)jsonObject["info"],
+               (int)jsonObject["rejections"],
+               (int)jsonObject["responsibleuser"],
+               (int)jsonObject["verifyinguser"],
+               (int)jsonObject["sprint"]);
+        }
 
+        public void ApplyFields(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int sprint)
+        {
+            WrappedValue.Id = id;
+            WrappedValue.Name = name;
+            WrappedValue.Info = info;
+            WrappedValue.Rejections = rejections;
+            WrappedValue.ResponsibleUser = ScrumbleController.GetUser(responsibleUser);
+            WrappedValue.VerifyingUser = ScrumbleController.GetUser(verifyingUser);
+            WrappedValue.Sprint = ScrumbleController.GetSprint(sprint);
         }
 
         public int Id
