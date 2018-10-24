@@ -41,7 +41,7 @@ Insert into sc_teammember values(27,25);
 Insert into sc_task values(null,23,26,'Testdata','Adding Testdata to Database',0,'TO_VERIFY',1,9,22);
 Insert into sc_task values(null,24,25,'WPF','Creating a beatiful WPF Application',0,'IN_PROGRESS',1,9,22);
 Insert into sc_task values(null,25,23,'Android','Creating a beautiful Android Application',0,'IN_PROGRESS',2,10,22);
-Insert into sc_task values(null,26,24,'Webservice','Creating a beautifully running Webservice to get a Döner from Sam',0,'IN_PROGRESS',3,10,22);
+Insert into sc_task values(null,26,24,'Webservice','Creating a beautifully running Webservice to get a DÃ¶ner from Sam',0,'IN_PROGRESS',3,10,22);
 
 Insert into sc_task values(null,23,27,'Scrumboard','Making a Scrum Board',0,'DONE',1,11,23);
 Insert into sc_task values(null,24,25,'Backend','Making a the backend',0,'DONE',2,11,23);
@@ -54,3 +54,8 @@ Insert into sc_task values(null,28,24,'Streamlink','Streamlink stuff',0,'DONE',1
 Insert into sc_task values(null,23,26,'SQL_Developen','Develop SQL to make Ozepek happy',0,'DONE',1,15,25);
 Insert into sc_task values(null,26,27,'More SQL','MORE SQL',0,'DONE',2,15,25);
 Insert into sc_task values(null,27,26,'Even More SQL','MAXIMUM SQL Development',0,'DONE',1,16,25);
+
+Insert into sc_task values(null,23,25,'Backlog Entries','Creating a beautifully Backlog Entry',0,'PRODUCT_BACKLOG',null,null,22);
+Insert into sc_task values(null,24,27,'Backlog Entries','Creating a beautifully Backlog Entry',0,'PRODUCT_BACKLOG',null,null,23);
+Insert into sc_task values(null,28,23,'Backlog Entries','Creating a beautifully Backlog Entry',0,'PRODUCT_BACKLOG',null,null,24);
+Insert into sc_task values(null,27,23,'Backlog Entries','Creating a beautifully Backlog Entry',0,'PRODUCT_BACKLOG',null,null,25);
