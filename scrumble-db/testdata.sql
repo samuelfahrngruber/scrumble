@@ -59,3 +59,8 @@ Insert into sc_task values(null,23,25,'Backlog Entries','Creating a beautifully 
 Insert into sc_task values(null,24,27,'Backlog Entries','Creating a beautifully Backlog Entry',0,'PRODUCT_BACKLOG',null,null,23);
 Insert into sc_task values(null,28,23,'Backlog Entries','Creating a beautifully Backlog Entry',0,'PRODUCT_BACKLOG',null,null,24);
 Insert into sc_task values(null,27,23,'Backlog Entries','Creating a beautifully Backlog Entry',0,'PRODUCT_BACKLOG',null,null,25);
+
+Update sc_project set idcurrentsprint = 10 where id = 22;
+Update sc_project set idcurrentsprint = 12 where id = 23;
+Update sc_project set idcurrentsprint = 14 where id = 24;
+Update sc_project set idcurrentsprint = 16 where id = 25;
