@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace ScrumbleLib.Connection
 {
-    public static class ScrumbleConnection
+    internal static class ScrumbleConnection
     {
+        // todo remove all console.writelines
         public static void Update<WrappedType>(DataWrapper<WrappedType> wrapper)
         {
             string json = wrapper.ToJson();
@@ -20,7 +21,7 @@ namespace ScrumbleLib.Connection
             Console.ForegroundColor = color;
         }
 
-        public static void GetProject(Project project)
+        public static async Task<Project> GetProject(Project project)
         {
             ProjectWrapper wrapper = new ProjectWrapper(project);
             int projectId = wrapper.Id;
@@ -36,9 +37,10 @@ namespace ScrumbleLib.Connection
             Console.WriteLine(json);
             Console.ForegroundColor = color;
             wrapper.ApplyJson(json);
+            return project;
         }
 
-        public static void GetUser(User user)
+        public static async Task<User> GetUser(User user)
         {
             UserWrapper wrapper = new UserWrapper(user);
             int userId = wrapper.Id;
@@ -52,9 +54,10 @@ namespace ScrumbleLib.Connection
             Console.WriteLine(json);
             Console.ForegroundColor = color;
             wrapper.ApplyJson(json);
+            return user;
         }
 
-        public static void GetTask(Data.Task task)
+        public static async Task<Data.Task> GetTask(Data.Task task)
         {
             TaskWrapper wrapper = new TaskWrapper(task);
             int taskId = task.Id;
@@ -63,7 +66,7 @@ namespace ScrumbleLib.Connection
                 "\"name\":\"Task" + taskId + "\"," +
                 "\"info\":\"TASKINFO" + taskId + taskId + taskId + taskId + "\"," +
                 "\"rejections\":" + 2 + "," +
-                "\"responsibleuser\":" + taskId * 10 + "," +
+                "\"responsibleuser\":" + taskId % 3 + "," +
                 "\"verifyinguser\":" + taskId * 100 + "," +
                 "\"sprint\":" + taskId + "" +
                 "}";
@@ -73,9 +76,10 @@ namespace ScrumbleLib.Connection
             Console.WriteLine(json);
             Console.ForegroundColor = color;
             wrapper.ApplyJson(json);
+            return task;
         }
 
-        public static void GetSprint(Sprint sprint)
+        public static async Task<Sprint> GetSprint(Sprint sprint)
         {
             SprintWrapper wrapper = new SprintWrapper(sprint);
             int sprintId = wrapper.Id;
@@ -92,6 +96,7 @@ namespace ScrumbleLib.Connection
             Console.WriteLine(json);
             Console.ForegroundColor = color;
             wrapper.ApplyJson(json);
+            return sprint;
         }
     }
 }

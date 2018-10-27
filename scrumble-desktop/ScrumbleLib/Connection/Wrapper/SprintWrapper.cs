@@ -16,15 +16,15 @@ namespace ScrumbleLib.Connection.Wrapper
         }
 
         public SprintWrapper(int id)
-            : base(ScrumbleController.GetSprint(id))
+            : base(ScrumbleController.GetSprint(id).Result)
         {
 
         }
 
-        public void ApplyFields(int id, int project, int number, DateTime start, DateTime deadline)
+        public async void ApplyFields(int id, int project, int number, DateTime start, DateTime deadline)
         {
             WrappedValue.Id = id;
-            WrappedValue.Project = ScrumbleController.GetProject(project); ;
+            WrappedValue.Project = await ScrumbleController.GetProject(project);
             WrappedValue.Number = number;
             WrappedValue.Start = start;
             WrappedValue.Deadline = deadline;
@@ -65,7 +65,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
             set
             {
-                WrappedValue.Project = ScrumbleController.GetProject(value);
+                WrappedValue.Project = ScrumbleController.GetProject(value).Result;
                 ScrumbleConnection.Update(this);
             }
         }

@@ -15,7 +15,7 @@ namespace ScrumbleLib.Connection.Wrapper
         }
 
         public TaskWrapper(int id)
-            : base(ScrumbleController.GetTask(id))
+            : base(ScrumbleController.GetTask(id).Result)
         {
 
         }
@@ -42,9 +42,9 @@ namespace ScrumbleLib.Connection.Wrapper
             WrappedValue.Name = name;
             WrappedValue.Info = info;
             WrappedValue.Rejections = rejections;
-            WrappedValue.ResponsibleUser = ScrumbleController.GetUser(responsibleUser);
-            WrappedValue.VerifyingUser = ScrumbleController.GetUser(verifyingUser);
-            WrappedValue.Sprint = ScrumbleController.GetSprint(sprint);
+            WrappedValue.ResponsibleUser = ScrumbleController.GetUser(responsibleUser).Result;
+            WrappedValue.VerifyingUser = ScrumbleController.GetUser(verifyingUser).Result;
+            WrappedValue.Sprint = ScrumbleController.GetSprint(sprint).Result;
         }
 
         public int Id
@@ -107,7 +107,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
             set
             {
-                WrappedValue.ResponsibleUser = ScrumbleController.GetUser(value);
+                WrappedValue.ResponsibleUser = ScrumbleController.GetUser(value).Result;
                 ScrumbleConnection.Update(this);
             }
         }
@@ -120,7 +120,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
             set
             {
-                WrappedValue.VerifyingUser = ScrumbleController.GetUser(value);
+                WrappedValue.VerifyingUser = ScrumbleController.GetUser(value).Result;
                 ScrumbleConnection.Update(this);
             }
         }

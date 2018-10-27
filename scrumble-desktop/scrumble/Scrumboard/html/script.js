@@ -1,4 +1,8 @@
 ﻿$(function () {
+    refreshClasses();
+});
+
+function refreshClasses() {
     $(".column").sortable({
         connectWith: ".column",
         handle: ".portlet-header",
@@ -21,4 +25,29 @@
         icon.toggleClass("ui-icon-minusthick ui-icon-plusthick");
         icon.closest(".portlet").find(".portlet-content").toggle();
     });
-});
+}
+
+var tasks = [];
+
+function addTasks() {
+    alert(JSON.stringify(scrumble_scrumboardInterface));
+    var tmptasks = scrumble_scrumboardInterface.getTasks();
+    for(var t of tmptasks){
+        addTaskWrapper(t);
+    }
+}
+
+function addTask(taskWrapper) {
+    alert(JSON.stringify(taskWrapper));
+    var taskdiv = $('<div class="portlet"></div>');
+    var header = $('<div class="portlet-header">' + taskWrapper.name + '<div>');
+    var content = $('<div class="portlet-content">' + taskWrapper.info + '</div>');
+    taskdiv.append(header);
+    taskdiv.append(content);
+    $("#column-sprintbacklog").append(taskdiv);
+    refreshClasses();
+}
+
+window.onerror = function (errorMessage, url, lineNumber) {
+    alert(errorMessage);
+}

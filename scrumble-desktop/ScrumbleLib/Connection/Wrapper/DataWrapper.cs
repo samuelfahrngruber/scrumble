@@ -27,5 +27,10 @@ namespace ScrumbleLib.Connection.Wrapper
         {
             WrappedValue = wrappedValue;
         }
+
+        public override string ToString()
+        {
+            return WrappedValue.ToString();
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace ScrumbleLib.Connection.Wrapper
         }
 
         public ProjectWrapper(int id)
-            : base(ScrumbleController.GetProject(id))
+            : base(ScrumbleController.GetProject(id).Result)
         {
 
         }
@@ -26,8 +26,8 @@ namespace ScrumbleLib.Connection.Wrapper
         {
             WrappedValue.Id = id;
             WrappedValue.Name = name;
-            WrappedValue.ProductOwner = ScrumbleController.GetUser(productOwner);
-            WrappedValue.CurrentSprint = ScrumbleController.GetSprint(currentSprint);
+            WrappedValue.ProductOwner = ScrumbleController.GetUser(productOwner).Result;
+            WrappedValue.CurrentSprint = ScrumbleController.GetSprint(currentSprint).Result;
         }
 
         public void ApplyJson(JObject jsonObject)
@@ -79,7 +79,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
             set
             {
-                WrappedValue.ProductOwner = ScrumbleController.GetUser(value);
+                WrappedValue.ProductOwner = ScrumbleController.GetUser(value).Result;
                 ScrumbleConnection.Update(this);
             }
         }
@@ -92,7 +92,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
             set
             {
-                WrappedValue.CurrentSprint = ScrumbleController.GetSprint(value);
+                WrappedValue.CurrentSprint = ScrumbleController.GetSprint(value).Result;
                 ScrumbleConnection.Update(this);
             }
         }

@@ -45,7 +45,7 @@
             <GridSplitter Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="1" ShowsPreview="True" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
 
             <!-- Project Overview -->
-            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
+            <StackPanel Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Orientation="Vertical">
                 <TextBlock Text="Project Overview" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
                 <Separator Margin="20, 0"></Separator>
                 <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"><Run Text="Project Name: "></Run><Run FontWeight="Medium" Text="Scrumble"></Run></TextBlock>
@@ -138,11 +138,20 @@
                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical">
                     <TextBlock Text="Selected Task" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
                     <Separator Margin="20, 0"></Separator>
-                    <TextBlock Text="hello" FontSize="18" Margin="20, 10" HorizontalAlignment="Stretch" FontWeight="Medium"/>
-                    <TextBlock Text="this user story only says hello. it does absolutely nothing else" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
-                    <TextBlock FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"><Run Text="Responsible: "></Run><Run FontWeight="Medium" Text="Sam"></Run></TextBlock>
-                    <TextBlock FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"><Run Text="Verify: "></Run><Run FontWeight="Medium" Text="Paul"></Run></TextBlock>
-                    <TextBlock FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"><Run Text="Rejections: "></Run><Run FontWeight="Medium" Text="3"></Run></TextBlock>
+                    <TextBlock x:Name="textBlock_selectedTask_name" Text="hello" FontSize="18" Margin="20, 10" HorizontalAlignment="Stretch" FontWeight="Medium"/>
+                    <TextBlock x:Name="textBlock_selectedTask_description" Text="this user story only says hello. it does absolutely nothing else" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
+                    <TextBlock FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap">
+                        <Run Text="Responsible: "></Run>
+                        <Run x:Name="textBlock_selectedTask_responsible" FontWeight="Medium" Text="Sam"></Run>
+                    </TextBlock>
+                    <TextBlock FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap">
+                        <Run Text="Verify: "></Run>
+                        <Run x:Name="textBlock_selectedTask_verify" FontWeight="Medium" Text="Paul"></Run>
+                    </TextBlock>
+                    <TextBlock FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap">
+                        <Run Text="Rejections: "></Run>
+                        <Run x:Name="textBlock_selectedTask_rejections" FontWeight="Medium" Text="3"></Run>
+                    </TextBlock>
                 </StackPanel>
             </Grid>
             <Grid Grid.Row="1" Grid.Column="1">
@@ -168,7 +177,7 @@
             <TextBlock Text="Project: Scrumble"></TextBlock>
             <Separator Margin="5"></Separator>
             <TextBlock Text="Sprint: #1"></TextBlock>
-            <Separator Margin="5"></Separator>
+            <Separator x:Name="separator_statusBarSeparator" Margin="5"></Separator>
             <TextBlock x:Name="textBlock_statusBarIndicator" Text="Initializing Scrum Board..."></TextBlock>
             <ProgressBar x:Name="progressBar_statusBar" IsIndeterminate="True" Width="100" Height="15"></ProgressBar>
         </StatusBar>

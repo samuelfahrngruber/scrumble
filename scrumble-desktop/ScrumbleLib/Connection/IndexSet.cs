@@ -4,12 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ScrumbleLib.Connection.Wrapper;
 
 namespace ScrumbleLib.Connection
 {
     public class IndexSet<T> where T : IIndexable
     {
         private System.Collections.Generic.Dictionary<int, T> data;
+        public Dictionary<int, T>.ValueCollection Values
+        {
+            get
+            {
+                return data.Values;
+            }
+        }
         public IndexSet()
         {
             data = new Dictionary<int, T>();

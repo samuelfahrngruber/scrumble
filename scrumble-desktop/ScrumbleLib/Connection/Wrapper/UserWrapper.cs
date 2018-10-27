@@ -16,7 +16,7 @@ namespace ScrumbleLib.Connection.Wrapper
         }
 
         public UserWrapper(int id)
-            : base(ScrumbleController.GetUser(id))
+            : base(ScrumbleController.GetUser(id).Result)
         {
 
         }

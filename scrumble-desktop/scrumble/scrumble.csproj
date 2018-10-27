@@ -84,6 +84,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Scrumboard\ScrumboardInterface.cs" />
     <Page Include="DailyScrumTable\DailyScrumTable.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -1,25 +1,11 @@
 ﻿using ScrumbleLib;
-using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using CefSharp;
-using System.IO;
 using CefSharp.Wpf;
-using CefSharp.SchemeHandler;
-using scrumble.DailyScrumTable;
 using ScrumbleLib.Data;
+using ScrumbleLib.Connection.Wrapper;
+using scrumble.Scrumboard;
 
 namespace scrumble
 {
@@ -28,12 +14,26 @@ namespace scrumble
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ScrumboardInterface scrumboardInterface;
         public MainWindow()
         {
             testInitBrowser();
             InitializeComponent();
+            chromiumWebBrowser_scrumBoard.RegisterJsObject("scrumble_scrumboardInterface", scrumboardInterface);
+
 
             testInit();
+            Scrumble.Login("user", "pw");
+            new TaskWrapper(1);
+            new TaskWrapper(2);
+            new TaskWrapper(3);
+            new TaskWrapper(4);
+            new TaskWrapper(5);
+            new TaskWrapper(6);
+            new TaskWrapper(7);
+            new TaskWrapper(8);
+            setSelectedTask();
+            setMyTasks();
         }
 
         private void testInit()
@@ -62,8 +62,35 @@ namespace scrumble
 
         }
 
+        private void setSelectedTask()
+        {
+            int id = 4;
+            TaskWrapper task = new TaskWrapper(id);
+            textBlock_selectedTask_name.Text = task.Name;
+            textBlock_selectedTask_description.Text = task.Info;
+            textBlock_selectedTask_responsible.Text = task.WrappedValue.ResponsibleUser.Username.ToString();
+            textBlock_selectedTask_verify.Text = task.WrappedValue.VerifyingUser.Username.ToString();
+            textBlock_selectedTask_rejections.Text = task.Rejections.ToString();
+        } 
+
+        private void setMyTasks()
+        {
+            treeViewItem_sprintBacklog.ItemsSource = Scrumble.MyTasks;
+        }
+
+        private async void addTaskToScrumboard(TaskWrapper wrapper)
+        {
+            if (chromiumWebBrowser_scrumBoard.CanExecuteJavascriptInMainFrame)
+            {
+                JavascriptResponse response = await chromiumWebBrowser_scrumBoard.EvaluateScriptAsync("addTask(" + wrapper.ToJson() + ");");
+            }
+        }
+
         private void testInitBrowser()
         {
+            CefSharpSettings.LegacyJavascriptBindingEnabled = true;
+            scrumboardInterface = ScrumboardInterface.Create(this);
+
             CefSettings settings = new CefSettings();
             settings.RegisterScheme(new CefCustomScheme()
             {
@@ -89,13 +116,23 @@ namespace scrumble
 
         private void stopProgress()
         {
+            separator_statusBarSeparator.Visibility = Visibility.Collapsed;
             textBlock_statusBarIndicator.Text = "";
+            textBlock_statusBarIndicator.Visibility = Visibility.Collapsed;
             progressBar_statusBar.Visibility = Visibility.Collapsed;
         }
 
         private void chromiumWebBrowser_scrumBoard_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
         {
             Dispatcher.Invoke(stopProgress);
+            Dispatcher.Invoke(setSelectedTask);
+            Dispatcher.Invoke(addTaskToScrumboardTMP);
+        }
+
+        private void addTaskToScrumboardTMP()
+        {
+            addTaskToScrumboard(new TaskWrapper(3));
+
         }
     }
 }

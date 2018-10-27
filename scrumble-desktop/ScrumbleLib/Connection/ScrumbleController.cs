@@ -8,14 +8,23 @@ using System.Threading.Tasks;
 
 namespace ScrumbleLib.Connection
 {
-    public static class ScrumbleController
+    internal static class ScrumbleController
     {
+        public static int currentUser { get; private set; } = -1;
+        public static int currentProject { get; private set; } = -1;
+
         public static IndexSet<Project> Projects { get; private set; } = new IndexSet<Project>();
         public static IndexSet<Sprint> Sprints { get; private set; } = new IndexSet<Sprint>();
         public static IndexSet<Data.Task> Tasks { get; private set; } = new IndexSet<Data.Task>();
+
+        internal static void SetCurrentProject(int projectId)
+        {
+            currentProject = projectId;
+        }
+
         public static IndexSet<User> Users { get; private set; } = new IndexSet<User>();
 
-        public static Project GetProject(int id)
+        public static async Task<Project> GetProject(int id)
         {
             if (Projects.Contains(id))
             {
@@ -23,11 +32,12 @@ namespace ScrumbleLib.Connection
             }
             Project project = new Project(id);
             Projects.Add(project);
-            System.Threading.Tasks.Task.Run(() => ScrumbleConnection.GetProject(project));
+            project = await ScrumbleConnection.GetProject(project);
+            Scrumble.OnProjectAdded(project);
             return project;
         }
 
-        public static User GetUser(int id)
+        public static async Task<User> GetUser(int id)
         {
             if (Users.Contains(id))
             {
@@ -35,11 +45,12 @@ namespace ScrumbleLib.Connection
             }
             User user = new User(id);
             Users.Add(user);
-            System.Threading.Tasks.Task.Run(() => ScrumbleConnection.GetUser(user));
+            user = await ScrumbleConnection.GetUser(user);
+            Scrumble.OnUserAdded(user);
             return user;
         }
 
-        public static Data.Task GetTask(int id)
+        public static async Task<Data.Task> GetTask(int id)
         {
             if (Tasks.Contains(id))
             {
@@ -47,11 +58,12 @@ namespace ScrumbleLib.Connection
             }
             Data.Task task = new Data.Task(id);
             Tasks.Add(task);
-            System.Threading.Tasks.Task.Run(() => ScrumbleConnection.GetTask(task));
+            task = await ScrumbleConnection.GetTask(task);
+            Scrumble.OnTaskAdded(task);
             return task;
         }
 
-        public static Sprint GetSprint(int id)
+        public static async Task<Sprint> GetSprint(int id)
         {
             if (Sprints.Contains(id))
             {
@@ -59,8 +71,37 @@ namespace ScrumbleLib.Connection
             }
             Sprint sprint = new Sprint(id);
             Sprints.Add(sprint);
-            System.Threading.Tasks.Task.Run(() => ScrumbleConnection.GetSprint(sprint));
+            sprint = await ScrumbleConnection.GetSprint(sprint);
+            Scrumble.OnSprintAdded(sprint);
             return sprint;
+        }
+
+
+        public static bool Login(string username, string password)
+        {
+            currentUser = 2;
+            currentProject = 4;
+            return true;
+        }
+
+
+        private static bool isLoggedIn()
+        {
+            return currentUser >= 0;
+        }
+        private static bool isProjectSet()
+        {
+            return currentProject >= 0;
+        }
+        private static void assertLoggedIn()
+        {
+            if (!isLoggedIn())
+                throw new Exception("not logged in");
+        }
+        private static void assertProjectSet()
+        {
+            if (!isProjectSet())
+                throw new Exception("project not set");
         }
     }
 }
