@@ -11,14 +11,18 @@ namespace ScrumbleLib.Connection
     internal static class ScrumbleConnection
     {
         // todo remove all console.writelines
-        public static void Update<WrappedType>(DataWrapper<WrappedType> wrapper)
+        public static async void Update<WrappedType>(DataWrapper<WrappedType> wrapper)
         {
             string json = wrapper.ToJson();
-            ConsoleColor color = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("PUT:");
-            Console.WriteLine(json);
-            Console.ForegroundColor = color;
+            Scrumble.Log("PUT:", "#00FFFF");
+            Scrumble.Log(json, "#00FFFF");
+        }
+
+        public static async void Update<WrappedType>(IDataWrapper<WrappedType> wrapper)
+        {
+            string json = wrapper.ToJson();
+            Scrumble.Log("PUT:", "#00FFFF");
+            Scrumble.Log(json, "#00FFFF");
         }
 
         public static async Task<Project> GetProject(Project project)
@@ -31,11 +35,8 @@ namespace ScrumbleLib.Connection
                 "\"currentsprint\":" + 666 + "," +
                 "\"productowner\":" + projectId * 2 + "" +
                 "}";
-            ConsoleColor color = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("GET - Project:");
-            Console.WriteLine(json);
-            Console.ForegroundColor = color;
+            Scrumble.Log("GET - Project:", "#00FF00");
+            Scrumble.Log(json, "#00FF00");
             wrapper.ApplyJson(json);
             return project;
         }
@@ -48,18 +49,15 @@ namespace ScrumbleLib.Connection
                 "\"id\":" + userId + "," +
                 "\"username\":\"USER" + userId + "\"" +
                 "}";
-            ConsoleColor color = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("GET - User:");
-            Console.WriteLine(json);
-            Console.ForegroundColor = color;
+            Scrumble.Log("GET - User:", "#00FF00");
+            Scrumble.Log(json, "#00FF00");
             wrapper.ApplyJson(json);
             return user;
         }
 
         public static async Task<Data.Task> GetTask(Data.Task task)
         {
-            TaskWrapper wrapper = new TaskWrapper(task);
+            TaskWrapper wrapper = TaskWrapper.GetInstance(task);
             int taskId = task.Id;
             string json = "{" +
                 "\"id\":" + taskId + "," +
@@ -68,13 +66,11 @@ namespace ScrumbleLib.Connection
                 "\"rejections\":" + 2 + "," +
                 "\"responsibleuser\":" + taskId % 3 + "," +
                 "\"verifyinguser\":" + taskId * 100 + "," +
-                "\"sprint\":" + taskId + "" +
+                "\"sprint\":" + taskId + "," +
+                "\"state\":\"" + "INTEST" + "\"" +
                 "}";
-            ConsoleColor color = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("GET - Task:");
-            Console.WriteLine(json);
-            Console.ForegroundColor = color;
+            Scrumble.Log("GET - Task:", "#00FF00");
+            Scrumble.Log(json, "#00FF00");
             wrapper.ApplyJson(json);
             return task;
         }
@@ -90,11 +86,8 @@ namespace ScrumbleLib.Connection
                 "\"start\":\"" + new DateTime() + "\"," +
                 "\"deadline\":\"" + new DateTime() + "\"" +
                 "}";
-            ConsoleColor color = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("GET - Sprint:");
-            Console.WriteLine(json);
-            Console.ForegroundColor = color;
+            Scrumble.Log("GET - Sprint:", "#00FF00");
+            Scrumble.Log(json, "#00FF00");
             wrapper.ApplyJson(json);
             return sprint;
         }

@@ -15,8 +15,9 @@ namespace ScrumbleLib.Data
         public User ResponsibleUser { get; set; }
         public User VerifyingUser { get; set; }
         public Sprint Sprint { get; set; }
+        public ScrumBoardColumn State { get; set; }
 
-        public Task(int id, string name = default(string), string info = default(string), int rejections = default(int), User responsibleUser = default(User), User verifyingUser = default(User), Sprint sprint = default(Sprint))
+        public Task(int id, string name = default(string), string info = default(string), int rejections = default(int), User responsibleUser = default(User), User verifyingUser = default(User), Sprint sprint = default(Sprint), ScrumBoardColumn state = default(ScrumBoardColumn))
         {
             this.Id = id;
             this.Name = name;
@@ -25,6 +26,7 @@ namespace ScrumbleLib.Data
             this.VerifyingUser = verifyingUser;
             this.ResponsibleUser = responsibleUser;
             this.Sprint = sprint;
+            this.State = state;
         }
 
         public override string ToString()

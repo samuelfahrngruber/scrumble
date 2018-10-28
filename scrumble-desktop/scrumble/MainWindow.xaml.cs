@@ -6,34 +6,45 @@ using CefSharp.Wpf;
 using ScrumbleLib.Data;
 using ScrumbleLib.Connection.Wrapper;
 using scrumble.Scrumboard;
+using System.Linq;
+using System.Collections.Specialized;
+using System;
+using System.Windows.Documents;
+using System.Windows.Media;
+using System.Windows.Input;
+using System.ComponentModel;
 
 namespace scrumble
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IDevLogger
     {
         private ScrumboardInterface scrumboardInterface;
+        private DeveloperConsole console;
+
+        private TaskWrapper selectedTask = null;
+
         public MainWindow()
         {
+            Scrumble.Logger = this;
+
             testInitBrowser();
             InitializeComponent();
             chromiumWebBrowser_scrumBoard.RegisterJsObject("scrumble_scrumboardInterface", scrumboardInterface);
 
+            //initDevConsole();
 
             testInit();
             Scrumble.Login("user", "pw");
-            new TaskWrapper(1);
-            new TaskWrapper(2);
-            new TaskWrapper(3);
-            new TaskWrapper(4);
-            new TaskWrapper(5);
-            new TaskWrapper(6);
-            new TaskWrapper(7);
-            new TaskWrapper(8);
-            setSelectedTask();
+            TaskWrapper.GetInstance(1);
+            TaskWrapper.GetInstance(2);
+            setSelectedTask(4);
             setMyTasks();
+            console = new DeveloperConsole(this);
+
+            Scrumble.MyTasks.CollectionChanged += new NotifyCollectionChangedEventHandler(MyTasksChanged);
         }
 
         private void testInit()
@@ -41,7 +52,7 @@ namespace scrumble
             List<ScrumbleLib.Data.Task> toDo = new List<ScrumbleLib.Data.Task>();
             //toDo.Add(new ScrumbleLib.Data.Task("hello"));
             //toDo.Add(new ScrumbleLib.Data.Task("world"));
-            treeViewItem_sprintBacklog.ItemsSource = toDo;
+            treeViewItem_myTasks_sprintBacklog.ItemsSource = toDo;
 
             List<ScrumbleLib.Data.Task> productBacklog = new List<ScrumbleLib.Data.Task>();
             //productBacklog.Add(new ScrumbleLib.Data.Task("hello_pbl"));
@@ -62,20 +73,35 @@ namespace scrumble
 
         }
 
-        private void setSelectedTask()
+        private void setSelectedTask(int id)
         {
-            int id = 4;
-            TaskWrapper task = new TaskWrapper(id);
-            textBlock_selectedTask_name.Text = task.Name;
-            textBlock_selectedTask_description.Text = task.Info;
-            textBlock_selectedTask_responsible.Text = task.WrappedValue.ResponsibleUser.Username.ToString();
-            textBlock_selectedTask_verify.Text = task.WrappedValue.VerifyingUser.Username.ToString();
-            textBlock_selectedTask_rejections.Text = task.Rejections.ToString();
-        } 
+            if (selectedTask != null)
+                selectedTask.PropertyChanged -= refreshSelectedTask;
+            selectedTask = TaskWrapper.GetInstance(id);
+            refreshSelectedTask(null, null);
+            selectedTask.PropertyChanged += refreshSelectedTask;
+        }
+
+        private async void refreshSelectedTask(object sender, PropertyChangedEventArgs e)
+        {
+            await Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action) (() =>
+            {
+                textBlock_selectedTask_name.Text = selectedTask.Name;
+                textBlock_selectedTask_description.Text = selectedTask.Info;
+                textBlock_selectedTask_responsible.Text = selectedTask.WrappedValue.ResponsibleUser.Username.ToString();
+                textBlock_selectedTask_verify.Text = selectedTask.WrappedValue.VerifyingUser.Username.ToString();
+                textBlock_selectedTask_rejections.Text = selectedTask.Rejections.ToString();
+            }));
+        }
 
         private void setMyTasks()
         {
-            treeViewItem_sprintBacklog.ItemsSource = Scrumble.MyTasks;
+            Dispatcher.Invoke(() => { 
+                treeViewItem_myTasks_sprintBacklog.ItemsSource = Scrumble.MyTasks.Where(task => task.WrappedValue.State == ScrumBoardColumn.SPRINTBACKLOG);
+                treeViewItem_myTasks_inProgress.ItemsSource = Scrumble.MyTasks.Where(task => task.WrappedValue.State == ScrumBoardColumn.INPROGRESS);
+                treeViewItem_myTasks_inTest.ItemsSource = Scrumble.MyTasks.Where(task => task.WrappedValue.State == ScrumBoardColumn.INTEST);
+                treeViewItem_myTasks_done.ItemsSource = Scrumble.MyTasks.Where(task => task.WrappedValue.State == ScrumBoardColumn.DONE);
+            });
         }
 
         private async void addTaskToScrumboard(TaskWrapper wrapper)
@@ -95,7 +121,7 @@ namespace scrumble
             settings.RegisterScheme(new CefCustomScheme()
             {
                 SchemeName = "scrumboard",
-                SchemeHandlerFactory = new CefSharp.SchemeHandler.FolderSchemeHandlerFactory("./Scrumboard/html")
+                SchemeHandlerFactory = new CefSharp.SchemeHandler.FolderSchemeHandlerFactory("./Scrumboard/html/")
             });
             Cef.Initialize(settings);
         }
@@ -125,14 +151,93 @@ namespace scrumble
         private void chromiumWebBrowser_scrumBoard_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
         {
             Dispatcher.Invoke(stopProgress);
-            Dispatcher.Invoke(setSelectedTask);
-            Dispatcher.Invoke(addTaskToScrumboardTMP);
+            Dispatcher.Invoke(() => { setSelectedTask(4); });
+            Scrumble.Scrumboard.CollectionChanged += new NotifyCollectionChangedEventHandler(ScrumboardChanged);
+            Dispatcher.Invoke(setScrumboardContent);
+        }
+
+        private void ScrumboardChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            //different kind of changes that may have occurred in collection
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (TaskWrapper task in e.NewItems)
+                {
+                    addTaskToScrumboard(task);
+                }
+            }
+            if (e.Action == NotifyCollectionChangedAction.Replace)
+            {
+                foreach (TaskWrapper task in e.NewItems)
+                {
+                    addTaskToScrumboard(task);
+                }
+            }
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (TaskWrapper task in e.NewItems)
+                {
+                    //removeTaskFromScrumboard(task);
+                }
+            }
+            if (e.Action == NotifyCollectionChangedAction.Move)
+            {
+                //your code
+            }
+            //setScrumboardContent();
+        }
+
+        private void MyTasksChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            //different kind of changes that may have occurred in collection
+            setMyTasks();
+        }
+
+        private void setScrumboardContent()
+        {
+            foreach(TaskWrapper task in Scrumble.Scrumboard)
+            {
+                addTaskToScrumboard(task);
+            }
         }
 
         private void addTaskToScrumboardTMP()
         {
-            addTaskToScrumboard(new TaskWrapper(3));
-
+            addTaskToScrumboard(TaskWrapper.GetInstance(3));
         }
+
+        public void LogDev(string text, string hexcolor)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                Run r = new Run();
+                r.Text = text + "\n";
+                r.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom(hexcolor));
+                textBlock_devConsole.Inlines.Add(r);
+                scrollViewer_devConsole.ScrollToEnd();
+            });
+        }
+
+        private void initDevConsole()
+        {
+            bool isenabled = (bool)Properties.Settings.Default["EnableDeveloperTools"];
+            if (!isenabled)
+            {
+                tabItem_devConsole.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void textBox_devConsole_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                string command = textBox_devConsole.Text;
+                LogDev(command, "#FFFFFF");
+                textBox_devConsole.Text = "";
+                console.Execute(command);
+            }
+        }
+
+        
     }
 }

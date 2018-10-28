@@ -45,13 +45,13 @@ namespace ScrumbleLib.Connection.Wrapper
             ApplyJson(JObject.Parse(json));
         }
 
-        public int Id
+        public override int Id
         {
             get
             {
                 return WrappedValue.Id;
             }
-            private set
+            protected set
             {
                 throw new Exception("Use WrappedValue.Id.set instead!");
             }

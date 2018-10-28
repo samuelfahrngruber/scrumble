@@ -105,28 +105,28 @@
                     <TextBlock Text="My Tasks" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
                     <Separator Margin="20, 0"></Separator>
                     <TreeView Margin="5" BorderThickness="0" FontSize="18" FontWeight="Light" >
-                        <TreeViewItem x:Name="treeViewItem_sprintBacklog" IsExpanded="True" Margin="5">
+                        <TreeViewItem x:Name="treeViewItem_myTasks_sprintBacklog" IsExpanded="True" Margin="5">
                             <TreeViewItem.Header>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Sprint Backlog" FontWeight="Light" />
                                 </StackPanel>
                             </TreeViewItem.Header>
                         </TreeViewItem>
-                        <TreeViewItem IsExpanded="True" Margin="5">
+                        <TreeViewItem x:Name="treeViewItem_myTasks_inProgress" IsExpanded="True" Margin="5">
                             <TreeViewItem.Header>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="In Progress" FontWeight="Light" />
                                 </StackPanel>
                             </TreeViewItem.Header>
                         </TreeViewItem>
-                        <TreeViewItem IsExpanded="True" Margin="5">
+                        <TreeViewItem x:Name="treeViewItem_myTasks_inTest" IsExpanded="True" Margin="5">
                             <TreeViewItem.Header>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="To Verify" FontWeight="Light" />
                                 </StackPanel>
                             </TreeViewItem.Header>
                         </TreeViewItem>
-                        <TreeViewItem IsExpanded="True" Margin="5">
+                        <TreeViewItem x:Name="treeViewItem_myTasks_done" IsExpanded="True" Margin="5">
                             <TreeViewItem.Header>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Done" FontWeight="Light" />
@@ -169,6 +169,23 @@
                     </TabItem>
                     <TabItem Padding="5" Header="Daily Scrum Table">
                         <dailyscrumtable:DailyScrumTable></dailyscrumtable:DailyScrumTable>
+                    </TabItem>
+                    <TabItem x:Name="tabItem_devConsole" Padding="5" Header="Developer Console">
+                        <ScrollViewer Grid.Row="0" x:Name="scrollViewer_devConsole">
+                            <Grid Background="Black">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="textBlock_devConsole" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Padding="5px" FontFamily="Consolas" TextWrapping="Wrap" Margin="0" Background="Black" />
+                                <Label Grid.Row="1" Grid.Column="0" Padding="5px" FontFamily="Consolas" Background="Black" Foreground="White" Content=">" Margin="0"></Label>
+                                <TextBox x:Name="textBox_devConsole" Grid.Row="1" Grid.Column="1" Padding="5px" FontFamily="Consolas" Background="Black" Foreground="White" BorderThickness="0" Margin="0" KeyDown="textBox_devConsole_KeyDown"></TextBox>
+                            </Grid>
+                        </ScrollViewer>
                     </TabItem>
                 </TabControl>
             </Grid>

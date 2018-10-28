@@ -1,24 +1,80 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using ScrumbleLib.Connection.Json;
 using ScrumbleLib.Data;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
 namespace ScrumbleLib.Connection.Wrapper
 {
-    public class TaskWrapper : DataWrapper<Task>
+    public class TaskWrapper : IDataWrapper<Task>
     {
-        public TaskWrapper(Task wrappedValue) : base(wrappedValue)
-        {
+        public event PropertyChangedEventHandler PropertyChanged;
 
+        public Task WrappedValue  { get; private set; }
+
+        private static IndexSet<TaskWrapper> instances = new IndexSet<TaskWrapper>();
+
+        public static TaskWrapper GetInstance(Task wrappedValue)
+        {
+            TaskWrapper instance;
+            if (instances.Contains(wrappedValue.Id))
+            {
+                instance = instances[wrappedValue.Id];
+                instance.WrappedValue = wrappedValue;
+                instance.OnPropertyChanged(null);
+            }
+            else {
+                instance = new TaskWrapper(wrappedValue);
+                instances.Add(instance);
+            }
+            return instance;
         }
 
-        public TaskWrapper(int id)
-            : base(ScrumbleController.GetTask(id).Result)
+        private TaskWrapper(Task wrappedValue)
         {
-
+            WrappedValue = wrappedValue;
         }
+
+        public static TaskWrapper GetInstance(int taskId)
+        {
+            TaskWrapper instance;
+            if (instances.Contains(taskId))
+            {
+                instance = instances[taskId];
+            }
+            else {
+                instance = new TaskWrapper(taskId);
+                instances.Add(instance);
+            }
+            return instance;
+        } 
+
+        private TaskWrapper(int id)
+        {
+            WrappedValue = ScrumbleController.GetTask(id).Result;
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (PropertyChanged != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public string ToJson()
+        {
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.ContractResolver = new LowercaseContractResolver();
+            string json = JsonConvert.SerializeObject(this, Formatting.Indented, settings);
+            return json;
+        }
+
         public void ApplyJson(string json)
         {
             ApplyJson(JObject.Parse(json));
@@ -26,6 +82,7 @@ namespace ScrumbleLib.Connection.Wrapper
 
         public void ApplyJson(JObject jsonObject)
         {
+            //ScrumBoardColumn state = (ScrumBoardColumn)Enum.Parse(typeof(ScrumBoardColumn), (string)jsonObject["state"]);
             ApplyFields(
                (int)jsonObject["id"],
                (string)jsonObject["name"],
@@ -33,10 +90,11 @@ namespace ScrumbleLib.Connection.Wrapper
                (int)jsonObject["rejections"],
                (int)jsonObject["responsibleuser"],
                (int)jsonObject["verifyinguser"],
-               (int)jsonObject["sprint"]);
+               (int)jsonObject["sprint"],
+               (string)jsonObject["state"]);
         }
 
-        public void ApplyFields(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int sprint)
+        public void ApplyFields(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int sprint, string state)
         {
             WrappedValue.Id = id;
             WrappedValue.Name = name;
@@ -45,6 +103,7 @@ namespace ScrumbleLib.Connection.Wrapper
             WrappedValue.ResponsibleUser = ScrumbleController.GetUser(responsibleUser).Result;
             WrappedValue.VerifyingUser = ScrumbleController.GetUser(verifyingUser).Result;
             WrappedValue.Sprint = ScrumbleController.GetSprint(sprint).Result;
+            WrappedValue.State = ScrumBoardColumnParser.Parse(state);
         }
 
         public int Id
@@ -53,7 +112,7 @@ namespace ScrumbleLib.Connection.Wrapper
             {
                 return WrappedValue.Id;
             }
-            private set
+            protected set
             {
                 throw new Exception("Use WrappedValue.Id.set instead!");
             }
@@ -68,6 +127,7 @@ namespace ScrumbleLib.Connection.Wrapper
             set
             {
                 WrappedValue.Name = value;
+                OnPropertyChanged("Name");
                 ScrumbleConnection.Update(this);
             }
         }
@@ -81,6 +141,7 @@ namespace ScrumbleLib.Connection.Wrapper
             set
             {
                 WrappedValue.Info = value;
+                OnPropertyChanged("Info");
                 ScrumbleConnection.Update(this);
             }
         }
@@ -95,6 +156,7 @@ namespace ScrumbleLib.Connection.Wrapper
             set
             {
                 WrappedValue.Rejections = value;
+                OnPropertyChanged("Rejections");
                 ScrumbleConnection.Update(this);
             }
         }
@@ -108,6 +170,7 @@ namespace ScrumbleLib.Connection.Wrapper
             set
             {
                 WrappedValue.ResponsibleUser = ScrumbleController.GetUser(value).Result;
+                OnPropertyChanged("ResponsibleUser");
                 ScrumbleConnection.Update(this);
             }
         }
@@ -121,8 +184,28 @@ namespace ScrumbleLib.Connection.Wrapper
             set
             {
                 WrappedValue.VerifyingUser = ScrumbleController.GetUser(value).Result;
+                OnPropertyChanged("VerifyingUser");
                 ScrumbleConnection.Update(this);
             }
+        }
+
+        public String State
+        {
+            get
+            {
+                return WrappedValue.State.ToString();
+            }
+            set
+            {
+                WrappedValue.State = ScrumBoardColumnParser.Parse(value);
+                OnPropertyChanged("State");
+                ScrumbleConnection.Update(this);
+            }
+        }
+
+        public override string ToString()
+        {
+            return WrappedValue.ToString();
         }
     }
 }

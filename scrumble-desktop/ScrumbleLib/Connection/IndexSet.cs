@@ -35,10 +35,13 @@ namespace ScrumbleLib.Connection
             }
         }
 
-        public void Add(T value)
+        public bool Add(T value)
         {
             // data[value.Id] = value;
+            if (Contains(value.Id))
+                return false;
             data.Add(value.Id, value);
+            return true;
         }
 
         public bool Contains(int key)

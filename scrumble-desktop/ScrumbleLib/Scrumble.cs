@@ -12,7 +12,11 @@ namespace ScrumbleLib
 {
     public static class Scrumble
     {
-        public static ObservableCollection<TaskWrapper> MyTasks { get; private set; } = new ObservableCollection<TaskWrapper>();
+        public static ObservableCollectionEx<TaskWrapper> MyTasks { get; private set; } = new ObservableCollectionEx<TaskWrapper>();
+        public static ObservableCollectionEx<TaskWrapper> Scrumboard { get; private set; } = new ObservableCollectionEx<TaskWrapper>();
+
+        public static IDevLogger Logger { get; set; }
+
         public static bool Login(string username, string password)
         {
             return ScrumbleController.Login(username, password);
@@ -35,13 +39,23 @@ namespace ScrumbleLib
 
         internal static void OnTaskAdded(Data.Task task)
         {
-            if(task.ResponsibleUser.Id == ScrumbleController.currentUser)
-                MyTasks.Add(new TaskWrapper(task));
+            if(task.ResponsibleUser.Id == ScrumbleController.currentUser) // todo also check for current project
+                MyTasks.Add(TaskWrapper.GetInstance(task.Id));
+            if (true)//(ScrumbleController.GetProject(ScrumbleController.currentProject).Result.CurrentSprint.Id == task.Sprint.Id)
+                Scrumboard.Add(TaskWrapper.GetInstance(task.Id));
         }
 
         internal static void OnSprintAdded(Sprint sprint)
         {
             // todo implement
+        }
+
+        public static void Log(string str, string col)
+        {
+            if(Logger != null)
+            {
+                Logger.LogDev(str, col);
+            }
         }
     }
 }

@@ -21,5 +21,9 @@ namespace scrumble.Scrumboard
             return new ScrumboardInterface(csContext);
         }
 
+        public void changeTaskState(int taskId, string taskState)
+        {
+            TaskWrapper.GetInstance(taskId).State = taskState;
+        }
     }
 }

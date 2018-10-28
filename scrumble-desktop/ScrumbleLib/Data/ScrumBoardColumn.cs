@@ -13,4 +13,12 @@ namespace ScrumbleLib.Data
         INTEST,
         DONE
     }
+
+    public static class ScrumBoardColumnParser
+    {
+        public static ScrumBoardColumn Parse(string str)
+        {
+            return (ScrumBoardColumn)Enum.Parse(typeof(ScrumBoardColumn), str);
+        }
+    }
 }

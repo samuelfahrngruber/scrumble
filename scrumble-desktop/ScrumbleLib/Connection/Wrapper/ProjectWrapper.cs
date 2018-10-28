@@ -44,13 +44,13 @@ namespace ScrumbleLib.Connection.Wrapper
             ApplyJson(JObject.Parse(json));
         }
 
-        public int Id
+        public override int Id
         {
             get
             {
                 return WrappedValue.Id;
             }
-            set
+            protected set
             {
                 // todo inspect
                 WrappedValue.Id = value;
@@ -67,6 +67,7 @@ namespace ScrumbleLib.Connection.Wrapper
             set
             {
                 WrappedValue.Name = value;
+                OnPropertyChanged("Name");
                 ScrumbleConnection.Update(this);
             }
         }
@@ -80,6 +81,7 @@ namespace ScrumbleLib.Connection.Wrapper
             set
             {
                 WrappedValue.ProductOwner = ScrumbleController.GetUser(value).Result;
+                OnPropertyChanged("ProductOwner");
                 ScrumbleConnection.Update(this);
             }
         }
@@ -93,10 +95,12 @@ namespace ScrumbleLib.Connection.Wrapper
             set
             {
                 WrappedValue.CurrentSprint = ScrumbleController.GetSprint(value).Result;
+                OnPropertyChanged("CurrentSprint");
                 ScrumbleConnection.Update(this);
             }
         }
 
+        // todo
         public HashSet<User> Team
         {
             get

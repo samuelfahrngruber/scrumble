@@ -2,6 +2,21 @@
     refreshClasses();
 });
 
+var tasks = [];
+
+var state2column = {
+    "SPRINTBACKLOG": "column-sprintbacklog",
+    "INPROGRESS": "column-inprogress",
+    "INTEST": "column-intest",
+    "DONE": "column-done"
+}
+
+var column2state = {};
+
+for(var key in state2column) {
+    column2state[state2column[key]] = key;
+}
+
 function refreshClasses() {
     $(".column").sortable({
         connectWith: ".column",
@@ -12,6 +27,7 @@ function refreshClasses() {
             var index = ui.item.index();
             var column = ui.item.parent();
             console.log("new position of " + ui.item.attr("id") + ": (column: " + column.attr("id") + ", row: " + index + ")");
+            changeTaskState(Number(ui.item.attr("id")), column2state[column.attr("id")]);
         }
     });
 
@@ -27,27 +43,25 @@ function refreshClasses() {
     });
 }
 
-var tasks = [];
-
-function addTasks() {
-    alert(JSON.stringify(scrumble_scrumboardInterface));
-    var tmptasks = scrumble_scrumboardInterface.getTasks();
-    for(var t of tmptasks){
-        addTaskWrapper(t);
-    }
-}
-
 function addTask(taskWrapper) {
-    alert(JSON.stringify(taskWrapper));
-    var taskdiv = $('<div class="portlet"></div>');
+    var column = $("#" + state2column[taskWrapper.state.toUpperCase()]);
+
+    var taskdiv = $('<div class="portlet" id="' + taskWrapper.id + '"></div>');
     var header = $('<div class="portlet-header">' + taskWrapper.name + '<div>');
     var content = $('<div class="portlet-content">' + taskWrapper.info + '</div>');
     taskdiv.append(header);
     taskdiv.append(content);
-    $("#column-sprintbacklog").append(taskdiv);
+    $("#" + taskWrapper.id).remove();
+    column.append(taskdiv);
     refreshClasses();
+}
+
+function changeTaskState(taskid, newTaskState) {
+    scrumble_scrumboardInterface.changeTaskState(taskid, newTaskState);
 }
 
 window.onerror = function (errorMessage, url, lineNumber) {
     alert(errorMessage);
 }
+window.onc
+

@@ -39,13 +39,13 @@ namespace ScrumbleLib.Connection.Wrapper
             ApplyJson(JObject.Parse(json));
         }
 
-        public int Id
+        public override int Id
         {
             get
             {
                 return WrappedValue.Id;
             }
-            set
+            protected set
             {
                 // todo inspect
                 WrappedValue.Id = value;
