@@ -35,3 +35,5 @@ Data model:
 [2018-10-15](https://docs.google.com/document/d/1Gon0d3dsv2NabF_IYOM2_ienjwpz0SYARF6-fLzsgok/edit?usp=sharing)
 
 [2018-10-22](https://docs.google.com/document/d/1ZKyH_1ksY__FbPm0fRWnVfUPl7ngW_nmSNYprvn42hM/edit?usp=sharing)
+
+[2018-10-29](https://docs.google.com/document/d/1NyflbvuWPuMIbQ6oim3F-_XA4AiFLiNt2pxqypG9drQ/edit?usp=sharing)
