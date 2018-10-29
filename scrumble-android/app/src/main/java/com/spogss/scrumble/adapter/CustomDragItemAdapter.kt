@@ -8,12 +8,15 @@ import com.spogss.scrumble.data.Task
 import com.woxthebox.draglistview.DragItemAdapter
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
-import android.text.SpannableStringBuilder
-import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import de.mrapp.android.dialog.MaterialDialog
-import android.text.style.StyleSpan
+import android.widget.ArrayAdapter
+import com.llollox.androidtoggleswitch.widgets.ToggleSwitch
+import com.rengwuxian.materialedittext.MaterialEditText
+import com.spogss.scrumble.controller.PopupController
+import com.spogss.scrumble.controller.ScrumbleController
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
 import de.mrapp.android.dialog.ScrollableArea
 
 
@@ -31,7 +34,6 @@ class CustomDragItemAdapter
         this.context = context
         itemList = list
     }
-
 
 
     @NonNull
@@ -57,40 +59,11 @@ class CustomDragItemAdapter
         override fun onItemClicked(view: View) {
             val task = view.tag as Task
 
-            setupPopup(task)
+            PopupController.setupTaskPopup(context, {}, task)
         }
 
         override fun onItemLongClicked(view: View): Boolean {
             return true
-        }
-
-        private fun setupPopup(task: Task) {
-            val dialogBuilder = MaterialDialog.Builder(context)
-            dialogBuilder.setTitle(task.name)
-            dialogBuilder.setTitleColor(ContextCompat.getColor(context, R.color.colorAccent))
-            dialogBuilder.setMessage(task.info)
-            dialogBuilder.setPositiveButton(R.string.close, null)
-            dialogBuilder.setButtonTextColor(ContextCompat.getColor(context, R.color.colorAccent))
-
-            val responsible = context.resources.getString(R.string.responsible_double_dot)
-            val verify = context.resources.getString(R.string.verify_double_dot)
-            val rejections = context.resources.getString(R.string.rejections_double_dot, if(task.rejections != 1) "s" else "")
-
-            val boldSpan = StyleSpan(android.graphics.Typeface.BOLD)
-            val responsibleString = SpannableStringBuilder().append("$responsible ").append(task.responsible.username, boldSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            val verifyString  = SpannableStringBuilder().append("$verify ").append(task.verify.username, boldSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            val rejectionString = SpannableStringBuilder().append("$rejections ").append(task.rejections.toString(), boldSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-            val customView = View.inflate(context, R.layout.popup_task, null)
-            (customView.findViewById(R.id.popup_view_task_responsible) as TextView).text = responsibleString
-            (customView.findViewById(R.id.popup_view_task_verify) as TextView).text = verifyString
-            (customView.findViewById(R.id.popup_view_task_rejection) as TextView).text = rejectionString
-
-            dialogBuilder.setView(customView)
-            dialogBuilder.setScrollableArea(ScrollableArea.Area.CONTENT)
-
-            val dialog = dialogBuilder.create()
-            dialog.show()
         }
     }
 }

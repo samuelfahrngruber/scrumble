@@ -26,7 +26,7 @@ class CustomTimeLineAdapter(private val layoutInflater: LayoutInflater, private 
         holder.description.text = dailyScrumEntry.description
 
         if(dailyScrumEntry.task != null)
-            holder.task.text = layoutInflater.context.resources.getString(R.string.task_double_dot, dailyScrumEntry.task.name)
+            holder.task.text = "${layoutInflater.context.resources.getString(R.string.task)}: ${dailyScrumEntry.task.name}"
         else
             holder.task.visibility = View.GONE
 

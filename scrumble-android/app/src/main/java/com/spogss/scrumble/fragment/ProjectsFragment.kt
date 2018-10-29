@@ -18,6 +18,7 @@ import com.spogss.scrumble.R
 import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.adapter.CustomOverviewHeaderAdapter
 import com.spogss.scrumble.adapter.CustomSwipeItemAdapter
+import com.spogss.scrumble.controller.PopupController
 import com.spogss.scrumble.data.User
 import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.viewItem.CustomSelectableItem
@@ -28,15 +29,11 @@ import com.woxthebox.draglistview.swipe.ListSwipeItem
 import de.mrapp.android.dialog.MaterialDialog
 import de.mrapp.android.dialog.ScrollableArea
 import kotlinx.android.synthetic.main.fragment_projects.*
-import org.jetbrains.anko.collections.forEachByIndex
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 class ProjectsFragment: Fragment() {
-    private val startCal = Calendar.getInstance()
-    private val endCal = Calendar.getInstance()
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
@@ -93,223 +90,19 @@ class ProjectsFragment: Fragment() {
             var retVal = true
             when(actionItem.id) {
                 R.id.fab_add_project -> {
-                    setupPopup(resources.getString(R.string.add_project), {
-                        setupAddProjectAddTeamMemberCustomView(R.layout.popup_add_project)
-                    }, {
-                        addProjectButtonClick(it)
-                    })
+                    PopupController.setupProjectPopup(context!!) { speed_dial.close() }
                 }
                 R.id.fab_add_sprint -> {
                     //TODO: check if there is a current project
-                    setupPopup(resources.getString(R.string.add_sprint), {
-                        setupAddSprintCustomView()
-                    }, {
-                        addSprintButtonClick(it)
-                    })
+                    PopupController.setupSprintPopup(context!!, { speed_dial.close() })
                 }
                 R.id.fab_add_team_member -> {
                     //TODO: check if there is a current project
-                    setupPopup(resources.getString(R.string.add_team_member), {
-                        setupAddProjectAddTeamMemberCustomView(R.layout.popup_add_team_member)
-                    }, {
-                        addTeamMemberButtonClick(it)
-                    })
+                    PopupController.setupTeamMemberPopup(context!!) { speed_dial.close() }
                 }
                 else -> retVal = false
             }
             retVal
         }
-    }
-
-    private fun setupPopup(title: String, customization: () -> View, buttonCallBack: (view: View) -> Boolean) {
-        val dialogBuilder = MaterialDialog.Builder(context!!)
-        dialogBuilder.setTitle(title)
-        dialogBuilder.setTitleColor(ContextCompat.getColor(context!!, R.color.colorAccent))
-        dialogBuilder.setPositiveButton(android.R.string.ok, null)
-        dialogBuilder.setNegativeButton(android.R.string.cancel, null)
-        dialogBuilder.setButtonTextColor(ContextCompat.getColor(context!!, R.color.colorAccent))
-        dialogBuilder.setCanceledOnTouchOutside(false)
-
-        val customView = customization()
-        dialogBuilder.setScrollableArea(ScrollableArea.Area.CONTENT)
-        dialogBuilder.setView(customView)
-
-        val dialog = dialogBuilder.create()
-        dialog.setOnShowListener {
-            dialog.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener { _ ->
-                if(buttonCallBack(customView)) {
-                    dialog.dismiss()
-                    speed_dial.close(true)
-                }
-            }
-        }
-
-        dialog.show()
-    }
-
-    private fun setupAddProjectAddTeamMemberCustomView(res: Int): View {
-        val customView = View.inflate(context, res, null)
-        val listView = customView.findViewById<DragListView>(R.id.swipe_list_add_team_member)
-        val teamMemberEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_team_member)
-
-        listView.setLayoutManager(LinearLayoutManager(context))
-        listView.isDragEnabled = false
-        val adapter = CustomSwipeItemAdapter(mutableListOf<Pair<Int, User>>(), R.layout.item_list_swipeable, R.id.item_layout, false, context!!)
-        listView.setAdapter(adapter, true)
-
-        listView.setSwipeListener(object : ListSwipeHelper.OnSwipeListener {
-            override fun onItemSwipeEnded(item: ListSwipeItem, swipedDirection: ListSwipeItem.SwipeDirection?) {
-                if(swipedDirection == ListSwipeItem.SwipeDirection.LEFT) {
-                    val userItem = item.tag as Pair<Int, User>
-                    val pos = listView.adapter.getPositionForItem(userItem)
-                    listView.adapter.removeItem(pos)
-                }
-            }
-            override fun onItemSwiping(item: ListSwipeItem?, swipedDistanceX: Float) {}
-            override fun onItemSwipeStarted(item: ListSwipeItem?) {}
-        })
-
-        teamMemberEditText.setRawInputType(InputType.TYPE_CLASS_TEXT)
-        teamMemberEditText.setImeActionLabel(resources.getString(R.string.add), EditorInfo.IME_ACTION_SEND)
-        teamMemberEditText.imeOptions = EditorInfo.IME_ACTION_SEND
-        teamMemberEditText.setOnEditorActionListener { textView, actionId, event ->
-            var ret = false
-            if (event == null) {
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    if (teamMemberEditText.text.trim().toString().trim() != "") {
-                        //TODO: check if team member exists
-                        //TODO: check if team member does not already work at the current project
-
-                        listView.adapter.addItem(adapter.itemCount, Pair(adapter.itemCount, User(adapter.itemCount, teamMemberEditText.text.trim().toString(), "")))
-                        teamMemberEditText.setText("")
-                        teamMemberEditText.requestFocus()
-                        ret = true
-                    }
-                }
-            }
-            ret
-        }
-
-        return customView
-    }
-    private fun addProjectButtonClick(customView: View): Boolean {
-        val nameEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_project_name)
-        val productOwnerEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_project_product_owner)
-
-        var closePopup = true
-        if(nameEditText.text.trim().isEmpty()) {
-            nameEditText.error = resources.getString(R.string.error_enter_name)
-            closePopup = false
-        }
-        if(productOwnerEditText.text.trim().isEmpty()) {
-            productOwnerEditText.error = resources.getString(R.string.error_enter_product_owner)
-            closePopup = false
-        }
-
-        //TODO: check if Product Owner exist
-        //TODO: add project
-
-        return closePopup
-    }
-
-    private fun addTeamMemberButtonClick(customView: View): Boolean {
-        //TODO: add team members
-        return true
-    }
-
-    private fun setupAddSprintCustomView(): View {
-        val customView = View.inflate(context, R.layout.popup_add_sprint, null)
-        val sprintNumberEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_number)
-        val selectListTask = customView.findViewById<RecyclerView>(R.id.popup_add_sprint_tasks)
-
-        //TODO: set next sprint number
-        sprintNumberEditText.setText("1")
-
-        setupDatePicker(customView)
-
-        val adapter = FastItemAdapter<CustomSelectableItem>()
-        adapter.withSelectable(true)
-        adapter.withOnPreClickListener { _, _, _, _ -> true }
-        adapter.withEventHook(CustomSelectableItem(null).CheckBoxClickEvent())
-        adapter.add(ScrumbleController.tasks.filter { it.state == TaskState.PRODUCT_BACKLOG }.map { CustomSelectableItem(it) })
-
-        adapter.adapterItems.forEachIndexed { index, item ->
-            if(item.task != null && item.task.state != TaskState.PRODUCT_BACKLOG)
-                (adapter.getExtension(SelectExtension::class.java as Class<SelectExtension<CustomSelectableItem>>) as SelectExtension<CustomSelectableItem>).select(index)
-        }
-
-        selectListTask.layoutManager = LinearLayoutManager(context)
-        selectListTask.itemAnimator = DefaultItemAnimator()
-        selectListTask.adapter = adapter
-
-        return customView
-    }
-    private fun setupDatePicker(customView: View) {
-        val startDateEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_start_date)
-        val endDateEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_deadline)
-
-        val calender = Calendar.getInstance()
-        val dateFormatter = SimpleDateFormat("EEEE, dd.MM.yyyy", Locale("EN"))
-
-        startDateEditText.setText(dateFormatter.format(calender.time))
-        calender.add(Calendar.DAY_OF_MONTH, 1)
-        endDateEditText.setText(dateFormatter.format(calender.time))
-
-        val endPicker = DatePickerDialog.newInstance({ view, year, monthOfYear, dayOfMonth ->
-            endCal.set(year, monthOfYear, dayOfMonth)
-            endDateEditText.setText(dateFormatter.format(endCal.time))
-        }, calender)
-        endCal.set(calender.get(Calendar.YEAR), calender.get(Calendar.MONTH), calender.get(Calendar.DAY_OF_MONTH))
-        endPicker.minDate = endCal
-        endPicker.setTitle(resources.getString(R.string.deadline))
-        endPicker.vibrate(false)
-
-        calender.add(Calendar.DAY_OF_MONTH, -1)
-        val startPicker = DatePickerDialog.newInstance { view, year, monthOfYear, dayOfMonth ->
-            startCal.set(year, monthOfYear, dayOfMonth)
-            startDateEditText.setText(dateFormatter.format(startCal.time))
-
-            startCal.add(Calendar.DAY_OF_MONTH, 1)
-            endPicker.minDate = startCal
-            startCal.add(Calendar.DAY_OF_MONTH, -1)
-
-            if(startCal.time > endCal.time) {
-                endCal.set(endPicker.minDate.get(Calendar.YEAR), endPicker.minDate.get(Calendar.MONTH), endPicker.minDate.get(Calendar.DAY_OF_MONTH))
-                endDateEditText.setText(dateFormatter.format(endCal.time))
-            }
-        }
-        startCal.set(calender.get(Calendar.YEAR), calender.get(Calendar.MONTH), calender.get(Calendar.DAY_OF_MONTH))
-        startPicker.setTitle(resources.getString(R.string.start_date))
-        startPicker.vibrate(false)
-
-        startDateEditText.setOnClickListener {
-            if(!startPicker.isAdded)
-                startPicker.show(fragmentManager, resources.getString(R.string.start_date))
-        }
-        endDateEditText.setOnClickListener {
-            if(!endPicker.isAdded)
-                endPicker.show(fragmentManager, resources.getString(R.string.deadline))
-        }
-    }
-    private fun addSprintButtonClick(customView: View): Boolean {
-        val sprintNumberEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_number)
-
-        var closePopup = true
-        if(sprintNumberEditText.text.trim().isEmpty()) {
-            sprintNumberEditText.error = resources.getString(R.string.error_enter_sprint_number)
-            closePopup = false
-        }
-        else if(!sprintNumberEditText.text.matches("\\d+".toRegex())) {
-            sprintNumberEditText.error = resources.getString(R.string.error_sprint_number_integer)
-            closePopup = false
-        }
-        else {
-            //TODO: check if sprint number already exists
-            println("#######" + startCal.time)
-            println("######" + endCal.time)
-        }
-        //TODO: add sprint
-
-        return closePopup
     }
 }

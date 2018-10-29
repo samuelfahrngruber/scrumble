@@ -8,6 +8,7 @@
 
     <string name="project">Project</string>
     <string name="sprint">Sprint</string>
+    <string name="task">Task</string>
 
     <string name="team">Team</string>
     <string name="sprints">Sprints</string>
@@ -27,16 +28,7 @@
 
     <string name="responsible">Responsible</string>
     <string name="verify">Verify</string>
-
-    <string name="responsible_double_dot">Responsible:</string>
-    <string name="verify_double_dot">Verify:</string>
-    <string name="rejections_double_dot">Rejection%1$s:</string>
-    <string name="task_double_dot">Task: %1$s</string>
-
-    <string name="add_task">Add Task</string>
-    <string name="add_project">Add Project</string>
-    <string name="add_sprint">Add Sprint</string>
-    <string name="add_team_member">Add Team Member</string>
+    <string name="rejections">Rejections</string>
     <string name="close">Close</string>
 
     <string name="error_enter_name">Please enter a name</string>

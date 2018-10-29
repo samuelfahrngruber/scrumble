@@ -13,6 +13,7 @@ import com.llollox.androidtoggleswitch.widgets.ToggleSwitch
 import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.R
 import com.spogss.scrumble.adapter.CustomDragItemAdapter
+import com.spogss.scrumble.controller.PopupController
 import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.enums.TaskState
@@ -36,7 +37,7 @@ class ScrumBoardFragment: Fragment() {
 
         setupBoardView()
         fab_add_task.setOnClickListener {
-            setupPopup()
+            PopupController.setupTaskPopup(context!!, {})
         }
     }
 
@@ -60,8 +61,7 @@ class ScrumBoardFragment: Fragment() {
     //TODO: replace with data from webservice
     private fun addColumn(taskState: TaskState) {
         val items = mutableListOf<Pair<Int, Task>>()
-        ScrumbleController.tasks.filter { it.state == taskState &&
-                ((it.sprint == null && taskState == TaskState.SPRINT_BACKLOG) || (it.sprint != null && taskState != TaskState.SPRINT_BACKLOG)) }
+        ScrumbleController.tasks.filter { it.state == taskState  }
                 .sortedBy { task -> task.position }.forEach { items.add(Pair(it.id, it)) }
 
         val adapter = CustomDragItemAdapter(items, R.layout.board_view_column_item, R.id.item_layout, true, context!!)
@@ -69,73 +69,6 @@ class ScrumBoardFragment: Fragment() {
         (header.findViewById(R.id.column_header_text_view) as TextView).text = taskState.toString().replace('_', ' ')
         board_view.addColumn(adapter, header, null, false)
     }
-
-    private fun setupPopup() {
-        val dialogBuilder = MaterialDialog.Builder(context!!)
-        dialogBuilder.setTitle(R.string.add_task)
-        dialogBuilder.setTitleColor(ContextCompat.getColor(context!!, R.color.colorAccent))
-        dialogBuilder.setPositiveButton(android.R.string.ok, null)
-        dialogBuilder.setNegativeButton(android.R.string.cancel, null)
-        dialogBuilder.setButtonTextColor(ContextCompat.getColor(context!!, R.color.colorAccent))
-        dialogBuilder.setCanceledOnTouchOutside(false)
-
-        val customView = View.inflate(context, R.layout.popup_add_task, null)
-
-        val toggleSwitch = customView.findViewById<ToggleSwitch>(R.id.popup_add_task_toggle_button)
-        toggleSwitch.setCheckedPosition(0)
-        //TODO: Disable ToggleSwitch when currentSprint = null
-
-        setupSpinner(customView)
-
-        dialogBuilder.setScrollableArea(ScrollableArea.Area.CONTENT)
-        dialogBuilder.setView(customView)
-
-        val dialog = dialogBuilder.create()
-        dialog.setOnShowListener {
-            dialog.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener { _ ->
-                if(dialogButtonClick(customView))
-                    dialog.dismiss()
-            }
-        }
-
-        dialog.show()
-    }
-
-    private fun setupSpinner(customView: View) {
-        val responsibleSpinner = customView.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_responsible)
-        responsibleSpinner.setAdapter(ArrayAdapter(context!!, android.R.layout.simple_spinner_dropdown_item, ScrumbleController.users))
-
-        val verifySpinner = customView.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_verify)
-        verifySpinner.setAdapter(ArrayAdapter(context!!, android.R.layout.simple_spinner_dropdown_item, ScrumbleController.users))
-    }
-
-    private fun dialogButtonClick(customView: View): Boolean {
-        val nameEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_task_name)
-        val infoEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_task_info)
-        val responsibleSpinner = customView.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_responsible)
-        val verifySpinner = customView.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_verify)
-
-        var closePopup = true
-        if(nameEditText.text.trim().isEmpty()) {
-            nameEditText.error = resources.getString(R.string.error_enter_name)
-            closePopup = false
-        }
-        if(infoEditText.text.trim().isEmpty()) {
-            infoEditText.error = resources.getString(R.string.error_enter_info)
-            closePopup = false
-        }
-        if(responsibleSpinner.text.trim().isEmpty()) {
-            responsibleSpinner.error = resources.getString(R.string.error_select_team_member)
-            closePopup = false
-        }
-        if(verifySpinner.text.trim().isEmpty()) {
-            verifySpinner.error = resources.getString(R.string.error_select_team_member)
-            closePopup = false
-        }
-
-        return closePopup
-    }
-
 
     inner class ColumnChangeListener: BoardView.BoardListener {
         override fun onItemDragEnded(fromColumn: Int, fromRow: Int, toColumn: Int, toRow: Int){
