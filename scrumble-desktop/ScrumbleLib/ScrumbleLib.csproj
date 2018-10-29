@@ -87,7 +87,6 @@
     <Compile Include="Connection\ObservableCollectionEx.cs" />
     <Compile Include="Connection\ScrumbleConnection.cs" />
     <Compile Include="Connection\ScrumbleController.cs" />
-    <Compile Include="Connection\Wrapper\DataWrapper.cs" />
     <Compile Include="Connection\Wrapper\IDataWrapper.cs" />
     <Compile Include="Connection\Wrapper\ProjectWrapper.cs" />
     <Compile Include="Connection\Wrapper\SprintWrapper.cs" />

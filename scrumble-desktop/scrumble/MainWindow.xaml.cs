@@ -38,9 +38,8 @@ namespace scrumble
 
             testInit();
             Scrumble.Login("user", "pw");
-            TaskWrapper.GetInstance(1);
-            TaskWrapper.GetInstance(2);
-            setSelectedTask(4);
+            TaskWrapper.GetInstance(18);
+            setSelectedTask(18);
             setMyTasks();
             console = new DeveloperConsole(this);
 

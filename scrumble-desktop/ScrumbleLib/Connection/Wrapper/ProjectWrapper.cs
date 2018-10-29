@@ -1,25 +1,81 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using ScrumbleLib.Connection.Json;
 using ScrumbleLib.Data;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ScrumbleLib.Connection.Wrapper
 {
-    public class ProjectWrapper : DataWrapper<Project>, IIndexable
+    public class ProjectWrapper : IDataWrapper<Project>
     {
-        public ProjectWrapper(Project project)
-            : base(project)
-        {
+        public event PropertyChangedEventHandler PropertyChanged;
 
+        public Project WrappedValue { get; private set; }
+
+        private static IndexSet<ProjectWrapper> instances = new IndexSet<ProjectWrapper>();
+
+        public static ProjectWrapper GetInstance(Project wrappedValue)
+        {
+            ProjectWrapper instance;
+            if (instances.Contains(wrappedValue.Id))
+            {
+                instance = instances[wrappedValue.Id];
+                instance.WrappedValue = wrappedValue;
+                instance.OnPropertyChanged(null);
+            }
+            else
+            {
+                instance = new ProjectWrapper(wrappedValue);
+                instances.Add(instance);
+            }
+            return instance;
         }
 
-        public ProjectWrapper(int id)
-            : base(ScrumbleController.GetProject(id).Result)
+        private ProjectWrapper(Project project)
         {
+            WrappedValue = project;
+        }
 
+        public static ProjectWrapper GetInstance(int projectId)
+        {
+            ProjectWrapper instance;
+            if (instances.Contains(projectId))
+            {
+                instance = instances[projectId];
+            }
+            else
+            {
+                instance = new ProjectWrapper(projectId);
+                instances.Add(instance);
+            }
+            return instance;
+        }
+
+        private ProjectWrapper(int id)
+        {
+            WrappedValue = ScrumbleController.GetProject(id).Result;
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (PropertyChanged != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public string ToJson()
+        {
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.ContractResolver = new LowercaseContractResolver();
+            string json = JsonConvert.SerializeObject(this, Formatting.Indented, settings);
+            return json;
         }
 
         public void ApplyFields(int id, string name, int productOwner, int currentSprint)
@@ -44,7 +100,7 @@ namespace ScrumbleLib.Connection.Wrapper
             ApplyJson(JObject.Parse(json));
         }
 
-        public override int Id
+        public int Id
         {
             get
             {

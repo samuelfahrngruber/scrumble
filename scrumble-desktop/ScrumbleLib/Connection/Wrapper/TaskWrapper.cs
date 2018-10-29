@@ -161,6 +161,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
         }
 
+        [JsonProperty(PropertyName = "Responsible")]
         public int ResponsibleUser
         {
             get
@@ -175,6 +176,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
         }
 
+        [JsonProperty(PropertyName = "Verify")]
         public int VerifyingUser
         {
             get

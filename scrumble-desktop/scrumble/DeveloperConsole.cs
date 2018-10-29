@@ -32,7 +32,7 @@ namespace scrumble
                             {
                                 case "project":
                                     {
-                                        ProjectWrapper w = new ProjectWrapper(int.Parse(parts[2]));
+                                        ProjectWrapper w = ProjectWrapper.GetInstance(int.Parse(parts[2]));
                                         result += w.ToJson();
                                         break;
                                     }
@@ -44,13 +44,13 @@ namespace scrumble
                                     }
                                 case "user":
                                     {
-                                        UserWrapper w = new UserWrapper(int.Parse(parts[2]));
+                                        UserWrapper w = UserWrapper.GetInstance(int.Parse(parts[2]));
                                         result += w.ToJson();
                                         break;
                                     }
                                 case "sprint":
                                     {
-                                        SprintWrapper w = new SprintWrapper(int.Parse(parts[2]));
+                                        SprintWrapper w = SprintWrapper.GetInstance(int.Parse(parts[2]));
                                         result += w.ToJson();
                                         break;
                                     }
@@ -69,7 +69,7 @@ namespace scrumble
                             {
                                 case "project":
                                     {
-                                        ProjectWrapper w = new ProjectWrapper(int.Parse(parts[2]));
+                                        ProjectWrapper w = ProjectWrapper.GetInstance(int.Parse(parts[2]));
                                         switch (parts[3].ToLower())
                                         {
                                             case "name":
@@ -138,7 +138,7 @@ namespace scrumble
                                     }
                                 case "user":
                                     {
-                                        UserWrapper w = new UserWrapper(int.Parse(parts[2]));
+                                        UserWrapper w = UserWrapper.GetInstance(int.Parse(parts[2]));
                                         switch (parts[3].ToLower())
                                         {
                                             case "username":
@@ -155,7 +155,7 @@ namespace scrumble
                                     }
                                 case "sprint":
                                     {
-                                        SprintWrapper w = new SprintWrapper(int.Parse(parts[2]));
+                                        SprintWrapper w = SprintWrapper.GetInstance(int.Parse(parts[2]));
                                         switch (parts[3].ToLower())
                                         {
                                             case "number":

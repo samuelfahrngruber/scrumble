@@ -1,24 +1,81 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using ScrumbleLib.Connection.Json;
 using ScrumbleLib.Data;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ScrumbleLib.Connection.Wrapper
 {
-    public class SprintWrapper : DataWrapper<Sprint>
+    public class SprintWrapper : IDataWrapper<Sprint>
     {
-        public SprintWrapper(Sprint wrappedValue) : base(wrappedValue)
-        {
+        public event PropertyChangedEventHandler PropertyChanged;
 
+        public Sprint WrappedValue { get; private set; }
+
+        private static IndexSet<SprintWrapper> instances = new IndexSet<SprintWrapper>();
+
+        public static SprintWrapper GetInstance(Sprint wrappedValue)
+        {
+            SprintWrapper instance;
+            if (instances.Contains(wrappedValue.Id))
+            {
+                instance = instances[wrappedValue.Id];
+                instance.WrappedValue = wrappedValue;
+                instance.OnPropertyChanged(null);
+            }
+            else
+            {
+                instance = new SprintWrapper(wrappedValue);
+                instances.Add(instance);
+            }
+            return instance;
         }
 
-        public SprintWrapper(int id)
-            : base(ScrumbleController.GetSprint(id).Result)
+        private SprintWrapper(Sprint wrappedValue)
         {
+            this.WrappedValue = wrappedValue;
+        }
 
+        public static SprintWrapper GetInstance(int sprintId)
+        {
+            SprintWrapper instance;
+            if (instances.Contains(sprintId))
+            {
+                instance = instances[sprintId];
+            }
+            else
+            {
+                instance = new SprintWrapper(sprintId);
+                instances.Add(instance);
+            }
+            return instance;
+        }
+
+        private SprintWrapper(int id)
+        {
+            this.WrappedValue = ScrumbleController.GetSprint(id).Result;
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (PropertyChanged != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public string ToJson()
+        {
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.ContractResolver = new LowercaseContractResolver();
+            string json = JsonConvert.SerializeObject(this, Formatting.Indented, settings);
+            return json;
         }
 
         public async void ApplyFields(int id, int project, int number, DateTime start, DateTime deadline)
@@ -45,7 +102,7 @@ namespace ScrumbleLib.Connection.Wrapper
             ApplyJson(JObject.Parse(json));
         }
 
-        public override int Id
+        public int Id
         {
             get
             {
@@ -66,6 +123,7 @@ namespace ScrumbleLib.Connection.Wrapper
             set
             {
                 WrappedValue.Project = ScrumbleController.GetProject(value).Result;
+                OnPropertyChanged("Project");
                 ScrumbleConnection.Update(this);
             }
         }
@@ -79,6 +137,7 @@ namespace ScrumbleLib.Connection.Wrapper
             set
             {
                 WrappedValue.Number = value;
+                OnPropertyChanged("Number");
                 ScrumbleConnection.Update(this);
             }
         }
@@ -92,6 +151,7 @@ namespace ScrumbleLib.Connection.Wrapper
             set
             {
                 WrappedValue.Start = value;
+                OnPropertyChanged("Start");
                 ScrumbleConnection.Update(this);
             }
         }
@@ -105,6 +165,7 @@ namespace ScrumbleLib.Connection.Wrapper
             set
             {
                 WrappedValue.Deadline = value;
+                OnPropertyChanged("Deadline");
                 ScrumbleConnection.Update(this);
             }
         }
