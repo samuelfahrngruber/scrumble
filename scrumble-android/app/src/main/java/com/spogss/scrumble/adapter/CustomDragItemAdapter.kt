@@ -55,9 +55,9 @@ class CustomDragItemAdapter
         var text: TextView = itemView.findViewById(R.id.column_item_text_view)
 
         override fun onItemClicked(view: View) {
-            val userStory = view.tag as Task
+            val task = view.tag as Task
 
-            setupPopup(userStory)
+            setupPopup(task)
         }
 
         override fun onItemLongClicked(view: View): Boolean {

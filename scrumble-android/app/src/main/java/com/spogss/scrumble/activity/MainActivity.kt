@@ -9,6 +9,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import com.spogss.scrumble.R
+import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.fragment.DailyScrumFragment
 import com.spogss.scrumble.fragment.MyTasksFragment
 import com.spogss.scrumble.fragment.ProjectsFragment
@@ -24,19 +25,23 @@ class MainActivity : AppCompatActivity() {
         var selectedFragment = fragments[0]
         when (item.itemId) {
             R.id.navigation_my_tasks -> {
-                setupTitle("My Tasks")
+                setupTitle(resources.getString(R.string.my_tasks))
             }
             R.id.navigation_scrum_board -> {
                 selectedFragment = fragments[1]
-                setupTitle("Scrum Board")
+                setupTitle(resources.getString(R.string.scrum_board))
             }
             R.id.navigation_daily_scrum -> {
                 selectedFragment = fragments[2]
-                setupTitle("Daily Scrum")
+                setupTitle(resources.getString(R.string.daily_scrum))
             }
             R.id.navigation_project_overview -> {
                 selectedFragment = fragments[3]
-                setupTitle("Projects")
+                setupTitle(
+                if(ScrumbleController.currentProject == null)
+                    resources.getString(R.string.projects)
+                else
+                    ScrumbleController.currentProject!!.name)
             }
             else -> res = false
         }
@@ -65,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         fragments.add(ProjectsFragment())
     }
 
-    private fun setupTitle(newTitle: String) {
+    fun setupTitle(newTitle: String) {
         val formattedText = SpannableString(newTitle)
         formattedText.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorAccent)), 0, formattedText.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
         title = formattedText

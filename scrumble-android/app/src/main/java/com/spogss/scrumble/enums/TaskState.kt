@@ -1,6 +1,6 @@
 package com.spogss.scrumble.enums
 
-enum class UserStoryState {
+enum class TaskState {
     PRODUCT_BACKLOG,
     SPRINT_BACKLOG,
     IN_PROGRESS,

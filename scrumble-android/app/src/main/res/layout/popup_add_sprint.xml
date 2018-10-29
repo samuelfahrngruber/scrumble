@@ -34,11 +34,19 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:layout_marginBottom="6dp"
+        android:layout_marginBottom="@dimen/twelve_dp"
         android:hint="@string/deadline"
         app:met_floatingLabel="highlight"
         app:met_primaryColor="@color/colorAccent"
         android:focusable="false"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/popup_add_sprint_tasks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="6dp"/>
 
     <View
         android:layout_width="match_parent"

@@ -3,4 +3,7 @@
     <item name="fab_add_project" type="id" />
     <item name="fab_add_sprint" type="id" />
     <item name="fab_add_team_member" type="id" />
+
+    <item name="select_item" type="id"/>
+    <item name="projects_item" type="id" />
 </resources>

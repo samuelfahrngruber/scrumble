@@ -26,17 +26,6 @@ android {
     }
 }
 
-configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        def requested = details.requested
-        if (requested.group == "com.android.support") {
-            if (!requested.name.startsWith("multidex")) {
-                details.useVersion "26.+"
-            }
-        }
-    }
-}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -67,4 +56,9 @@ dependencies {
     implementation "com.leinardi.android:speed-dial:2.0.0"
     //datePicker
     implementation 'com.wdullaer:materialdatetimepicker:4.0.1'
+    //expandableView
+    implementation 'com.github.aakira:expandable-layout:1.6.0@aar'
+    //fastAdapter
+    implementation 'com.mikepenz:fastadapter:3.3.1'
+    implementation 'com.mikepenz:fastadapter-commons:3.3.1'
 }

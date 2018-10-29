@@ -9,6 +9,9 @@
     <string name="project">Project</string>
     <string name="sprint">Sprint</string>
 
+    <string name="team">Team</string>
+    <string name="sprints">Sprints</string>
+
     <string name="name">Name</string>
     <string name="info">Info</string>
     <string name="product_owner">Product Owner</string>
@@ -19,6 +22,8 @@
 
     <string name="current_sprint">Current Sprint</string>
     <string name="product_backlog">Product Backlog</string>
+
+    <string name="change_project">Change project</string>
 
     <string name="responsible">Responsible</string>
     <string name="verify">Verify</string>

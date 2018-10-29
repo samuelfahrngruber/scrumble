@@ -1,28 +1,26 @@
 package com.spogss.scrumble.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.text.InputType
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.leinardi.android.speeddial.SpeedDialActionItem
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import com.mikepenz.fastadapter.select.SelectExtension
 import com.rengwuxian.materialedittext.MaterialEditText
-import com.rengwuxian.materialedittext.validation.RegexpValidator
 import com.spogss.scrumble.R
+import com.spogss.scrumble.controller.ScrumbleController
+import com.spogss.scrumble.adapter.CustomOverviewHeaderAdapter
 import com.spogss.scrumble.adapter.CustomSwipeItemAdapter
-import com.spogss.scrumble.data.Project
-import com.spogss.scrumble.data.Sprint
-import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.data.User
-import com.spogss.scrumble.enums.UserStoryState
-import com.wdullaer.materialdatetimepicker.date.DatePickerController
+import com.spogss.scrumble.enums.TaskState
+import com.spogss.scrumble.viewItem.CustomSelectableItem
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.woxthebox.draglistview.DragListView
 import com.woxthebox.draglistview.swipe.ListSwipeHelper
@@ -30,6 +28,7 @@ import com.woxthebox.draglistview.swipe.ListSwipeItem
 import de.mrapp.android.dialog.MaterialDialog
 import de.mrapp.android.dialog.ScrollableArea
 import kotlinx.android.synthetic.main.fragment_projects.*
+import org.jetbrains.anko.collections.forEachByIndex
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -38,24 +37,39 @@ class ProjectsFragment: Fragment() {
     private val startCal = Calendar.getInstance()
     private val endCal = Calendar.getInstance()
 
-    //TODO: remove when webservice call is possible
-    private var users = mutableListOf<User>()
-    private var projects = mutableListOf<Project>()
-    private var sprints = mutableListOf<Sprint>()
-    private var userStories = mutableListOf<Task>()
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        setHasOptionsMenu(true)
 
-        //TODO: remove when webservice call is possible
-        createTestData()
         return inflater.inflate(R.layout.fragment_projects, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupProjectsList()
         setupSpeedDial()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.change_project, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.menu_item_change_project -> Toast.makeText(context, "change project", Toast.LENGTH_SHORT).show()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun setupProjectsList() {
+        //list_headers.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        list_headers.layoutManager = LinearLayoutManager(context)
+        list_headers.adapter = CustomOverviewHeaderAdapter(mutableListOf(
+                context!!.resources.getString(R.string.team),
+                context!!.resources.getString(R.string.sprints),
+                context!!.resources.getString(R.string.product_backlog)), ScrumbleController.users, ScrumbleController.sprints, ScrumbleController.tasks, context!!)
     }
 
     private fun setupSpeedDial() {
@@ -140,7 +154,7 @@ class ProjectsFragment: Fragment() {
 
         listView.setLayoutManager(LinearLayoutManager(context))
         listView.isDragEnabled = false
-        val adapter = CustomSwipeItemAdapter(mutableListOf<Pair<Int, User>>(), R.layout.swipe_list_item, R.id.item_layout, false, context!!)
+        val adapter = CustomSwipeItemAdapter(mutableListOf<Pair<Int, User>>(), R.layout.item_list_swipeable, R.id.item_layout, false, context!!)
         listView.setAdapter(adapter, true)
 
         listView.setSwipeListener(object : ListSwipeHelper.OnSwipeListener {
@@ -206,11 +220,33 @@ class ProjectsFragment: Fragment() {
     private fun setupAddSprintCustomView(): View {
         val customView = View.inflate(context, R.layout.popup_add_sprint, null)
         val sprintNumberEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_number)
-        val startDateEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_start_date)
-        val endDateEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_deadline)
+        val selectListTask = customView.findViewById<RecyclerView>(R.id.popup_add_sprint_tasks)
 
         //TODO: set next sprint number
         sprintNumberEditText.setText("1")
+
+        setupDatePicker(customView)
+
+        val adapter = FastItemAdapter<CustomSelectableItem>()
+        adapter.withSelectable(true)
+        adapter.withOnPreClickListener { _, _, _, _ -> true }
+        adapter.withEventHook(CustomSelectableItem(null).CheckBoxClickEvent())
+        adapter.add(ScrumbleController.tasks.filter { it.state == TaskState.PRODUCT_BACKLOG }.map { CustomSelectableItem(it) })
+
+        adapter.adapterItems.forEachIndexed { index, item ->
+            if(item.task != null && item.task.state != TaskState.PRODUCT_BACKLOG)
+                (adapter.getExtension(SelectExtension::class.java as Class<SelectExtension<CustomSelectableItem>>) as SelectExtension<CustomSelectableItem>).select(index)
+        }
+
+        selectListTask.layoutManager = LinearLayoutManager(context)
+        selectListTask.itemAnimator = DefaultItemAnimator()
+        selectListTask.adapter = adapter
+
+        return customView
+    }
+    private fun setupDatePicker(customView: View) {
+        val startDateEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_start_date)
+        val endDateEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_deadline)
 
         val calender = Calendar.getInstance()
         val dateFormatter = SimpleDateFormat("EEEE, dd.MM.yyyy", Locale("EN"))
@@ -247,13 +283,13 @@ class ProjectsFragment: Fragment() {
         startPicker.vibrate(false)
 
         startDateEditText.setOnClickListener {
-            startPicker.show(fragmentManager, resources.getString(R.string.start_date))
+            if(!startPicker.isAdded)
+                startPicker.show(fragmentManager, resources.getString(R.string.start_date))
         }
         endDateEditText.setOnClickListener {
-            endPicker.show(fragmentManager, resources.getString(R.string.deadline))
+            if(!endPicker.isAdded)
+                endPicker.show(fragmentManager, resources.getString(R.string.deadline))
         }
-
-        return customView
     }
     private fun addSprintButtonClick(customView: View): Boolean {
         val sprintNumberEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_number)
@@ -276,57 +312,4 @@ class ProjectsFragment: Fragment() {
 
         return closePopup
     }
-
-
-    //TODO: remove when webservice call is possible
-    private fun createTestData() {
-        users.clear()
-        projects.clear()
-        sprints.clear()
-        userStories.clear()
-
-        val sam = User(0, "Sam", "entersamspassworthere")
-        val pauli = User(1, "Pauli", "phaulson")
-        val simon = User(2, "Simon", "hamsterbacke")
-        val webi = User(3, "Webi", "livepoolftw")
-        val savan = User(4, "Savan", "chelseafcgothistory")
-        users.add(sam)
-        users.add(pauli)
-        users.add(simon)
-        users.add(webi)
-        users.add(savan)
-
-        val scrumble = Project(0, "Scrumble", sam, mutableListOf(pauli, simon, webi), null)
-        val footballsimulator = Project(1, "Football Simulator", savan, mutableListOf(webi), null)
-        projects.add(scrumble)
-        projects.add(footballsimulator)
-
-        val scrumble1 = Sprint(0, 1, Date(2018, 10, 3), Date(2018, 10, 12), 0)
-        val scrumble2 = Sprint(1, 2, Date(2018, 10, 12), Date(2018, 11, 1), 0)
-        val scrumble3 = Sprint(2, 3, Date(2018, 11, 3), Date(2018, 11, 22), 0)
-        val footballsimulator1 = Sprint(3, 1, Date(2018, 10, 10), Date(2018, 10, 30), 1)
-        val footballsimulator2 = Sprint(4, 2, Date(2018, 11, 1), Date(2018, 11, 15), 1)
-        sprints.add(scrumble1)
-        sprints.add(scrumble2)
-        sprints.add(scrumble3)
-        sprints.add(footballsimulator1)
-        sprints.add(footballsimulator2)
-
-        val scrumbleGUI = Task(0, pauli, sam, "GUI Programmieren", "Hierbei handelt es sich um die Android GUI",
-                0, UserStoryState.IN_PROGRESS, 1, 0, 0)
-        val scrumbleDB = Task(1, webi, simon, "Datenbank aufsetzten", "Inklusive Trigger, Sequenzen usw...",
-                0, UserStoryState.TO_VERIFY, 1, 0, 0)
-        val scrumbleWebservice = Task(2, webi, pauli, "Webservice implementieren", "Der Webservice connected Client mit Datenbank",
-                0, UserStoryState.SPRINT_BACKLOG, 1, null, 0)
-        val scrumbleTesting = Task(3, simon, sam, "Testen", "Sollen wir Unit-Tests machen? Keine Ahnung",
-                0, UserStoryState.SPRINT_BACKLOG, 2, null, 0)
-        val scrumblePlaning = Task(4, sam, pauli, "Planung", "Geplant wird immer, weil wir mit Scrum arbeiten, lol. Hier steht auch noch mehr Text",
-                0, UserStoryState.IN_PROGRESS, 2, 0, 0)
-        userStories.add(scrumbleGUI)
-        userStories.add(scrumbleDB)
-        userStories.add(scrumbleWebservice)
-        userStories.add(scrumbleTesting)
-        userStories.add(scrumblePlaning)
-    }
-
 }
