@@ -6,8 +6,8 @@ var tasks = [];
 
 var state2column = {
     "SPRINTBACKLOG": "column-sprintbacklog",
-    "INPROGRESS": "column-inprogress",
-    "INTEST": "column-intest",
+    "IN_PROGRESS": "column-inprogress",
+    "TO_VERIFY": "column-intest",
     "DONE": "column-done"
 }
 

@@ -13,17 +13,22 @@ namespace ScrumbleLib.Connection
     {
         private const string webserviceUrl = "https://scrumble-api.herokuapp.com/";
         private static HttpClient client = new HttpClient();
-        private static string getUrlForWrapper<T>(IDataWrapper<T> w)
+        private static string getUrlForType(Type t)
         {
-            if (typeof(T) == typeof(Project)) return "scrumble/project/";
-            if (typeof(T) == typeof(Sprint)) return "scrumble/sprint/";
-            if (typeof(T) == typeof(Data.Task)) return "scrumble/task/";
-            if (typeof(T) == typeof(User)) return "scrumble/user/";
+            if (t == typeof(Project)) return webserviceUrl + "scrumble/project/";
+            if (t == typeof(Sprint)) return webserviceUrl + "scrumble/sprint/";
+            if (t == typeof(Data.Task)) return webserviceUrl + "scrumble/task/";
+            if (t == typeof(User)) return webserviceUrl + "scrumble/user/";
             //throw new Exception("invalid type for ScrumbleConnection.Update<T>(IDataWrapper<T>)");
             return null;
         }
 
-        public static async void Update<T>(IDataWrapper<T> wrapper)
+        private static string getUrlForWrapper<T>(IDataWrapper<T> wrapper)
+        {
+            return getUrlForType(typeof(T)) + wrapper.Id;
+        }
+
+        public static void Update<T>(IDataWrapper<T> wrapper)
         {
             string url = getUrlForWrapper(wrapper);
             string json = wrapper.ToJson();
@@ -31,7 +36,7 @@ namespace ScrumbleLib.Connection
             Scrumble.Log(json, "#00FFFF");
         }
 
-        public static async void Add<T>(IDataWrapper<T> wrapper)
+        public static void Add<T>(IDataWrapper<T> wrapper)
         {
             string url = getUrlForWrapper(wrapper);
             string json = wrapper.ToJson();
@@ -39,7 +44,7 @@ namespace ScrumbleLib.Connection
             Scrumble.Log(json, "#FFFF00");
         }
 
-        public static async Task<Project> GetProject(Project project)
+        public static Project GetProject(Project project)
         {
             ProjectWrapper wrapper = ProjectWrapper.GetInstance(project);
             int projectId = wrapper.Id;
@@ -49,18 +54,20 @@ namespace ScrumbleLib.Connection
             //    "\"currentsprint\":" + 666 + "," +
             //    "\"productowner\":" + projectId * 2 + "" +
             //    "}";
-            string url = webserviceUrl + getUrlForWrapper(wrapper) + project.Id;
-            HttpResponseMessage response = await client.GetAsync(url);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                return null;
-            string json = await response.Content.ReadAsStringAsync();
+            string url = getUrlForWrapper(wrapper);
+            string json = "";
+            HttpResponseMessage response = client.GetAsync(url).Result;
+            if (response.IsSuccessStatusCode)
+                json = response.Content.ReadAsStringAsync().Result;
+            else
+                throw new Exception("invalid get at " + url + "for id " + wrapper.Id);
             Scrumble.Log("GET - Project:", "#00FF00");
             Scrumble.Log(json, "#00FF00");
             wrapper.ApplyJson(json);
             return project;
         }
 
-        public static async Task<User> GetUser(User user)
+        public static User GetUser(User user)
         {
             UserWrapper wrapper = UserWrapper.GetInstance(user);
             int userId = wrapper.Id;
@@ -68,19 +75,20 @@ namespace ScrumbleLib.Connection
             //    "\"id\":" + userId + "," +
             //    "\"username\":\"USER" + userId + "\"" +
             //    "}";
-            string url = webserviceUrl + getUrlForWrapper(wrapper) + "/" + user.Id;
-            HttpResponseMessage response = await client.GetAsync(url);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                return null;
-            string json = await response.Content.ReadAsStringAsync();
-
+            string url = getUrlForWrapper(wrapper);
+            string json = "";
+            HttpResponseMessage response = client.GetAsync(url).Result;
+            if (response.IsSuccessStatusCode)
+                json = response.Content.ReadAsStringAsync().Result;
+            else
+                throw new Exception("invalid get at " + url + "for id " + wrapper.Id);
             Scrumble.Log("GET - User:", "#00FF00");
             Scrumble.Log(json, "#00FF00");
             wrapper.ApplyJson(json);
             return user;
         }
 
-        public static async Task<Data.Task> GetTask(Data.Task task)
+        public static Data.Task GetTask(Data.Task task)
         {
             TaskWrapper wrapper = TaskWrapper.GetInstance(task);
             int taskId = task.Id;
@@ -94,21 +102,20 @@ namespace ScrumbleLib.Connection
             //    "\"sprint\":" + taskId + "," +
             //    "\"state\":\"" + "INTEST" + "\"" +
             //    "}";
-            string url = webserviceUrl + getUrlForWrapper(wrapper) + task.Id;
-
-            //string json = client.GetStringAsync("https://scrumble-api.herokuapp.com/scrumble/task/18").Result;
+            string url = getUrlForWrapper(wrapper);
             string json = "";
-            HttpResponseMessage response = await client.GetAsync("https://scrumble-api.herokuapp.com/scrumble/task/18");
+            HttpResponseMessage response = client.GetAsync(url).Result;
             if (response.IsSuccessStatusCode)
-                json = await response.Content.ReadAsStringAsync();
-
+                json = response.Content.ReadAsStringAsync().Result;
+            else
+                throw new Exception("invalid get at " + url + "for id " + wrapper.Id);
             Scrumble.Log("GET - Task:", "#00FF00");
             Scrumble.Log(json, "#00FF00");
             wrapper.ApplyJson(json);
             return task;
         }
 
-        public static async Task<Sprint> GetSprint(Sprint sprint)
+        public static Sprint GetSprint(Sprint sprint)
         {
             SprintWrapper wrapper = SprintWrapper.GetInstance(sprint);
             int sprintId = wrapper.Id;
@@ -119,12 +126,13 @@ namespace ScrumbleLib.Connection
             //    "\"start\":\"" + new DateTime() + "\"," +
             //    "\"deadline\":\"" + new DateTime() + "\"" +
             //    "}";
-            string url = webserviceUrl + getUrlForWrapper(wrapper) + "/" + sprint.Id;
+            string url = getUrlForWrapper(wrapper);
+            string json = "";
             HttpResponseMessage response = client.GetAsync(url).Result;
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                return null;
-            string json = await response.Content.ReadAsStringAsync();
-
+            if (response.IsSuccessStatusCode)
+                json = response.Content.ReadAsStringAsync().Result;
+            else
+                throw new Exception("invalid get at " + url + "for id " + wrapper.Id);
             Scrumble.Log("GET - Sprint:", "#00FF00");
             Scrumble.Log(json, "#00FF00");
             wrapper.ApplyJson(json);

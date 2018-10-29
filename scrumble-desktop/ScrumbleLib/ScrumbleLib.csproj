@@ -81,10 +81,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Connection\ConnectionMock.cs" />
-    <Compile Include="Connection\IndexSet.cs" />
+    <Compile Include="Utils\IndexSet.cs" />
     <Compile Include="Connection\Json\LowercaseContractResolver.cs" />
-    <Compile Include="Connection\ObservableCollectionEx.cs" />
+    <Compile Include="Utils\ObservableCollectionEx.cs" />
     <Compile Include="Connection\ScrumbleConnection.cs" />
     <Compile Include="Connection\ScrumbleController.cs" />
     <Compile Include="Connection\Wrapper\IDataWrapper.cs" />
@@ -92,15 +91,16 @@
     <Compile Include="Connection\Wrapper\SprintWrapper.cs" />
     <Compile Include="Connection\Wrapper\TaskWrapper.cs" />
     <Compile Include="Connection\Wrapper\UserWrapper.cs" />
-    <Compile Include="Data\IIndexable.cs" />
+    <Compile Include="Utils\IIndexable.cs" />
     <Compile Include="Data\Project.cs" />
-    <Compile Include="Data\ScrumBoardColumn.cs" />
+    <Compile Include="Data\TaskState.cs" />
     <Compile Include="Data\Sprint.cs" />
     <Compile Include="IDevLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\User.cs" />
     <Compile Include="Data\Task.cs" />
     <Compile Include="Scrumble.cs" />
+    <Compile Include="WrapperFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

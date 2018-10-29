@@ -31,7 +31,7 @@ user
                 switch (input)
                 {
                     case "project":
-                        ProjectWrapper pw = new ProjectWrapper(id);
+                        ProjectWrapper pw = ProjectWrapper(id);
                         break;
                     case "sprint":
                         SprintWrapper sw = new SprintWrapper(id);

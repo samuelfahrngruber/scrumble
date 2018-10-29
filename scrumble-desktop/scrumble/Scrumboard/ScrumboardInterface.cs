@@ -1,4 +1,5 @@
 ﻿using CefSharp.Wpf;
+using ScrumbleLib;
 using ScrumbleLib.Connection.Wrapper;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace scrumble.Scrumboard
 
         public void changeTaskState(int taskId, string taskState)
         {
-            TaskWrapper.GetInstance(taskId).State = taskState;
+            Scrumble.WrapperFactory.CreateTaskWrapper(taskId).State = taskState;
         }
     }
 }

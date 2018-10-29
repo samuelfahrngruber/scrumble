@@ -37,7 +37,6 @@ namespace ScrumbleLib.Connection
 
         public bool Add(T value)
         {
-            // data[value.Id] = value;
             if (Contains(value.Id))
                 return false;
             data.Add(value.Id, value);

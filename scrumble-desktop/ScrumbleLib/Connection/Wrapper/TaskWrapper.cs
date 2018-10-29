@@ -18,7 +18,7 @@ namespace ScrumbleLib.Connection.Wrapper
 
         private static IndexSet<TaskWrapper> instances = new IndexSet<TaskWrapper>();
 
-        public static TaskWrapper GetInstance(Task wrappedValue)
+        internal static TaskWrapper GetInstance(Task wrappedValue)
         {
             TaskWrapper instance;
             if (instances.Contains(wrappedValue.Id))
@@ -39,7 +39,7 @@ namespace ScrumbleLib.Connection.Wrapper
             WrappedValue = wrappedValue;
         }
 
-        public static TaskWrapper GetInstance(int taskId)
+        internal static TaskWrapper GetInstance(int taskId)
         {
             TaskWrapper instance;
             if (instances.Contains(taskId))
@@ -55,7 +55,7 @@ namespace ScrumbleLib.Connection.Wrapper
 
         private TaskWrapper(int id)
         {
-            WrappedValue = ScrumbleController.GetTask(id).Result;
+            WrappedValue = ScrumbleController.GetTask(id);
         }
 
         protected void OnPropertyChanged(string propertyName)
@@ -88,22 +88,22 @@ namespace ScrumbleLib.Connection.Wrapper
                (string)jsonObject["name"],
                (string)jsonObject["info"],
                (int)jsonObject["rejections"],
-               (int)jsonObject["responsibleuser"],
-               (int)jsonObject["verifyinguser"],
-               (int)jsonObject["sprint"],
+               (int)jsonObject["responible"], //responsibleUser
+               (int)jsonObject["verify"], //verifyingUser
+               (int?)jsonObject["sprint"],
                (string)jsonObject["state"]);
         }
 
-        public void ApplyFields(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int sprint, string state)
+        public void ApplyFields(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int? sprint, string state)
         {
             WrappedValue.Id = id;
             WrappedValue.Name = name;
             WrappedValue.Info = info;
             WrappedValue.Rejections = rejections;
-            WrappedValue.ResponsibleUser = ScrumbleController.GetUser(responsibleUser).Result;
-            WrappedValue.VerifyingUser = ScrumbleController.GetUser(verifyingUser).Result;
-            WrappedValue.Sprint = ScrumbleController.GetSprint(sprint).Result;
-            WrappedValue.State = ScrumBoardColumnParser.Parse(state);
+            WrappedValue.ResponsibleUser = ScrumbleController.GetUser(responsibleUser);
+            WrappedValue.VerifyingUser = ScrumbleController.GetUser(verifyingUser);
+            WrappedValue.Sprint = sprint == null ? null : ScrumbleController.GetSprint((int)sprint);
+            WrappedValue.State = TaskStateParser.Parse(state);
         }
 
         public int Id
@@ -161,7 +161,6 @@ namespace ScrumbleLib.Connection.Wrapper
             }
         }
 
-        [JsonProperty(PropertyName = "Responsible")]
         public int ResponsibleUser
         {
             get
@@ -170,13 +169,12 @@ namespace ScrumbleLib.Connection.Wrapper
             }
             set
             {
-                WrappedValue.ResponsibleUser = ScrumbleController.GetUser(value).Result;
+                WrappedValue.ResponsibleUser = ScrumbleController.GetUser(value);
                 OnPropertyChanged("ResponsibleUser");
                 ScrumbleConnection.Update(this);
             }
         }
 
-        [JsonProperty(PropertyName = "Verify")]
         public int VerifyingUser
         {
             get
@@ -185,7 +183,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
             set
             {
-                WrappedValue.VerifyingUser = ScrumbleController.GetUser(value).Result;
+                WrappedValue.VerifyingUser = ScrumbleController.GetUser(value);
                 OnPropertyChanged("VerifyingUser");
                 ScrumbleConnection.Update(this);
             }
@@ -199,7 +197,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
             set
             {
-                WrappedValue.State = ScrumBoardColumnParser.Parse(value);
+                WrappedValue.State = TaskStateParser.Parse(value);
                 OnPropertyChanged("State");
                 ScrumbleConnection.Update(this);
             }

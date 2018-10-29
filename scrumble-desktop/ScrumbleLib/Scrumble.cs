@@ -15,7 +15,17 @@ namespace ScrumbleLib
         public static ObservableCollectionEx<TaskWrapper> MyTasks { get; private set; } = new ObservableCollectionEx<TaskWrapper>();
         public static ObservableCollectionEx<TaskWrapper> Scrumboard { get; private set; } = new ObservableCollectionEx<TaskWrapper>();
 
+        public static int CurrentProject
+        {
+            get
+            {
+                return ScrumbleController.currentProject;
+            }
+        }
+
         public static IDevLogger Logger { get; set; }
+
+        public static WrapperFactory WrapperFactory { get; } = new WrapperFactory();
 
         public static bool Login(string username, string password)
         {

@@ -19,7 +19,7 @@ namespace ScrumbleLib.Connection.Wrapper
 
         private static IndexSet<UserWrapper> instances = new IndexSet<UserWrapper>();
 
-        public static UserWrapper GetInstance(User wrappedValue)
+        internal static UserWrapper GetInstance(User wrappedValue)
         {
             UserWrapper instance;
             if (instances.Contains(wrappedValue.Id))
@@ -41,7 +41,7 @@ namespace ScrumbleLib.Connection.Wrapper
             WrappedValue = wrappedValue;
         }
 
-        public static UserWrapper GetInstance(int userId)
+        internal static UserWrapper GetInstance(int userId)
         {
             UserWrapper instance;
             if (instances.Contains(userId))
@@ -58,7 +58,7 @@ namespace ScrumbleLib.Connection.Wrapper
 
         private UserWrapper(int id)
         {
-            WrappedValue = ScrumbleController.GetUser(id).Result;
+            WrappedValue = ScrumbleController.GetUser(id);
         }
 
         protected void OnPropertyChanged(string propertyName)
@@ -88,7 +88,7 @@ namespace ScrumbleLib.Connection.Wrapper
         {
             ApplyFields(
                 (int)jsonObject["id"],
-                (string)jsonObject["username"]);
+                (string)jsonObject["name"]); // username
         }
 
         public void ApplyJson(string json)

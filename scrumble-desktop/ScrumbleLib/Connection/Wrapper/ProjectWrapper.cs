@@ -19,7 +19,7 @@ namespace ScrumbleLib.Connection.Wrapper
 
         private static IndexSet<ProjectWrapper> instances = new IndexSet<ProjectWrapper>();
 
-        public static ProjectWrapper GetInstance(Project wrappedValue)
+        internal static ProjectWrapper GetInstance(Project wrappedValue)
         {
             ProjectWrapper instance;
             if (instances.Contains(wrappedValue.Id))
@@ -41,7 +41,7 @@ namespace ScrumbleLib.Connection.Wrapper
             WrappedValue = project;
         }
 
-        public static ProjectWrapper GetInstance(int projectId)
+        internal static ProjectWrapper GetInstance(int projectId)
         {
             ProjectWrapper instance;
             if (instances.Contains(projectId))
@@ -58,7 +58,7 @@ namespace ScrumbleLib.Connection.Wrapper
 
         private ProjectWrapper(int id)
         {
-            WrappedValue = ScrumbleController.GetProject(id).Result;
+            WrappedValue = ScrumbleController.GetProject(id);
         }
 
         protected void OnPropertyChanged(string propertyName)
@@ -82,17 +82,17 @@ namespace ScrumbleLib.Connection.Wrapper
         {
             WrappedValue.Id = id;
             WrappedValue.Name = name;
-            WrappedValue.ProductOwner = ScrumbleController.GetUser(productOwner).Result;
-            WrappedValue.CurrentSprint = ScrumbleController.GetSprint(currentSprint).Result;
+            WrappedValue.ProductOwner = ScrumbleController.GetUser(productOwner);
+            WrappedValue.CurrentSprint = ScrumbleController.GetSprint(currentSprint);
         }
 
         public void ApplyJson(JObject jsonObject)
         {
             ApplyFields(
                 (int)jsonObject["id"],
-                (string)jsonObject["project"],
+                (string)jsonObject["name"],
                 (int)jsonObject["productowner"],
-                (int)jsonObject["currentsprint"]);
+                (int)jsonObject["currentSprint"]); // currentsprint
         }
 
         public void ApplyJson(string json)
@@ -136,7 +136,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
             set
             {
-                WrappedValue.ProductOwner = ScrumbleController.GetUser(value).Result;
+                WrappedValue.ProductOwner = ScrumbleController.GetUser(value);
                 OnPropertyChanged("ProductOwner");
                 ScrumbleConnection.Update(this);
             }
@@ -150,7 +150,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
             set
             {
-                WrappedValue.CurrentSprint = ScrumbleController.GetSprint(value).Result;
+                WrappedValue.CurrentSprint = ScrumbleController.GetSprint(value);
                 OnPropertyChanged("CurrentSprint");
                 ScrumbleConnection.Update(this);
             }

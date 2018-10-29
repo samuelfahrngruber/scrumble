@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "scrumble", "scrumble\scrumb
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrumbleLib", "ScrumbleLib\ScrumbleLib.csproj", "{6E96CDAB-B52B-44CA-96B3-C89BD0931479}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrumbleExperiments", "ScrumbleExperiments\ScrumbleExperiments.csproj", "{64CAF95D-4D38-4C61-B7B3-3EEAEC72DC64}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,18 +41,6 @@ Global
 		{6E96CDAB-B52B-44CA-96B3-C89BD0931479}.Release|x64.Build.0 = Release|x64
 		{6E96CDAB-B52B-44CA-96B3-C89BD0931479}.Release|x86.ActiveCfg = Release|x86
 		{6E96CDAB-B52B-44CA-96B3-C89BD0931479}.Release|x86.Build.0 = Release|x86
-		{64CAF95D-4D38-4C61-B7B3-3EEAEC72DC64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64CAF95D-4D38-4C61-B7B3-3EEAEC72DC64}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64CAF95D-4D38-4C61-B7B3-3EEAEC72DC64}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{64CAF95D-4D38-4C61-B7B3-3EEAEC72DC64}.Debug|x64.Build.0 = Debug|Any CPU
-		{64CAF95D-4D38-4C61-B7B3-3EEAEC72DC64}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{64CAF95D-4D38-4C61-B7B3-3EEAEC72DC64}.Debug|x86.Build.0 = Debug|Any CPU
-		{64CAF95D-4D38-4C61-B7B3-3EEAEC72DC64}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64CAF95D-4D38-4C61-B7B3-3EEAEC72DC64}.Release|Any CPU.Build.0 = Release|Any CPU
-		{64CAF95D-4D38-4C61-B7B3-3EEAEC72DC64}.Release|x64.ActiveCfg = Release|Any CPU
-		{64CAF95D-4D38-4C61-B7B3-3EEAEC72DC64}.Release|x64.Build.0 = Release|Any CPU
-		{64CAF95D-4D38-4C61-B7B3-3EEAEC72DC64}.Release|x86.ActiveCfg = Release|Any CPU
-		{64CAF95D-4D38-4C61-B7B3-3EEAEC72DC64}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

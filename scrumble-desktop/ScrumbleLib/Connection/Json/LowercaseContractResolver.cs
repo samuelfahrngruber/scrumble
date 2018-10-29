@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ScrumbleLib.Connection.Json
 {
-    public class LowercaseContractResolver : DefaultContractResolver
+    internal class LowercaseContractResolver : DefaultContractResolver
     {
         protected override string ResolvePropertyName(string propertyName)
         {

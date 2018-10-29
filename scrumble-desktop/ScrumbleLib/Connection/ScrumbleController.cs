@@ -24,7 +24,7 @@ namespace ScrumbleLib.Connection
 
         public static IndexSet<User> Users { get; private set; } = new IndexSet<User>();
 
-        public static async Task<Project> GetProject(int id)
+        public static Project GetProject(int id)
         {
             if (Projects.Contains(id))
             {
@@ -32,12 +32,12 @@ namespace ScrumbleLib.Connection
             }
             Project project = new Project(id);
             Projects.Add(project);
-            project = await ScrumbleConnection.GetProject(project);
+            project = ScrumbleConnection.GetProject(project);
             Scrumble.OnProjectAdded(project);
             return project;
         }
 
-        public static async Task<User> GetUser(int id)
+        public static User GetUser(int id)
         {
             if (Users.Contains(id))
             {
@@ -45,12 +45,12 @@ namespace ScrumbleLib.Connection
             }
             User user = new User(id);
             Users.Add(user);
-            user = await ScrumbleConnection.GetUser(user);
+            user = ScrumbleConnection.GetUser(user);
             Scrumble.OnUserAdded(user);
             return user;
         }
 
-        public static async Task<Data.Task> GetTask(int id)
+        public static Data.Task GetTask(int id)
         {
             if (Tasks.Contains(id))
             {
@@ -58,12 +58,12 @@ namespace ScrumbleLib.Connection
             }
             Data.Task task = new Data.Task(id);
             Tasks.Add(task);
-            task = await ScrumbleConnection.GetTask(task);
+            task = ScrumbleConnection.GetTask(task);
             Scrumble.OnTaskAdded(task);
             return task;
         }
 
-        public static async Task<Sprint> GetSprint(int id)
+        public static Sprint GetSprint(int id)
         {
             if (Sprints.Contains(id))
             {
@@ -71,7 +71,7 @@ namespace ScrumbleLib.Connection
             }
             Sprint sprint = new Sprint(id);
             Sprints.Add(sprint);
-            sprint = await ScrumbleConnection.GetSprint(sprint);
+            sprint = ScrumbleConnection.GetSprint(sprint);
             Scrumble.OnSprintAdded(sprint);
             return sprint;
         }

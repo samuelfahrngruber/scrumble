@@ -32,25 +32,25 @@ namespace scrumble
                             {
                                 case "project":
                                     {
-                                        ProjectWrapper w = ProjectWrapper.GetInstance(int.Parse(parts[2]));
+                                        ProjectWrapper w = Scrumble.WrapperFactory.CreateProjectWrapper(int.Parse(parts[2]));
                                         result += w.ToJson();
                                         break;
                                     }
                                 case "task":
                                     {
-                                        TaskWrapper w = TaskWrapper.GetInstance(int.Parse(parts[2]));
+                                        TaskWrapper w = Scrumble.WrapperFactory.CreateTaskWrapper(int.Parse(parts[2]));
                                         result += w.ToJson();
                                         break;
                                     }
                                 case "user":
                                     {
-                                        UserWrapper w = UserWrapper.GetInstance(int.Parse(parts[2]));
+                                        UserWrapper w = Scrumble.WrapperFactory.CreateUserWrapper(int.Parse(parts[2]));
                                         result += w.ToJson();
                                         break;
                                     }
                                 case "sprint":
                                     {
-                                        SprintWrapper w = SprintWrapper.GetInstance(int.Parse(parts[2]));
+                                        SprintWrapper w = Scrumble.WrapperFactory.CreateSprintWrapper(int.Parse(parts[2]));
                                         result += w.ToJson();
                                         break;
                                     }
@@ -69,7 +69,7 @@ namespace scrumble
                             {
                                 case "project":
                                     {
-                                        ProjectWrapper w = ProjectWrapper.GetInstance(int.Parse(parts[2]));
+                                        ProjectWrapper w = Scrumble.WrapperFactory.CreateProjectWrapper(int.Parse(parts[2]));
                                         switch (parts[3].ToLower())
                                         {
                                             case "name":
@@ -96,7 +96,7 @@ namespace scrumble
                                     }
                                 case "task":
                                     {
-                                        TaskWrapper w = TaskWrapper.GetInstance(int.Parse(parts[2]));
+                                        TaskWrapper w = Scrumble.WrapperFactory.CreateTaskWrapper(int.Parse(parts[2]));
                                         switch (parts[3].ToLower())
                                         {
                                             case "name":
@@ -138,7 +138,7 @@ namespace scrumble
                                     }
                                 case "user":
                                     {
-                                        UserWrapper w = UserWrapper.GetInstance(int.Parse(parts[2]));
+                                        UserWrapper w = Scrumble.WrapperFactory.CreateUserWrapper(int.Parse(parts[2]));
                                         switch (parts[3].ToLower())
                                         {
                                             case "username":
@@ -155,7 +155,7 @@ namespace scrumble
                                     }
                                 case "sprint":
                                     {
-                                        SprintWrapper w = SprintWrapper.GetInstance(int.Parse(parts[2]));
+                                        SprintWrapper w = Scrumble.WrapperFactory.CreateSprintWrapper(int.Parse(parts[2]));
                                         switch (parts[3].ToLower())
                                         {
                                             case "number":
