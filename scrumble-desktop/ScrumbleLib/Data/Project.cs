@@ -28,6 +28,15 @@ namespace ScrumbleLib.Data
             return Team.Add(member);
         }
 
+        public bool AddMembers(IEnumerable<User> members)
+        {
+            foreach(User m in members)
+            {
+                if(!AddMember(m)) return false;
+            }
+            return true;
+        }
+
         public bool RemoveMember(User member)
         {
             return Team.Remove(member);

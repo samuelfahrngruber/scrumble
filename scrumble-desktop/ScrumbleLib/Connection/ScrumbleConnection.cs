@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace ScrumbleLib.Connection
 {
@@ -64,6 +65,27 @@ namespace ScrumbleLib.Connection
             Scrumble.Log("GET - Project:", "#00FF00");
             Scrumble.Log(json, "#00FF00");
             wrapper.ApplyJson(json);
+            return project;
+        }
+
+        public static Project GetTeam(Project project)
+        {
+
+            ProjectWrapper wrapper = ProjectWrapper.GetInstance(project);
+            int projectId = wrapper.Id;
+
+            string url = getUrlForWrapper(wrapper) + "/user";
+            string json = "";
+            HttpResponseMessage response = client.GetAsync(url).Result;
+            if (response.IsSuccessStatusCode)
+                json = response.Content.ReadAsStringAsync().Result;
+            else
+                throw new Exception("invalid get at " + url + "for id " + wrapper.Id);
+            Scrumble.Log("GET - Project-Team:", "#00FF00");
+            Scrumble.Log(json, "#00FF00");
+
+            wrapper.ApplyTeamJson(json);
+
             return project;
         }
 

@@ -78,6 +78,27 @@ namespace ScrumbleLib.Connection.Wrapper
             return json;
         }
 
+        public void ApplyTeam()
+        {
+
+        }
+
+        public void ApplyTeamJson(JArray projectTeamJson)
+        {
+            foreach (JObject user in projectTeamJson)
+            {
+                User u = new User((int)user["id"]);
+                UserWrapper uw = UserWrapper.GetInstance(u);
+                uw.ApplyJson(user);
+                WrappedValue.Team.Add(u);
+            }
+        }
+
+        public void ApplyTeamJson(string projectTeamJson)
+        {
+            ApplyTeamJson(JArray.Parse(projectTeamJson));
+        }
+
         public void ApplyFields(int id, string name, int productOwner, int currentSprint)
         {
             WrappedValue.Id = id;

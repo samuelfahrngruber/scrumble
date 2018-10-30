@@ -26,9 +26,6 @@
                     <MenuItem Header="BLOBExplorer" />
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="Connection">
-
-            </MenuItem>
         </Menu>
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.ColumnDefinitions>
@@ -51,6 +48,10 @@
                 <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap">
                     <Run Text="Project Name: "></Run>
                     <Run x:Name="textBlock_projectOverview_name" FontWeight="Medium" Text="Scrumble"></Run>
+                </TextBlock>
+                <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap">
+                    <Run Text="Product Owner: "></Run>
+                    <Run x:Name="textBlock_projectOverview_productOwner" FontWeight="Medium" Text="BestProductOwner"></Run>
                 </TextBlock>
                 <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap">
                     <Run Text="Current Sprint: "></Run>

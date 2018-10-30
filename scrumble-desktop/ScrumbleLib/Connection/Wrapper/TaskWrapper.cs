@@ -88,13 +88,14 @@ namespace ScrumbleLib.Connection.Wrapper
                (string)jsonObject["name"],
                (string)jsonObject["info"],
                (int)jsonObject["rejections"],
-               (int)jsonObject["responible"], //responsibleUser
+               (int)jsonObject["responsible"], //responsibleUser
                (int)jsonObject["verify"], //verifyingUser
                (int?)jsonObject["sprint"],
+               (int)jsonObject["project"],
                (string)jsonObject["state"]);
         }
 
-        public void ApplyFields(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int? sprint, string state)
+        public void ApplyFields(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int? sprint, int project, string state)
         {
             WrappedValue.Id = id;
             WrappedValue.Name = name;
@@ -103,6 +104,7 @@ namespace ScrumbleLib.Connection.Wrapper
             WrappedValue.ResponsibleUser = ScrumbleController.GetUser(responsibleUser);
             WrappedValue.VerifyingUser = ScrumbleController.GetUser(verifyingUser);
             WrappedValue.Sprint = sprint == null ? null : ScrumbleController.GetSprint((int)sprint);
+            WrappedValue.Project = ScrumbleController.GetProject(project);
             WrappedValue.State = TaskStateParser.Parse(state);
         }
 
@@ -189,7 +191,21 @@ namespace ScrumbleLib.Connection.Wrapper
             }
         }
 
-        public String State
+        public int Project
+        {
+            get
+            {
+                return WrappedValue.Project == null ? -1 : WrappedValue.Project.Id;
+            }
+            set
+            {
+                WrappedValue.Project = ScrumbleController.GetProject(value);
+                OnPropertyChanged("Project");
+                ScrumbleConnection.Update(this);
+            }
+        }
+
+        public string State
         {
             get
             {

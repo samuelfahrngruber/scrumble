@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using ScrumbleLib.Data;
+using MahApps.Metro.Controls;
 
 namespace scrumble
 {
@@ -76,20 +77,9 @@ namespace scrumble
 
         private void initializeProjectOverview()
         {
-            List<ScrumbleLib.Data.Task> productBacklog = new List<ScrumbleLib.Data.Task>();
-            productBacklog.Add(new ScrumbleLib.Data.Task(1, "hello_pbl"));
-            productBacklog.Add(new ScrumbleLib.Data.Task(2, "world_pbl"));
-            treeViewItem_productBacklog.ItemsSource = productBacklog;
-
-            List<User> teamMembers = new List<User>();
-            teamMembers.Add(new User(10, "pauli"));
-            teamMembers.Add(new User(11, "simsi"));
-            teamMembers.Add(new User(12, "webi"));
-            treeViewItem_teamMembers.ItemsSource = teamMembers;
 
             Scrumble.WrapperFactory.CreateProjectWrapper(22);
             setCurrentProject(22);
-
             section_ProjectOverview.Visibility = Visibility.Visible;
         }
         
@@ -132,6 +122,7 @@ namespace scrumble
 
         private void setCurrentProject(int id)
         {
+            Scrumble.SetProject(id);
             if (currentProject != null)
                 currentProject.PropertyChanged -= refreshCurrentProject;
             currentProject = Scrumble.WrapperFactory.CreateProjectWrapper(id);
@@ -156,8 +147,13 @@ namespace scrumble
             await Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
             {
                 textBlock_projectOverview_name.Text = currentProject.Name;
+                textBlock_projectOverview_productOwner.Text = currentProject.WrappedValue.ProductOwner.ToString();
+
                 textBlock_projectOverview_currentSprint.Text = "#" + currentProject.CurrentSprint;
-                textBlock_projectOverview_currentSprintDeadline.Text = currentProject.WrappedValue.CurrentSprint.Deadline.ToString("dddd, dd.MM.YYYY");
+                textBlock_projectOverview_currentSprintDeadline.Text = currentProject.WrappedValue.CurrentSprint.Deadline.ToString("dddd, dd.MM.yyyy");
+
+                treeViewItem_teamMembers.ItemsSource = currentProject.WrappedValue.Team;
+                treeViewItem_productBacklog.ItemsSource = Scrumble.ProductBacklog;
             }));
         }
 

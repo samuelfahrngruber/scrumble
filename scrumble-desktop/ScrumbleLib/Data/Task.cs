@@ -15,9 +15,10 @@ namespace ScrumbleLib.Data
         public User ResponsibleUser { get; set; }
         public User VerifyingUser { get; set; }
         public Sprint Sprint { get; set; }
+        public Project Project { get; set; }
         public TaskState State { get; set; }
 
-        public Task(int id, string name = default(string), string info = default(string), int rejections = default(int), User responsibleUser = default(User), User verifyingUser = default(User), Sprint sprint = default(Sprint), TaskState state = default(TaskState))
+        public Task(int id, string name = default(string), string info = default(string), int rejections = default(int), User responsibleUser = default(User), User verifyingUser = default(User), Sprint sprint = default(Sprint), Project project = default(Project), TaskState state = default(TaskState))
         {
             this.Id = id;
             this.Name = name;
@@ -26,6 +27,7 @@ namespace ScrumbleLib.Data
             this.VerifyingUser = verifyingUser;
             this.ResponsibleUser = responsibleUser;
             this.Sprint = sprint;
+            this.Project = project;
             this.State = state;
         }
 

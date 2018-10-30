@@ -33,6 +33,7 @@ namespace ScrumbleLib.Connection
             Project project = new Project(id);
             Projects.Add(project);
             project = ScrumbleConnection.GetProject(project);
+            project = ScrumbleConnection.GetTeam(project);
             Scrumble.OnProjectAdded(project);
             return project;
         }

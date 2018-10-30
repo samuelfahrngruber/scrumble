@@ -14,6 +14,7 @@ namespace ScrumbleLib
     {
         public static ObservableCollectionEx<TaskWrapper> MyTasks { get; private set; } = new ObservableCollectionEx<TaskWrapper>();
         public static ObservableCollectionEx<TaskWrapper> Scrumboard { get; private set; } = new ObservableCollectionEx<TaskWrapper>();
+        public static ObservableCollectionEx<TaskWrapper> ProductBacklog { get; private set; } = new ObservableCollectionEx<TaskWrapper>();
 
         public static int CurrentProject
         {
@@ -51,8 +52,10 @@ namespace ScrumbleLib
         {
             if(task.ResponsibleUser.Id == ScrumbleController.currentUser) // todo also check for current project
                 MyTasks.Add(TaskWrapper.GetInstance(task.Id));
-            if (true)//(ScrumbleController.GetProject(ScrumbleController.currentProject).Result.CurrentSprint.Id == task.Sprint.Id)
+            if (task.Project != null && task.Project.Id == ScrumbleController.currentProject && task.State != TaskState.PRODUCT_BACKLOG)
                 Scrumboard.Add(TaskWrapper.GetInstance(task.Id));
+            if (task.Project != null && task.Project.Id == ScrumbleController.currentProject && task.State == TaskState.PRODUCT_BACKLOG)
+                ProductBacklog.Add(TaskWrapper.GetInstance(task.Id));
         }
 
         internal static void OnSprintAdded(Sprint sprint)
