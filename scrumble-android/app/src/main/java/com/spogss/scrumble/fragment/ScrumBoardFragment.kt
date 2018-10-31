@@ -62,7 +62,7 @@ class ScrumBoardFragment: Fragment() {
     private fun addColumn(taskState: TaskState) {
         val items = mutableListOf<Pair<Int, Task>>()
         ScrumbleController.tasks.filter { it.state == taskState  }
-                .sortedBy { task -> task.position }.forEach { items.add(Pair(it.id, it)) }
+                .sortedBy { it.position }.forEach { items.add(Pair(it.id, it)) }
 
         val adapter = CustomDragItemAdapter(items, R.layout.board_view_column_item, R.id.item_layout, true, context!!)
         val header = View.inflate(activity, R.layout.board_view_column_header, null)

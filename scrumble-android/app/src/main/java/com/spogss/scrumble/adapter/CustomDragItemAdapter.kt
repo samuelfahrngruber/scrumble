@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import de.mrapp.android.dialog.MaterialDialog
 import android.widget.ArrayAdapter
+import androidx.cardview.widget.CardView
 import com.llollox.androidtoggleswitch.widgets.ToggleSwitch
 import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.controller.PopupController
@@ -45,7 +46,20 @@ class CustomDragItemAdapter
     override fun onBindViewHolder(@NonNull holder: ViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
         val task = mItemList[position].second
-        holder.text.text = task.toString()
+
+        if(task.id < 0) {
+            holder.text.text = task.name
+            holder.text.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary))
+            holder.text.textSize = 20f
+            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent))
+            holder.cardView.cardElevation = 1f
+            holder.cardView.radius = 0f
+        }
+        else {
+            holder.text.text = task.toString()
+            holder.cardView.foreground = ContextCompat.getDrawable(context, R.drawable.sc_card_view_selector)
+        }
+
         holder.itemView.tag = mItemList[position].second
     }
 
@@ -54,16 +68,20 @@ class CustomDragItemAdapter
     }
 
     inner class ViewHolder(itemView: View) : DragItemAdapter.ViewHolder(itemView, mGrabHandleId, mDragOnLongPress) {
-        var text: TextView = itemView.findViewById(R.id.column_item_text_view)
+        val text = itemView.findViewById<View>(R.id.column_item_text_view) as TextView
+        val cardView = itemView.findViewById<View>(R.id.card_view_item) as CardView
 
         override fun onItemClicked(view: View) {
             val task = view.tag as Task
 
-            PopupController.setupTaskPopup(context, {}, task)
+            if(task.id >= 0)
+                PopupController.setupTaskPopup(context, {}, task)
         }
 
         override fun onItemLongClicked(view: View): Boolean {
-            return true
+            val task = view.tag as Task
+
+            return task.id >= 0
         }
     }
 }
