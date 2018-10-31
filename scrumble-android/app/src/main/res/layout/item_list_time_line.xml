@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -25,19 +26,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/fife_dp"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
-        <TextView
+        <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
             android:id="@+id/time_line_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/fife_dp"
+            android:hint="@string/task"
+            app:met_floatingLabel="highlight"
+            app:met_primaryColor="@color/colorAccent"
             android:textSize="14sp"/>
 
-        <TextView
+        <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/time_line_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/info"
+            app:met_floatingLabel="highlight"
+            app:met_primaryColor="@color/colorAccent"
             android:textSize="14sp"/>
 
     </LinearLayout>

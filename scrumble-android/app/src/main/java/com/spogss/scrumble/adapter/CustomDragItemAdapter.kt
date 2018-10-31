@@ -44,8 +44,8 @@ class CustomDragItemAdapter
 
     override fun onBindViewHolder(@NonNull holder: ViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
-        val userStory = mItemList[position].second
-        holder.text.text = userStory.name
+        val task = mItemList[position].second
+        holder.text.text = task.toString()
         holder.itemView.tag = mItemList[position].second
     }
 

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:id="@+id/rl_project_overview"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/twelve_dp"
-    android:paddingStart="@dimen/twelve_dp"
-    android:paddingEnd="@dimen/twelve_dp">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/project_overview_text_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
+        android:padding="@dimen/twelve_dp"
+        android:layout_centerVertical="true"
         android:textColor="@color/colorAccent"
-        android:textSize="18sp"/>
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/project_overview_text_view_2"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:layout_height="48dp"
+        android:padding="@dimen/twelve_dp"
+        android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
         android:textColor="@color/colorAccent"
         android:textSize="18sp"/>

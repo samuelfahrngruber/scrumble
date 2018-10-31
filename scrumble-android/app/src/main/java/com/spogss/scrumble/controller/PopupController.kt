@@ -15,6 +15,7 @@ import com.mikepenz.fastadapter.select.SelectExtension
 import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.R
 import com.spogss.scrumble.activity.MainActivity
+import com.spogss.scrumble.adapter.CustomSimpleAdapter
 import com.spogss.scrumble.adapter.CustomSwipeItemAdapter
 import com.spogss.scrumble.data.Sprint
 import com.spogss.scrumble.data.Task
@@ -339,5 +340,22 @@ object PopupController {
         }
 
         return closePopup
+    }
+
+    fun <T>setupRecyclerViewPopup(context: Context, callback: (item: T) -> Unit, title: String, data: MutableList<T>) {
+        val dialogBuilder = MaterialDialog.Builder(context)
+        dialogBuilder.setTitle(title)
+        dialogBuilder.setTitleColor(ContextCompat.getColor(context, R.color.colorAccent))
+
+        val customView = View.inflate(context, R.layout.popup_recycler_view, null)
+        val recyclerView = customView.findViewById<RecyclerView>(R.id.popup_recycler_view)
+        recyclerView.layoutManager = LinearLayoutManager(context)
+
+        dialogBuilder.setScrollableArea(ScrollableArea.Area.CONTENT)
+        dialogBuilder.setView(customView)
+
+        val dialog = dialogBuilder.create()
+        recyclerView.adapter = CustomSimpleAdapter(data, context) { callback(it); dialog.dismiss() }
+        dialog.show()
     }
 }

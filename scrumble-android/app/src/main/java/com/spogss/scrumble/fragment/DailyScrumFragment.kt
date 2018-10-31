@@ -32,7 +32,7 @@ class DailyScrumFragment: Fragment() {
     private fun setupTimeLine() {
         time_line.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         time_line.addItemDecoration(getSectionCallback(ScrumbleController.dailyScrumEntries))
-        time_line.adapter = CustomTimeLineAdapter(layoutInflater, ScrumbleController.dailyScrumEntries, R.layout.item_time_line)
+        time_line.adapter = CustomTimeLineAdapter(layoutInflater, ScrumbleController.dailyScrumEntries, R.layout.item_list_time_line)
     }
 
     private fun getSectionCallback(dailyScrumEntries: List<DailyScrum>): RecyclerSectionItemDecoration.SectionCallback {
@@ -43,11 +43,7 @@ class DailyScrumFragment: Fragment() {
 
             //Implement a method that returns a SectionHeader.
             override fun getSectionHeader(position: Int): SectionInfo? {
-                val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale("EN"))
-                val weekdayFormatter = SimpleDateFormat("EEEE", Locale("EN"))
-
-                return SectionInfo(dateFormatter.format(dailyScrumEntries[position].date),
-                        weekdayFormatter.format(dailyScrumEntries[position].date))
+                return SectionInfo(dailyScrumEntries[position].formattedDate(), dailyScrumEntries[position].weekday())
             }
         }
     }

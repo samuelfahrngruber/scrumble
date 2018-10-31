@@ -19,4 +19,8 @@ class Task(val id: Int, val responsible: User, val verify: User, val name: Strin
     override fun hashCode(): Int {
         return id
     }
+
+    override fun toString(): String {
+        return "[#$id] $name"
+    }
 }

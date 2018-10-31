@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aakira.expandablelayout.ExpandableLayoutListenerAdapter
@@ -18,7 +17,6 @@ import com.spogss.scrumble.R
 import com.spogss.scrumble.data.Sprint
 import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.data.User
-import kotlinx.android.synthetic.main.fragment_projects.*
 
 
 class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, private val team: MutableList<User>, private val sprints: MutableList<Sprint>,

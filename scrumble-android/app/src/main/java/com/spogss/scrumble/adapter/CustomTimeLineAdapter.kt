@@ -7,9 +7,14 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
+import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.R
+import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.data.DailyScrum
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
 
 class CustomTimeLineAdapter(private val layoutInflater: LayoutInflater, private val data: MutableList<DailyScrum>,
                             @param:LayoutRes private val layoutRes: Int)
@@ -22,14 +27,38 @@ class CustomTimeLineAdapter(private val layoutInflater: LayoutInflater, private 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val dailyScrumEntry = data[position]
-        holder.name.text = dailyScrumEntry.teamMember.username
-        holder.description.text = dailyScrumEntry.description
+        holder.name.text = dailyScrumEntry.teamMember.toString()
+        holder.description.setText(dailyScrumEntry.description)
+
+        holder.description.setOnFocusChangeListener { _, b ->
+            if(!b) {
+                Toast.makeText(layoutInflater.context, holder.description.text, Toast.LENGTH_SHORT).show()
+                dailyScrumEntry.description = holder.description.text.toString().trimStart().trimEnd()
+                setCardColor(dailyScrumEntry, holder)
+            }
+        }
+
+        val taskList = mutableListOf("")
+        taskList.addAll(ScrumbleController.tasks.map { it.toString() })
+        holder.task.setAdapter(ArrayAdapter(layoutInflater.context, android.R.layout.simple_spinner_dropdown_item, taskList))
+        holder.task.setOnFocusChangeListener { _, b ->
+            if(!b) {
+                Toast.makeText(layoutInflater.context, holder.task.text, Toast.LENGTH_SHORT).show()
+                val taskName = holder.task.text.toString().trimStart().trimEnd()
+                dailyScrumEntry.task = if(taskName == "") null else ScrumbleController.tasks.find { it.toString() == taskName }
+                setCardColor(dailyScrumEntry, holder)
+            }
+        }
 
         if(dailyScrumEntry.task != null)
-            holder.task.text = "${layoutInflater.context.resources.getString(R.string.task)}: ${dailyScrumEntry.task.name}"
-        else
-            holder.task.visibility = View.GONE
+            holder.task.setText(dailyScrumEntry.task!!.toString())
 
+        setCardColor(dailyScrumEntry, holder)
+    }
+
+    override fun getItemCount(): Int = data.size
+
+    private fun setCardColor(dailyScrumEntry: DailyScrum, holder: ViewHolder) {
         when {
             dailyScrumEntry.description.trim() == layoutInflater.context.resources.getString(R.string.missing) -> holder.cardView.setCardBackgroundColor(ContextCompat.getColor(layoutInflater.context, R.color.colorLightRed))
             dailyScrumEntry.description.trim() == "" -> holder.cardView.setCardBackgroundColor(ContextCompat.getColor(layoutInflater.context, R.color.colorLightOrange))
@@ -37,12 +66,10 @@ class CustomTimeLineAdapter(private val layoutInflater: LayoutInflater, private 
         }
     }
 
-    override fun getItemCount(): Int = data.size
-
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val cardView = view.findViewById<View>(R.id.card_view) as CardView
         val name = view.findViewById<View>(R.id.time_line_name) as TextView
-        val task = view.findViewById<View>(R.id.time_line_task) as TextView
-        val description = view.findViewById<View>(R.id.time_line_description) as TextView
+        val task = view.findViewById<View>(R.id.time_line_task) as MaterialBetterSpinner
+        val description = view.findViewById<View>(R.id.time_line_description) as MaterialEditText
     }
 }

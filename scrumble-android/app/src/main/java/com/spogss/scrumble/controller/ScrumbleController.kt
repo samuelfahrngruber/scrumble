@@ -12,6 +12,7 @@ object ScrumbleController {
     val dailyScrumEntries = mutableListOf<DailyScrum>()
 
     var currentProject: Project? = null
+    var currentSprint: Sprint? = null
 
     init {
         createTestData()
@@ -54,8 +55,14 @@ object ScrumbleController {
         start.time = end.time
         end.add(Calendar.DAY_OF_MONTH, 14)
         val scrumble3 = Sprint(2, 3, start.time,end.time, 0)
-        val footballsimulator1 = Sprint(3, 1, Date(2018, 10, 10), Date(2018, 10, 30), 1)
-        val footballsimulator2 = Sprint(4, 2, Date(2018, 11, 1), Date(2018, 11, 15), 1)
+
+        start.time = end.time
+        end.add(Calendar.DAY_OF_MONTH, 14)
+        val footballsimulator1 = Sprint(3, 1, start.time, end.time, 1)
+
+        start.time = end.time
+        end.add(Calendar.DAY_OF_MONTH, 14)
+        val footballsimulator2 = Sprint(4, 2, start.time, end.time, 1)
         sprints.add(scrumble1)
         sprints.add(scrumble2)
         sprints.add(scrumble3)
@@ -114,5 +121,6 @@ object ScrumbleController {
         dailyScrumEntries.add(ds12)
 
         currentProject = projects[0]
+        currentSprint = sprints[0]
     }
 }

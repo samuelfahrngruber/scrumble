@@ -1,5 +1,6 @@
 package com.spogss.scrumble.data
 
+import java.text.SimpleDateFormat
 import java.util.*
 
 class Sprint(val id: Int, val number: Int, val startDate: Date, val deadline: Date, project: Int) {
@@ -16,5 +17,14 @@ class Sprint(val id: Int, val number: Int, val startDate: Date, val deadline: Da
 
     override fun hashCode(): Int {
         return id
+    }
+
+    override fun toString(): String {
+        return "#$number"
+    }
+
+    fun timeSpan(): String {
+        val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale("EN"))
+        return "${dateFormatter.format(startDate)} - ${dateFormatter.format(deadline)}"
     }
 }

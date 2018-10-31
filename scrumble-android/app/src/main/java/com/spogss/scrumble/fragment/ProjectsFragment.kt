@@ -1,36 +1,18 @@
 package com.spogss.scrumble.fragment
 
 import android.os.Bundle
-import android.text.InputType
 import android.view.*
-import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.leinardi.android.speeddial.SpeedDialActionItem
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.select.SelectExtension
-import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.R
-import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.adapter.CustomOverviewHeaderAdapter
-import com.spogss.scrumble.adapter.CustomSwipeItemAdapter
 import com.spogss.scrumble.controller.PopupController
-import com.spogss.scrumble.data.User
+import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.enums.TaskState
-import com.spogss.scrumble.viewItem.CustomSelectableItem
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
-import com.woxthebox.draglistview.DragListView
-import com.woxthebox.draglistview.swipe.ListSwipeHelper
-import com.woxthebox.draglistview.swipe.ListSwipeItem
-import de.mrapp.android.dialog.MaterialDialog
-import de.mrapp.android.dialog.ScrollableArea
 import kotlinx.android.synthetic.main.fragment_projects.*
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class ProjectsFragment: Fragment() {
@@ -44,6 +26,7 @@ class ProjectsFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupTextViews()
         setupProjectsList()
         setupSpeedDial()
     }
@@ -55,9 +38,19 @@ class ProjectsFragment: Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.menu_item_change_project -> Toast.makeText(context, "change project", Toast.LENGTH_SHORT).show()
+            R.id.menu_item_change_project -> PopupController.setupRecyclerViewPopup(context!!, { Toast.makeText(context, it.name, Toast.LENGTH_SHORT).show() }, resources.getString(R.string.project), ScrumbleController.projects)
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun setupTextViews() {
+        product_owner_text_view.setText(ScrumbleController.currentProject!!.productOwner.username)
+        sprint_text_view.setText(ScrumbleController.currentSprint!!.toString())
+        sprint_text_view2.setText(ScrumbleController.currentSprint!!.timeSpan())
+
+        product_owner_text_view.setOnClickListener { _ -> PopupController.setupRecyclerViewPopup(context!!, { Toast.makeText(context, it.username, Toast.LENGTH_SHORT).show() }, resources.getString(R.string.product_owner), ScrumbleController.users)}
+        sprint_text_view.setOnClickListener { PopupController.setupSprintPopup(context!!, {}, ScrumbleController.currentSprint) }
+        sprint_text_view2.setOnClickListener { PopupController.setupSprintPopup(context!!, {}, ScrumbleController.currentSprint) }
     }
 
     private fun setupProjectsList() {
@@ -66,7 +59,8 @@ class ProjectsFragment: Fragment() {
         list_headers.adapter = CustomOverviewHeaderAdapter(mutableListOf(
                 context!!.resources.getString(R.string.team),
                 context!!.resources.getString(R.string.sprints),
-                context!!.resources.getString(R.string.product_backlog)), ScrumbleController.users, ScrumbleController.sprints, ScrumbleController.tasks, context!!)
+                context!!.resources.getString(R.string.product_backlog)), ScrumbleController.users, ScrumbleController.sprints,
+                ScrumbleController.tasks.filter { it.state == TaskState.PRODUCT_BACKLOG }.toMutableList(), context!!)
     }
 
     private fun setupSpeedDial() {

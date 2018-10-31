@@ -29,9 +29,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class CustomProjectOverviewAdapter<T>(private val data: MutableList<T>, private val context: Context): RecyclerView.Adapter<CustomProjectOverviewAdapter.ViewHolder>() {
-    private val startCal = Calendar.getInstance()
-    private val endCal = Calendar.getInstance()
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(context)
                 .inflate(R.layout.item_list_project_overview, parent, false))
@@ -49,9 +46,8 @@ class CustomProjectOverviewAdapter<T>(private val data: MutableList<T>, private 
                 holder.textView2.visibility = View.GONE
             }
             is Sprint -> {
-                val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale("EN"))
-                holder.textView1.text = "#${item.number}"
-                holder.textView2.text = "${dateFormatter.format(item.startDate)} - ${dateFormatter.format(item.deadline)}"
+                holder.textView1.text = item.toString()
+                holder.textView2.text = item.timeSpan()
                 holder.textView2.visibility = View.VISIBLE
                 holder.rlProjectOverview.setOnClickListener {
                     PopupController.setupSprintPopup(context, { }, item)

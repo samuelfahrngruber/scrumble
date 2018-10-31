@@ -15,4 +15,8 @@ class Project(val id: Int, val name: String, val productOwner: User, val team: M
     override fun hashCode(): Int {
         return id
     }
+
+    override fun toString(): String {
+        return name
+    }
 }
