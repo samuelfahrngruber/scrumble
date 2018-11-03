@@ -3,7 +3,7 @@ package com.spogss.scrumble.data
 import java.text.SimpleDateFormat
 import java.util.*
 
-class Sprint(val id: Int, val number: Int, val startDate: Date, val deadline: Date, project: Int) {
+class Sprint(val id: Int, val number: Int, val startDate: Date, val deadline: Date, var project: Project) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

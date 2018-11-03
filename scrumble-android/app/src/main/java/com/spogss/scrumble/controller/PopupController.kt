@@ -28,6 +28,7 @@ import com.woxthebox.draglistview.DragListView
 import com.woxthebox.draglistview.swipe.ListSwipeHelper
 import com.woxthebox.draglistview.swipe.ListSwipeItem
 import de.mrapp.android.dialog.MaterialDialog
+import de.mrapp.android.dialog.ProgressDialog
 import de.mrapp.android.dialog.ScrollableArea
 import java.text.SimpleDateFormat
 import java.util.*
@@ -91,8 +92,8 @@ object PopupController {
         verifySpinner.setAdapter(ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, ScrumbleController.users))
 
         if(task != null) {
-            responsibleSpinner.setText(task.responsible.username)
-            verifySpinner.setText(task.verify.username)
+            responsibleSpinner.setText(task.responsible.toString())
+            verifySpinner.setText(task.verify.toString())
         }
     }
     private fun taskDialogButtonClick(customView: View, context: Context): Boolean {
@@ -256,7 +257,7 @@ object PopupController {
         else {
             sprintNumberEditText.setText(sprint.number.toString())
             setupDatePicker(customView, context, sprint)
-            adapter.add(ScrumbleController.tasks.filter { it.state == TaskState.PRODUCT_BACKLOG || (it.sprint != null && it.sprint == sprint.id) }.map { CustomSelectableItem(it) })
+            adapter.add(ScrumbleController.tasks.filter { it.state == TaskState.PRODUCT_BACKLOG || (it.sprint != null && it.sprint!!.id == sprint.id) }.map { CustomSelectableItem(it) })
         }
 
         adapter.withSelectable(true)
@@ -357,5 +358,16 @@ object PopupController {
         val dialog = dialogBuilder.create()
         recyclerView.adapter = CustomSimpleAdapter(data, context) { callback(it); dialog.dismiss() }
         dialog.show()
+    }
+
+    fun getLoadingPopup(context: Context, title: String, message: String): ProgressDialog {
+        val dialogBuilder = ProgressDialog.Builder(context)
+        dialogBuilder.setTitle(title)
+        dialogBuilder.setMessage(message)
+        dialogBuilder.setProgressBarColor(ContextCompat.getColor(context, R.color.colorAccentLight))
+        dialogBuilder.setProgressBarPosition(ProgressDialog.ProgressBarPosition.LEFT)
+        dialogBuilder.setCanceledOnTouchOutside(false)
+
+        return dialogBuilder.create()
     }
 }

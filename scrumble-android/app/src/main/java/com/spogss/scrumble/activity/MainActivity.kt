@@ -1,5 +1,6 @@
 package com.spogss.scrumble.activity
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.fragment.app.Fragment
@@ -8,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.widget.Toast
 import com.spogss.scrumble.R
 import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.fragment.DailyScrumFragment
@@ -15,6 +17,12 @@ import com.spogss.scrumble.fragment.MyTasksFragment
 import com.spogss.scrumble.fragment.ProjectsFragment
 import com.spogss.scrumble.fragment.ScrumBoardFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import android.graphics.BitmapFactory
+import android.os.Handler
+import android.view.View
+import androidx.core.os.HandlerCompat.postDelayed
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -56,11 +64,34 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setupFragments()
+        ScrumbleController.loadTeam(22, {
+            image_progress.setProgress(25)
+            ScrumbleController.loadProjects(23, {
+                image_progress.setProgress(25, 50)
+                ScrumbleController.loadSprints(22, {
+                    image_progress.setProgress(50, 75)
+                    ScrumbleController.loadTasks(22, { image_progress.setProgress(75, 100); init() }, { onError(it) })
+                }, { onError(it) })
+            }, { onError(it) })
+        }, { onError(it) } )
+    }
 
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-        navigation.selectedItemId = R.id.navigation_my_tasks
+    private fun onError(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
 
+    private fun init() {
+        val handler = Handler()
+        handler.postDelayed({
+            image_progress.visibility = View.GONE
+            navigation.visibility = View.VISIBLE
+            frame_layout.visibility = View.VISIBLE
+
+            setupFragments()
+
+            navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+            navigation.selectedItemId = R.id.navigation_my_tasks
+        }, 1000)
     }
 
     private fun setupFragments() {
@@ -70,7 +101,7 @@ class MainActivity : AppCompatActivity() {
         fragments.add(ProjectsFragment())
     }
 
-    fun setupTitle(newTitle: String) {
+    private fun setupTitle(newTitle: String) {
         val formattedText = SpannableString(newTitle)
         formattedText.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorAccent)), 0, formattedText.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
         title = formattedText

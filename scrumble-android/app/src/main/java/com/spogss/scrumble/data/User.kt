@@ -1,6 +1,6 @@
 package com.spogss.scrumble.data
 
-class User(val id: Int, val username: String, val password: String) {
+class User(val id: Int, val name: String, val password: String) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -17,7 +17,7 @@ class User(val id: Int, val username: String, val password: String) {
     }
 
     override fun toString(): String {
-        return username
+        return name
     }
 
 

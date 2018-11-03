@@ -42,7 +42,7 @@ class CustomProjectOverviewAdapter<T>(private val data: MutableList<T>, private 
         val item = data[position]
         when(item) {
             is User -> {
-                holder.textView1.text = item.username
+                holder.textView1.text = item.toString()
                 holder.textView2.visibility = View.GONE
             }
             is Sprint -> {

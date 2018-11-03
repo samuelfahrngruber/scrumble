@@ -43,12 +43,9 @@ class CustomSwipeItemAdapter<T>: DragItemAdapter<Pair<Int, T>, CustomSwipeItemAd
         val item = mItemList[position].second
 
         when (item) {
-            is User -> holder.text.text = item.username
+            is User -> holder.text.text = item.toString()
             is Task -> holder.text.text = item.name
-            is Sprint -> {
-                val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale("EN"))
-                holder.text.text = "${item.number}: ${dateFormatter.format(item.startDate)} - ${item.deadline}"
-            }
+            is Sprint -> holder.text.text = item.timeSpan()
         }
 
         holder.itemView.tag = mItemList[position]

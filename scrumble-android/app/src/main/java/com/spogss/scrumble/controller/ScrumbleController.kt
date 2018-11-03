@@ -1,22 +1,89 @@
 package com.spogss.scrumble.controller
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.spogss.scrumble.connection.ScrumbleConnection
 import com.spogss.scrumble.data.*
 import com.spogss.scrumble.enums.TaskState
+import com.spogss.scrumble.json.ProjectDeserializer
+import com.spogss.scrumble.json.SprintDeserializer
+import com.spogss.scrumble.json.TaskDeserializer
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.util.*
 
 object ScrumbleController {
-    val users = mutableListOf<User>()
-    val projects = mutableListOf<Project>()
-    val sprints = mutableListOf<Sprint>()
-    val tasks = mutableListOf<Task>()
-    val dailyScrumEntries = mutableListOf<DailyScrum>()
+    var users = mutableListOf<User>()
+    var projects = mutableListOf<Project>()
+    var sprints = mutableListOf<Sprint>()
+    var tasks = mutableListOf<Task>()
+    var dailyScrumEntries = mutableListOf<DailyScrum>()
 
     var currentProject: Project? = null
-    var currentSprint: Sprint? = null
+    lateinit var currentUser: User
 
     init {
-        createTestData()
+        currentUser = User(23, "Paul", "lol")
+        currentProject = Project(22, "Scrumble", currentUser)
+        val sprint = Sprint(9, 1, Date(), Date(), currentProject!!)
+        currentProject!!.currentSprint = sprint
+        //createTestData()
     }
+
+    fun loadTeam(projectId: Int, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val response = ScrumbleConnection.get("/project/$projectId/user")
+            if(response.statusCode == 200) {
+                users = Gson().fromJson(response.jsonArray.toString(), Array<User>::class.java).toMutableList()
+                uiThread { onSuccess() }
+            }
+            else
+                uiThread { onError(response.text) }
+        }
+    }
+
+    fun loadProjects(userId: Int, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val response = ScrumbleConnection.get("/user/$userId/project")
+            if(response.statusCode == 200) {
+                val gson = GsonBuilder().registerTypeAdapter(Project::class.java, ProjectDeserializer()).create()
+                projects = gson.fromJson(response.jsonArray.toString(), Array<Project>::class.java).toMutableList()
+
+                uiThread { onSuccess() }
+            }
+            else
+                uiThread { onError(response.text) }
+        }
+    }
+
+    fun loadSprints(projectId: Int, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val response = ScrumbleConnection.get("/project/$projectId/sprint")
+            if(response.statusCode == 200) {
+                val gson = GsonBuilder().registerTypeAdapter(Sprint::class.java, SprintDeserializer()).create()
+                sprints = gson.fromJson(response.jsonArray.toString(), Array<Sprint>::class.java).toMutableList()
+
+                uiThread { onSuccess() }
+            }
+            else
+                uiThread { onError(response.text) }
+        }
+    }
+
+    fun loadTasks(projectId: Int, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val response = ScrumbleConnection.get("/project/$projectId/task")
+            if(response.statusCode == 200) {
+                val gson = GsonBuilder().registerTypeAdapter(Task::class.java, TaskDeserializer()).create()
+                tasks = gson.fromJson(response.jsonArray.toString(), Array<Task>::class.java).toMutableList()
+
+                uiThread { onSuccess() }
+            }
+            else
+                uiThread { onError(response.text) }
+        }
+    }
+
 
     //TODO: remove when webservice call is possible
     private fun createTestData() {
@@ -36,8 +103,8 @@ object ScrumbleController {
         users.add(webi)
         users.add(savan)
 
-        val scrumble = Project(0, "Scrumble", sam, mutableListOf(pauli, simon, webi), null)
-        val footballsimulator = Project(1, "Football Simulator", savan, mutableListOf(webi), null)
+        val scrumble = Project(0, "Scrumble", sam, null)
+        val footballsimulator = Project(1, "Football Simulator", savan, null)
         projects.add(scrumble)
         projects.add(footballsimulator)
 
@@ -46,23 +113,23 @@ object ScrumbleController {
         val end = Calendar.getInstance()
 
         end.add(Calendar.DAY_OF_MONTH, 14)
-        val scrumble1 = Sprint(0, 1, start.time, end.time, 0)
+        val scrumble1 = Sprint(0, 1, start.time, end.time, scrumble)
 
         start.time = end.time
         end.add(Calendar.DAY_OF_MONTH, 14)
-        val scrumble2 = Sprint(1, 2, start.time, end.time, 0)
+        val scrumble2 = Sprint(1, 2, start.time, end.time, scrumble)
 
         start.time = end.time
         end.add(Calendar.DAY_OF_MONTH, 14)
-        val scrumble3 = Sprint(2, 3, start.time,end.time, 0)
+        val scrumble3 = Sprint(2, 3, start.time,end.time, scrumble)
 
         start.time = end.time
         end.add(Calendar.DAY_OF_MONTH, 14)
-        val footballsimulator1 = Sprint(3, 1, start.time, end.time, 1)
+        val footballsimulator1 = Sprint(3, 1, start.time, end.time, footballsimulator)
 
         start.time = end.time
         end.add(Calendar.DAY_OF_MONTH, 14)
-        val footballsimulator2 = Sprint(4, 2, start.time, end.time, 1)
+        val footballsimulator2 = Sprint(4, 2, start.time, end.time, footballsimulator)
         sprints.add(scrumble1)
         sprints.add(scrumble2)
         sprints.add(scrumble3)
@@ -70,17 +137,17 @@ object ScrumbleController {
         sprints.add(footballsimulator2)
 
         val scrumbleGUI = Task(0, pauli, sam, "GUI Programmieren", "Hierbei handelt es sich um die Android GUI",
-                0, TaskState.IN_PROGRESS, 1, 0, 0)
+                0, TaskState.IN_PROGRESS, 1, scrumble1, scrumble)
         val scrumbleDB = Task(1, webi, simon, "Datenbank aufsetzten", "Inklusive Trigger, Sequenzen usw...",
-                0, TaskState.TO_VERIFY, 1, 0, 0)
+                0, TaskState.TO_VERIFY, 1, scrumble1, scrumble)
         val scrumbleWebservice = Task(2, webi, pauli, "Webservice implementieren", "Der Webservice connected Client mit Datenbank",
-                0, TaskState.SPRINT_BACKLOG, 1, 0, 0)
+                0, TaskState.SPRINT_BACKLOG, 1, scrumble1, scrumble)
         val scrumbleTesting = Task(3, simon, sam, "Testen", "Sollen wir Unit-Tests machen? Keine Ahnung",
-                0, TaskState.SPRINT_BACKLOG, 2, 0, 0)
+                0, TaskState.SPRINT_BACKLOG, 2, scrumble1, scrumble)
         val scrumblePlaning = Task(4, sam, pauli, "Planung", "Geplant wird immer, weil wir mit Scrum arbeiten, lol. Hier steht auch noch mehr Text",
-                0, TaskState.IN_PROGRESS, 2, 0, 0)
+                0, TaskState.IN_PROGRESS, 2, scrumble1, scrumble)
         val scrumbleFinish = Task(4, sam, pauli, "Abschließen", "Abschluss des Projektes",
-                0, TaskState.PRODUCT_BACKLOG, 0, null, 0)
+                0, TaskState.PRODUCT_BACKLOG, 0, null, scrumble)
         tasks.add(scrumbleGUI)
         tasks.add(scrumbleDB)
         tasks.add(scrumbleWebservice)
@@ -121,6 +188,5 @@ object ScrumbleController {
         dailyScrumEntries.add(ds12)
 
         currentProject = projects[0]
-        currentSprint = sprints[0]
     }
 }

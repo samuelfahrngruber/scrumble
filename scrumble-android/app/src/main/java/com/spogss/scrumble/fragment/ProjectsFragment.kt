@@ -44,13 +44,13 @@ class ProjectsFragment: Fragment() {
     }
 
     private fun setupTextViews() {
-        product_owner_text_view.setText(ScrumbleController.currentProject!!.productOwner.username)
-        sprint_text_view.setText(ScrumbleController.currentSprint!!.toString())
-        sprint_text_view2.setText(ScrumbleController.currentSprint!!.timeSpan())
+        product_owner_text_view.setText(ScrumbleController.currentProject!!.productOwner.toString())
+        sprint_text_view.setText(ScrumbleController.currentProject!!.currentSprint!!.toString())
+        sprint_text_view2.setText(ScrumbleController.currentProject!!.currentSprint!!.timeSpan())
 
-        product_owner_text_view.setOnClickListener { _ -> PopupController.setupRecyclerViewPopup(context!!, { Toast.makeText(context, it.username, Toast.LENGTH_SHORT).show() }, resources.getString(R.string.product_owner), ScrumbleController.users)}
-        sprint_text_view.setOnClickListener { PopupController.setupSprintPopup(context!!, {}, ScrumbleController.currentSprint) }
-        sprint_text_view2.setOnClickListener { PopupController.setupSprintPopup(context!!, {}, ScrumbleController.currentSprint) }
+        product_owner_text_view.setOnClickListener { PopupController.setupRecyclerViewPopup(context!!, { Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show() }, resources.getString(R.string.product_owner), ScrumbleController.users)}
+        sprint_text_view.setOnClickListener { PopupController.setupSprintPopup(context!!, {}, ScrumbleController.currentProject!!.currentSprint!!) }
+        sprint_text_view2.setOnClickListener { PopupController.setupSprintPopup(context!!, {}, ScrumbleController.currentProject!!.currentSprint!!) }
     }
 
     private fun setupProjectsList() {

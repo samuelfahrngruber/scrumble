@@ -6,14 +6,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
     tools:context=".activity.MainActivity">
+
+    <com.appersiano.progressimage.ProgressImage
+        android:id="@+id/image_progress"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:imageShadowColor="@color/colorAccentLight"
+        app:percentageTextColor="@color/colorAccent"
+        app:srcImage="@drawable/sc_logo"/>
 
     <FrameLayout
         android:id="@+id/frame_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:animateLayoutChanges="true" />
+        android:animateLayoutChanges="true"
+        android:visibility="gone"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation"
@@ -27,6 +37,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:menu="@menu/navigation" />
+        app:menu="@menu/navigation"
+        android:visibility="gone"/>
 
 </LinearLayout>

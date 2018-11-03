@@ -10,34 +10,33 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.spogss.scrumble.R
 import com.spogss.scrumble.adapter.CustomDragItemAdapter
 import com.spogss.scrumble.controller.ScrumbleController
+import com.spogss.scrumble.data.Project
 import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.data.User
 import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.viewItem.CustomDragItem
 import com.woxthebox.draglistview.DragListView
-import kotlinx.android.synthetic.main.fragment_my_tasks.*
 
 
 class MyTasksFragment: Fragment() {
     private val items = mutableListOf<Pair<Int, Task>>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_my_tasks, container, false)
+        val view = inflater.inflate(R.layout.fragment_my_tasks, container, false)
+
+        setupDragListView(view)
+
+        return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun setupDragListView(view: View) {
+        val dragListView = view.findViewById<DragListView>(R.id.drag_list_view)
+        dragListView.recyclerView.isVerticalScrollBarEnabled = true
+        dragListView.isDragEnabled = true
+        dragListView.setLayoutManager(LinearLayoutManager(context))
+        dragListView.setCustomDragItem(CustomDragItem(context!!, R.layout.board_view_column_item))
 
-        setupDragListView()
-    }
-
-    private fun setupDragListView() {
-        drag_list_view.recyclerView.isVerticalScrollBarEnabled = true
-        drag_list_view.isDragEnabled = true
-        drag_list_view.recyclerView.layoutManager = LinearLayoutManager(context)
-        drag_list_view.setCustomDragItem(CustomDragItem(context!!, R.layout.board_view_column_item))
-
-        drag_list_view.setDragListCallback(object : DragListView.DragListCallback {
+        dragListView.setDragListCallback(object : DragListView.DragListCallback {
             override fun canDragItemAtPosition(dragPosition: Int): Boolean {
                 return items[dragPosition].first >= 0
             }
@@ -46,7 +45,7 @@ class MyTasksFragment: Fragment() {
                 return dropPosition > 0
             }
         })
-        drag_list_view.setDragListListener(object : DragListView.DragListListener {
+        dragListView.setDragListListener(object : DragListView.DragListListener {
             override fun onItemDragEnded(fromPosition: Int, toPosition: Int) {
                 if(fromPosition != toPosition) {
                     val task = items[toPosition].second
@@ -63,22 +62,25 @@ class MyTasksFragment: Fragment() {
         })
 
         items.clear()
+        val myTasks = ScrumbleController.tasks.filter { it.sprint != null && it.sprint!!.id == ScrumbleController.currentProject!!.currentSprint!!.id }
+                .filter { it.responsible.id == ScrumbleController.currentUser.id || it.verify.id == ScrumbleController.currentUser.id }
         TaskState.values().forEachIndexed { index, taskState ->
             if(taskState != TaskState.PRODUCT_BACKLOG) {
-                val tasks = ScrumbleController.tasks.filter { it.state == taskState }.toMutableList()
+                val tasks = myTasks.filter { it.state == taskState }.toMutableList()
                 items.addAll(getDragItems(taskState, (index + 1) * -1, tasks))
             }
         }
 
         val adapter = CustomDragItemAdapter(items, R.layout.board_view_column_item, R.id.item_layout, true, context!!)
-        drag_list_view.setAdapter(adapter, false)
+        dragListView.setAdapter(adapter, false)
     }
 
     private fun getDragItems(state: TaskState, headerId: Int, tasks: MutableList<Task>): MutableList<Pair<Int, Task>> {
         val tempUser = User(-1, "", "")
+        val tempProject = Project(-1, "", tempUser)
         val tempItems = mutableListOf(Pair(headerId, Task(headerId, tempUser, tempUser,
                 state.toString().replace('_', ' '), "", -1,
-                state, -1, null, -1)))
+                state, -1, null, tempProject)))
 
         tasks.sortedBy { it.position }.forEach { tempItems.add(Pair(it.id, it)) }
 

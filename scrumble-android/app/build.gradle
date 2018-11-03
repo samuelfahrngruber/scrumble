@@ -33,11 +33,13 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0-beta02'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-beta02'
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
     //async
     implementation 'org.jetbrains.anko:anko-common:0.9'
+    //khttp
+    implementation 'com.github.jkcclemens:khttp:0.1.0'
     //gson
     implementation 'com.google.code.gson:gson:2.8.5'
     //dragView
@@ -61,4 +63,6 @@ dependencies {
     //fastAdapter
     implementation 'com.mikepenz:fastadapter:3.3.1'
     implementation 'com.mikepenz:fastadapter-commons:3.3.1'
+    //imageProgress
+    implementation (name: 'progressimage-debug', ext:'aar')
 }
