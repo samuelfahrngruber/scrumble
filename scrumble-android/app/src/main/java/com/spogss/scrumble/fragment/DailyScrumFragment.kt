@@ -1,11 +1,11 @@
 package com.spogss.scrumble.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.spogss.scrumble.R
 import com.spogss.scrumble.adapter.CustomTimeLineAdapter
@@ -14,8 +14,6 @@ import com.spogss.scrumble.data.DailyScrum
 import kotlinx.android.synthetic.main.fragment_daily_scrum.*
 import xyz.sangcomz.stickytimelineview.RecyclerSectionItemDecoration
 import xyz.sangcomz.stickytimelineview.model.SectionInfo
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class DailyScrumFragment: Fragment() {

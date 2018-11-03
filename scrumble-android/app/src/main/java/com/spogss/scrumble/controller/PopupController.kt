@@ -28,7 +28,6 @@ import com.woxthebox.draglistview.DragListView
 import com.woxthebox.draglistview.swipe.ListSwipeHelper
 import com.woxthebox.draglistview.swipe.ListSwipeItem
 import de.mrapp.android.dialog.MaterialDialog
-import de.mrapp.android.dialog.ProgressDialog
 import de.mrapp.android.dialog.ScrollableArea
 import java.text.SimpleDateFormat
 import java.util.*
@@ -358,16 +357,5 @@ object PopupController {
         val dialog = dialogBuilder.create()
         recyclerView.adapter = CustomSimpleAdapter(data, context) { callback(it); dialog.dismiss() }
         dialog.show()
-    }
-
-    fun getLoadingPopup(context: Context, title: String, message: String): ProgressDialog {
-        val dialogBuilder = ProgressDialog.Builder(context)
-        dialogBuilder.setTitle(title)
-        dialogBuilder.setMessage(message)
-        dialogBuilder.setProgressBarColor(ContextCompat.getColor(context, R.color.colorAccentLight))
-        dialogBuilder.setProgressBarPosition(ProgressDialog.ProgressBarPosition.LEFT)
-        dialogBuilder.setCanceledOnTouchOutside(false)
-
-        return dialogBuilder.create()
     }
 }

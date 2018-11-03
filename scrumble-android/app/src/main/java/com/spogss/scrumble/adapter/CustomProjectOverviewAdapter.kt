@@ -6,27 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.select.SelectExtension
-import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.R
-import com.spogss.scrumble.activity.MainActivity
 import com.spogss.scrumble.controller.PopupController
-import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.data.Sprint
 import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.data.User
-import com.spogss.scrumble.enums.TaskState
-import com.spogss.scrumble.viewItem.CustomSelectableItem
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
-import de.mrapp.android.dialog.MaterialDialog
-import de.mrapp.android.dialog.ScrollableArea
-import java.text.SimpleDateFormat
-import java.util.*
 
 class CustomProjectOverviewAdapter<T>(private val data: MutableList<T>, private val context: Context): RecyclerView.Adapter<CustomProjectOverviewAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

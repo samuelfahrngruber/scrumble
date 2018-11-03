@@ -1,24 +1,17 @@
 package com.spogss.scrumble.adapter
 
 import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.NonNull
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import com.spogss.scrumble.R
+import com.spogss.scrumble.controller.PopupController
 import com.spogss.scrumble.data.Task
 import com.woxthebox.draglistview.DragItemAdapter
-import androidx.annotation.NonNull
-import androidx.core.content.ContextCompat
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import de.mrapp.android.dialog.MaterialDialog
-import android.widget.ArrayAdapter
-import androidx.cardview.widget.CardView
-import com.llollox.androidtoggleswitch.widgets.ToggleSwitch
-import com.rengwuxian.materialedittext.MaterialEditText
-import com.spogss.scrumble.controller.PopupController
-import com.spogss.scrumble.controller.ScrumbleController
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-import de.mrapp.android.dialog.ScrollableArea
 
 
 class CustomDragItemAdapter

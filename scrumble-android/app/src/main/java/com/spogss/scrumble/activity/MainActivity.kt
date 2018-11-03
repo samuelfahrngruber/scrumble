@@ -1,15 +1,16 @@
 package com.spogss.scrumble.activity
 
-import android.graphics.Bitmap
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.fragment.app.Fragment
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Handler
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.spogss.scrumble.R
 import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.fragment.DailyScrumFragment
@@ -17,12 +18,6 @@ import com.spogss.scrumble.fragment.MyTasksFragment
 import com.spogss.scrumble.fragment.ProjectsFragment
 import com.spogss.scrumble.fragment.ScrumBoardFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import android.graphics.BitmapFactory
-import android.os.Handler
-import android.view.View
-import androidx.core.os.HandlerCompat.postDelayed
-
-
 
 
 class MainActivity : AppCompatActivity() {
@@ -91,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
             navigation.selectedItemId = R.id.navigation_my_tasks
-        }, 1000)
+        }, 1300)
     }
 
     private fun setupFragments() {

@@ -13,8 +13,6 @@ import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.data.User
 import com.woxthebox.draglistview.DragItemAdapter
 import com.woxthebox.draglistview.swipe.ListSwipeItem
-import java.text.SimpleDateFormat
-import java.util.*
 
 class CustomSwipeItemAdapter<T>: DragItemAdapter<Pair<Int, T>, CustomSwipeItemAdapter<T>.ViewHolder> {
     private var res = 0
