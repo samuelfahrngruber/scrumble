@@ -30,6 +30,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
             else
             {
+                ScrumbleController.Users.Add(wrappedValue);
                 instance = new UserWrapper(wrappedValue);
                 instances.Add(instance);
             }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
@@ -12,6 +13,7 @@ namespace ScrumbleLib.Connection
 {
     internal static class ScrumbleConnection
     {
+        //private const string webserviceUrl = "http://ssmagic:8080/";
         private const string webserviceUrl = "https://scrumble-api.herokuapp.com/";
         private static HttpClient client = new HttpClient();
         private static string getUrlForType(Type t)
@@ -33,6 +35,11 @@ namespace ScrumbleLib.Connection
         {
             string url = getUrlForWrapper(wrapper);
             string json = wrapper.ToJson();
+
+            HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = client.PutAsync(url, content).Result;
+
             Scrumble.Log("PUT: " + url, "#00FFFF");
             Scrumble.Log(json, "#00FFFF");
         }
@@ -135,6 +142,25 @@ namespace ScrumbleLib.Connection
             Scrumble.Log(json, "#00FF00");
             wrapper.ApplyJson(json);
             return task;
+        }
+
+        public static void GetScrumboard(int projectId)
+        {
+            List<Data.Task> scrumboard = new List<Data.Task>();
+
+            ProjectWrapper wrapper = ProjectWrapper.GetInstance(projectId);
+
+            string url = getUrlForWrapper(wrapper) + "/task";
+            string json = "";
+            HttpResponseMessage response = client.GetAsync(url).Result;
+            if (response.IsSuccessStatusCode)
+                json = response.Content.ReadAsStringAsync().Result;
+            else
+                throw new Exception("invalid get at " + url + "for id " + wrapper.Id);
+            Scrumble.Log("GET - Project-Tasks:", "#00FF00");
+            Scrumble.Log(json, "#00FF00");
+
+            Scrumble.ScrumboardFromJson(json);
         }
 
         public static Sprint GetSprint(Sprint sprint)

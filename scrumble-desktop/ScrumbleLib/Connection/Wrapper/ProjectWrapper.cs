@@ -30,6 +30,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
             else
             {
+                ScrumbleController.Projects.Add(wrappedValue);
                 instance = new ProjectWrapper(wrappedValue);
                 instances.Add(instance);
             }

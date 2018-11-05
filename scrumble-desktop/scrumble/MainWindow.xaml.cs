@@ -49,9 +49,11 @@ namespace scrumble
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            await Dispatcher.BeginInvoke((Action)(() => initializeInformation()));
+
             await Dispatcher.BeginInvoke((Action)(() => initializeMenu()));
             await Dispatcher.BeginInvoke((Action)(() => initializeProjectOverview()));
-            await Dispatcher.BeginInvoke((Action)(() => initializeInformation()));
+
             await Dispatcher.BeginInvoke((Action)(() => initializeMyTasks()));
             await Dispatcher.BeginInvoke((Action)(() => initializeSelectedTask()));
         }
@@ -160,7 +162,7 @@ namespace scrumble
         private void setMyTasks()
         {
             Dispatcher.BeginInvoke((Action)(() => { 
-                treeViewItem_myTasks_sprintBacklog.ItemsSource = Scrumble.MyTasks.Where(task => task.WrappedValue.State == TaskState.SPRINTBACKLOG);
+                treeViewItem_myTasks_sprintBacklog.ItemsSource = Scrumble.MyTasks.Where(task => task.WrappedValue.State == TaskState.SPRINT_BACKLOG);
                 treeViewItem_myTasks_inProgress.ItemsSource = Scrumble.MyTasks.Where(task => task.WrappedValue.State == TaskState.IN_PROGRESS);
                 treeViewItem_myTasks_inTest.ItemsSource = Scrumble.MyTasks.Where(task => task.WrappedValue.State == TaskState.TO_VERIFY);
                 treeViewItem_myTasks_done.ItemsSource = Scrumble.MyTasks.Where(task => task.WrappedValue.State == TaskState.DONE);
@@ -214,7 +216,7 @@ namespace scrumble
         {
             Dispatcher.Invoke(stopProgress);
             Dispatcher.Invoke(() => { setSelectedTask(6); });
-            Scrumble.Scrumboard.CollectionChanged += new NotifyCollectionChangedEventHandler(ScrumboardChanged);
+            Scrumble.GetScrumboard().CollectionChanged += new NotifyCollectionChangedEventHandler(ScrumboardChanged);
             Dispatcher.Invoke(setScrumboardContent);
         }
 
@@ -257,7 +259,7 @@ namespace scrumble
 
         private void setScrumboardContent()
         {
-            foreach(TaskWrapper task in Scrumble.Scrumboard)
+            foreach(TaskWrapper task in Scrumble.GetScrumboard(true))
             {
                 addTaskToScrumboard(task);
             }

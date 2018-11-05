@@ -28,6 +28,7 @@ namespace ScrumbleLib.Connection.Wrapper
                 instance.OnPropertyChanged(null);
             }
             else {
+                ScrumbleController.Tasks.Add(wrappedValue);
                 instance = new TaskWrapper(wrappedValue);
                 instances.Add(instance);
             }
@@ -92,10 +93,11 @@ namespace ScrumbleLib.Connection.Wrapper
                (int)jsonObject["verify"], //verifyingUser
                (int?)jsonObject["sprint"],
                (int)jsonObject["project"],
-               (string)jsonObject["state"]);
+               (string)jsonObject["state"],
+               (int)jsonObject["position"]);
         }
 
-        public void ApplyFields(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int? sprint, int project, string state)
+        public void ApplyFields(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int? sprint, int project, string state, int position)
         {
             WrappedValue.Id = id;
             WrappedValue.Name = name;
@@ -106,6 +108,7 @@ namespace ScrumbleLib.Connection.Wrapper
             WrappedValue.Sprint = sprint == null ? null : ScrumbleController.GetSprint((int)sprint);
             WrappedValue.Project = ScrumbleController.GetProject(project);
             WrappedValue.State = TaskStateParser.Parse(state);
+            WrappedValue.Position = position;
         }
 
         public int Id
@@ -163,6 +166,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
         }
 
+        [JsonProperty("responsible")]
         public int ResponsibleUser
         {
             get
@@ -177,6 +181,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
         }
 
+        [JsonProperty("verify")]
         public int VerifyingUser
         {
             get
@@ -187,6 +192,20 @@ namespace ScrumbleLib.Connection.Wrapper
             {
                 WrappedValue.VerifyingUser = ScrumbleController.GetUser(value);
                 OnPropertyChanged("VerifyingUser");
+                ScrumbleConnection.Update(this);
+            }
+        }
+
+        public int Sprint
+        {
+            get
+            {
+                return WrappedValue.Sprint == null ? -1 : WrappedValue.Sprint.Id;
+            }
+            set
+            {
+                WrappedValue.Sprint = ScrumbleController.GetSprint(value);
+                OnPropertyChanged("Sprint");
                 ScrumbleConnection.Update(this);
             }
         }
@@ -215,6 +234,20 @@ namespace ScrumbleLib.Connection.Wrapper
             {
                 WrappedValue.State = TaskStateParser.Parse(value);
                 OnPropertyChanged("State");
+                ScrumbleConnection.Update(this);
+            }
+        }
+
+        public int Position
+        {
+            get
+            {
+                return WrappedValue.Position;
+            }
+            set
+            {
+                WrappedValue.Position = value;
+                OnPropertyChanged("Position");
                 ScrumbleConnection.Update(this);
             }
         }

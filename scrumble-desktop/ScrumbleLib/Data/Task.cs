@@ -17,8 +17,9 @@ namespace ScrumbleLib.Data
         public Sprint Sprint { get; set; }
         public Project Project { get; set; }
         public TaskState State { get; set; }
+        public int Position { get; set; }
 
-        public Task(int id, string name = default(string), string info = default(string), int rejections = default(int), User responsibleUser = default(User), User verifyingUser = default(User), Sprint sprint = default(Sprint), Project project = default(Project), TaskState state = default(TaskState))
+        public Task(int id, string name = default(string), string info = default(string), int rejections = default(int), User responsibleUser = default(User), User verifyingUser = default(User), Sprint sprint = default(Sprint), Project project = default(Project), TaskState state = default(TaskState), int position = default(int))
         {
             this.Id = id;
             this.Name = name;
@@ -29,6 +30,7 @@ namespace ScrumbleLib.Data
             this.Sprint = sprint;
             this.Project = project;
             this.State = state;
+            this.Position = position;
         }
 
         public override string ToString()

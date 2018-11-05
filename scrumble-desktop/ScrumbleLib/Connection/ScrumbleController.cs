@@ -38,6 +38,11 @@ namespace ScrumbleLib.Connection
             return project;
         }
 
+        public static void GetScrumboard()
+        {
+            ScrumbleConnection.GetScrumboard(currentProject);
+        }
+
         public static User GetUser(int id)
         {
             if (Users.Contains(id))

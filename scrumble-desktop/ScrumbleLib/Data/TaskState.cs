@@ -9,7 +9,7 @@ namespace ScrumbleLib.Data
     public enum TaskState
     {
         PRODUCT_BACKLOG,
-        SPRINTBACKLOG,
+        SPRINT_BACKLOG,
         IN_PROGRESS,
         TO_VERIFY,
         DONE
