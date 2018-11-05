@@ -30,6 +30,9 @@ Data model:
 * [MongoDB Concept](https://drive.google.com/file/d/1No-tgxvGDaXy5VZoPew_oyJBf0xctDWK/view?usp=sharing)
 
 ## Reports
+
+### October
+
 [2018-10-08](https://docs.google.com/document/d/1GIx_nPy6as6BWanGzhu7H6GL-lOTfZIBhx789N2Ldmw/edit?usp=sharing)
 
 [2018-10-15](https://docs.google.com/document/d/1Gon0d3dsv2NabF_IYOM2_ienjwpz0SYARF6-fLzsgok/edit?usp=sharing)
@@ -37,3 +40,7 @@ Data model:
 [2018-10-22](https://docs.google.com/document/d/1ZKyH_1ksY__FbPm0fRWnVfUPl7ngW_nmSNYprvn42hM/edit?usp=sharing)
 
 [2018-10-29](https://docs.google.com/document/d/1NyflbvuWPuMIbQ6oim3F-_XA4AiFLiNt2pxqypG9drQ/edit?usp=sharing)
+
+### November
+
+[2018-11-05](https://docs.google.com/document/d/1PTnoygVCLBF4noy9rkdfZD8rWnfif_mimEbTottGHp8/edit?usp=sharing)
