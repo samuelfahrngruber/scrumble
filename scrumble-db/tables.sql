@@ -7,19 +7,19 @@ drop table sc_ProjectLogEntry cascade constraints;
 
 create Table sc_User(
  id number Primary Key,
- Username varchar2(30),
- Password varchar2(30)
+ username varchar2(30),
+ password varchar2(30)
 );
 
 create Table sc_Task(
  id number Primary Key,
  idResponsible number,
  idVerify number,
- Storyname varchar2(30),
- Info varchar2(500),
- Rejections number,
- State varchar2(20) check(State = 'PRODUCT_BACKLOG' OR State = 'SPRINT_BACKLOG' or State = 'IN_PROGRESS' or State = 'TO_VERIFY' or State = 'DONE'),
- Position number,
+ name varchar2(30),
+ info varchar2(500),
+ rejections number,
+ state varchar2(20) check(State = 'PRODUCT_BACKLOG' OR State = 'SPRINT_BACKLOG' or State = 'IN_PROGRESS' or State = 'TO_VERIFY' or State = 'DONE'),
+ position number,
  idSprint number,
  idProject number,
  constraint fk_userstory_responsible foreign key(idResponsible) references sc_User(id),
@@ -29,7 +29,7 @@ create Table sc_Task(
 
 create Table sc_Project(
  id number Primary Key,
- Name varchar2(30),
+ name varchar2(30),
  idProductowner number,
  idCurrentSprint number,
  constraint fk_project_user foreign key(idProductowner) references sc_User(id) 
@@ -37,9 +37,9 @@ create Table sc_Project(
 
 create Table sc_Sprint(
   id number Primary Key,
-  SprintNumber number,
-  StartDate date,
-  Deadline date,
+  sprintNumber number,
+  startDate date,
+  deadline date,
   idProject number,
   constraint fk_Sprint_Project foreign key(idProject) references sc_Project(id)
 );
@@ -54,8 +54,8 @@ create Table sc_Teammember(
 
 create Table sc_ProjectLogEntry(
   id number primary key,
-  Entrydate date,
-  Text varchar2(200),
+  entrydate date,
+  text varchar2(200),
   idProject number,
   constraint fk_ProjectLogEntry_Project foreign key(idProject) references sc_project(id)
 );
