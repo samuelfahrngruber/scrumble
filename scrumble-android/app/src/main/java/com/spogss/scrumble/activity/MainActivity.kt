@@ -59,34 +59,39 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        supportActionBar!!.hide()
+
         ScrumbleController.loadTeam(22, {
-            image_progress.setProgress(25)
+            image_progress.setProgress(5)
             ScrumbleController.loadProjects(23, {
-                image_progress.setProgress(25, 50)
+                image_progress.setProgress(5, 72)
                 ScrumbleController.loadSprints(22, {
-                    image_progress.setProgress(50, 75)
-                    ScrumbleController.loadTasks(22, { image_progress.setProgress(75, 100); init() }, { onError(it) })
-                }, { onError(it) })
-            }, { onError(it) })
-        }, { onError(it) } )
+                    image_progress.setProgress(72, 77)
+                    ScrumbleController.loadTasks(22, {
+                        image_progress.setProgress(77, 100); init()
+                    }, { showError(it) })
+                }, { showError(it) })
+            }, { showError(it) })
+        }, { showError(it) } )
     }
 
-    private fun onError(message: String) {
+    private fun showError(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun init() {
         val handler = Handler()
         handler.postDelayed({
+            supportActionBar!!.show()
             image_progress.visibility = View.GONE
             navigation.visibility = View.VISIBLE
             frame_layout.visibility = View.VISIBLE
-
-            setupFragments()
-
-            navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-            navigation.selectedItemId = R.id.navigation_my_tasks
         }, 1300)
+
+        setupFragments()
+
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        navigation.selectedItemId = R.id.navigation_my_tasks
     }
 
     private fun setupFragments() {

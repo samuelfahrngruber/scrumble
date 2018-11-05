@@ -8,8 +8,10 @@ import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.json.ProjectDeserializer
 import com.spogss.scrumble.json.SprintDeserializer
 import com.spogss.scrumble.json.TaskDeserializer
+import com.spogss.scrumble.json.TaskSerializer
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import org.json.JSONObject
 import java.util.*
 
 object ScrumbleController {
@@ -25,7 +27,7 @@ object ScrumbleController {
     init {
         currentUser = User(23, "Paul", "lol")
         currentProject = Project(22, "Scrumble", currentUser)
-        val sprint = Sprint(9, 1, Date(), Date(), currentProject!!)
+        val sprint = Sprint(10, 1, Date(), Date(), currentProject!!)
         currentProject!!.currentSprint = sprint
         //createTestData()
     }
@@ -84,6 +86,31 @@ object ScrumbleController {
         }
     }
 
+    fun addTask(task: Task, onSuccess: (id: Int) -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val gson = GsonBuilder().registerTypeAdapter(Task::class.java, TaskSerializer())
+                    .serializeNulls().create()
+            val response = ScrumbleConnection.post("/task", JSONObject(gson.toJson(task)))
+
+            if(response.statusCode == 201)
+                uiThread { onSuccess(response.text.toInt()) }
+            else
+                uiThread { onError(response.text) }
+        }
+    }
+
+    fun updateTask(taskId: Int, task: Task, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val gson = GsonBuilder().registerTypeAdapter(Task::class.java, TaskSerializer())
+                    .serializeNulls().create()
+            val response = ScrumbleConnection.put("/task/$taskId", JSONObject(gson.toJson(task)))
+
+            if(response.statusCode == 200)
+                uiThread { onSuccess() }
+            else
+                uiThread { onError(response.text) }
+        }
+    }
 
     //TODO: remove when webservice call is possible
     private fun createTestData() {

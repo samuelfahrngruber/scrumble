@@ -36,7 +36,7 @@ object PopupController {
     val startCal = Calendar.getInstance()
     val endCal = Calendar.getInstance()
 
-    fun setupTaskPopup(context: Context, callback: () -> Unit, task: Task? = null) {
+    fun setupTaskPopup(context: Context, callback: (view: View) -> Unit, task: Task? = null) {
         val dialogBuilder = MaterialDialog.Builder(context)
         dialogBuilder.setTitle(R.string.task)
         dialogBuilder.setTitleColor(ContextCompat.getColor(context, R.color.colorAccent))
@@ -73,9 +73,9 @@ object PopupController {
 
         val dialog = dialogBuilder.create()
         dialog.setOnShowListener {
-            dialog.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener { _ ->
+            dialog.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener {
                 if(taskDialogButtonClick(customView, context)) {
-                    callback()
+                    callback(customView)
                     dialog.dismiss()
                 }
             }
