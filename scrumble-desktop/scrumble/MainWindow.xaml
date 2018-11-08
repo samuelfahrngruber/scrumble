@@ -34,15 +34,16 @@
                 <ColumnDefinition Width="1*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="2*"></RowDefinition>
                 <RowDefinition Height="1*"></RowDefinition>
             </Grid.RowDefinitions>
-            <GridSplitter Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" ShowsPreview="True" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" />
-            <GridSplitter Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" ShowsPreview="True" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
-            <GridSplitter Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="1" ShowsPreview="True" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
+            <GridSplitter Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" ShowsPreview="True" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" />
+            <GridSplitter Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" ShowsPreview="True" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
+            <GridSplitter Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="1" ShowsPreview="True" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
 
             <!-- Project Overview -->
-            <StackPanel x:Name="section_ProjectOverview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Orientation="Vertical">
+            <StackPanel x:Name="section_ProjectOverview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Orientation="Vertical">
                 <TextBlock Text="Project Overview" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
                 <Separator Margin="20, 0"></Separator>
                 <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap">
@@ -95,12 +96,64 @@
             </StackPanel>
 
             <!-- Scrum Board -->
+            <ToolBarTray Grid.Column="1" IsLocked="True">
+                <ToolBar>
+                    <Button x:Name="toolBarButton_addTask" ToolTip="Add Task" Click="toolBarButton_addTask_Click">
+                        <Image Source="res/add.png" Height="25px" />
+                    </Button>
+                    <Button ToolTip="Add Task">
+                        <Image Source="res/remove.png" Height="25px" />
+                    </Button>
+                    <Button x:Name="toolBarButton_refreshBoard" ToolTip="Refresh Scrumboard" Click="toolBarButton_refreshBoard_Click">
+                        <Image Source="res/reload.png" Height="25px" />
+                    </Button>
+                </ToolBar>
+            </ToolBarTray>
             <!--WebBrowser x:Name="webBrowser_scrumBoard" Grid.Column="1" Grid.Row="0" Source="http://scrumblr.ca/scrumble"/-->
-            <cefSharp:ChromiumWebBrowser x:Name="chromiumWebBrowser_scrumBoard" Grid.Column="1" Grid.Row="0" IsBrowserInitializedChanged="chromiumWebBrowser_scrumBoard_IsBrowserInitializedChanged" Address="scrumboard://index.html" FrameLoadEnd="chromiumWebBrowser_scrumBoard_FrameLoadEnd" />
+            <cefSharp:ChromiumWebBrowser x:Name="chromiumWebBrowser_scrumBoard" Grid.Column="1" Grid.Row="1" IsBrowserInitializedChanged="chromiumWebBrowser_scrumBoard_IsBrowserInitializedChanged" Address="scrumboard://index.html" FrameLoadEnd="chromiumWebBrowser_scrumBoard_FrameLoadEnd" Visibility="Visible" />
+
+            <Grid Grid.Column="1" Grid.Row="1" x:Name="InputBox" Visibility="Collapsed">
+                <Grid Background="Black" Opacity="0.5"/>
+                <Border
+            MinWidth="400"
+            Background="White" 
+            CornerRadius="10" 
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center">
+                    <StackPanel>
+                        <TextBlock Text="Add Task" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                        <Separator Margin="20,10"></Separator>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="1*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Info:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Responsible:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Verify:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
+                            <TextBox x:Name="textBox_addTask_name" Grid.Row="0" Grid.Column="1" FontSize="15" Padding="2" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalContentAlignment="Center"/>
+                            <TextBox x:Name="textBox_addTask_info" Grid.Row="1" Grid.Column="1" FontSize="15" Padding="2" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalContentAlignment="Center" AcceptsReturn="True"/>
+                            <ComboBox x:Name="comboBox_addTask_responsible" Grid.Row="2" Grid.Column="1" FontSize="15" Padding="2" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" VerticalContentAlignment="Center"/>
+                            <ComboBox x:Name="comboBox_addTask_verify" Grid.Row="3" Grid.Column="1" FontSize="15" Padding="2" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" VerticalContentAlignment="Center"/>
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button x:Name="button_closeAddTask" Padding="2" Margin="20" Width="100" FontSize="15" FontWeight="Light" Content="Close" Click="button_closeAddTask_Click"></Button>
+                            <Button x:Name="button_confirmAddTask" Padding="2" Margin="20" Width="100" FontSize="15" FontWeight="Light" Content="Add" Click="button_confirmAddTask_Click"></Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
 
 
             <!-- my tasks -->
-            <Grid Grid.Column="2" Grid.Row="0" Grid.RowSpan="2">
+            <Grid Grid.Column="2" Grid.Row="0" Grid.RowSpan="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
@@ -164,7 +217,7 @@
                     </TextBlock>
                 </StackPanel>
             </Grid>
-            <Grid x:Name="section_Information" Grid.Row="1" Grid.Column="1">
+            <Grid x:Name="section_Information" Grid.Row="2" Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>

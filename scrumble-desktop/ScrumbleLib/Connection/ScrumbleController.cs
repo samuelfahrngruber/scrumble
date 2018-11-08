@@ -85,7 +85,7 @@ namespace ScrumbleLib.Connection
 
         public static bool Login(string username, string password)
         {
-            currentUser = 2;
+            currentUser = 23;
             currentProject = 4;
             return true;
         }

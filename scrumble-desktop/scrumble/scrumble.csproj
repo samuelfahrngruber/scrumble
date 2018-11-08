@@ -194,6 +194,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Scrumble.ico" />
+    <Resource Include="res\add.png" />
+    <Resource Include="res\remove.png" />
+    <Resource Include="res\reload.png" />
     <Content Include="Scrumboard\html\index.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

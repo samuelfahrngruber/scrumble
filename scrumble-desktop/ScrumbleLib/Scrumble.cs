@@ -61,7 +61,9 @@ namespace ScrumbleLib
 
         internal static void OnTaskAdded(Data.Task task)
         {
-            if(task.ResponsibleUser.Id == ScrumbleController.currentUser) // todo also check for current project
+            if(task.Sprint != null
+                    && (task.ResponsibleUser.Id == ScrumbleController.currentUser || task.VerifyingUser.Id == ScrumbleController.currentUser)
+                    && task.Project.CurrentSprint.Id == task.Sprint.Id) // todo also check for current project
                 MyTasks.Add(TaskWrapper.GetInstance(task.Id));
             if (task.Project != null
                     && task.Project.Id == ScrumbleController.currentProject 
@@ -100,6 +102,11 @@ namespace ScrumbleLib
             {
                 Logger.LogDev(str, col);
             }
+        }
+
+        public static void CreateTask(string name, string info, User responsible, User verify)
+        {
+
         }
     }
 }

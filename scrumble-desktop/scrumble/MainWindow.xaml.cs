@@ -155,6 +155,10 @@ namespace scrumble
                 textBlock_projectOverview_currentSprintDeadline.Text = currentProject.WrappedValue.CurrentSprint.Deadline.ToString("dddd, dd.MM.yyyy");
 
                 treeViewItem_teamMembers.ItemsSource = currentProject.WrappedValue.Team;
+
+                comboBox_addTask_responsible.ItemsSource = currentProject.WrappedValue.Team;
+                comboBox_addTask_verify.ItemsSource = currentProject.WrappedValue.Team;
+
                 treeViewItem_productBacklog.ItemsSource = Scrumble.ProductBacklog;
             }));
         }
@@ -217,7 +221,7 @@ namespace scrumble
             Dispatcher.Invoke(stopProgress);
             Dispatcher.Invoke(() => { setSelectedTask(6); });
             Scrumble.GetScrumboard().CollectionChanged += new NotifyCollectionChangedEventHandler(ScrumboardChanged);
-            Dispatcher.Invoke(setScrumboardContent);
+            Dispatcher.Invoke(() => { setScrumboardContent(); });
         }
 
         private void ScrumboardChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -257,12 +261,17 @@ namespace scrumble
             setMyTasks();
         }
 
-        private void setScrumboardContent()
+        private void setScrumboardContent(bool force)
         {
             foreach(TaskWrapper task in Scrumble.GetScrumboard(true))
             {
                 addTaskToScrumboard(task);
             }
+        }
+
+        private void setScrumboardContent()
+        {
+            setScrumboardContent(false);
         }
 
         private void addTaskToScrumboardTMP()
@@ -302,5 +311,36 @@ namespace scrumble
             }
         }
 
+        private void toolBarButton_refreshBoard_Click(object sender, RoutedEventArgs e)
+        {
+            setScrumboardContent(true);
+        }
+
+        private void toolBarButton_addTask_Click(object sender, RoutedEventArgs e)
+        {
+            InputBox.Visibility = System.Windows.Visibility.Visible;
+        }
+
+        private void button_closeAddTask_Click(object sender, RoutedEventArgs e)
+        {
+            InputBox.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+        private void button_confirmAddTask_Click(object sender, RoutedEventArgs e)
+        {
+            string name = textBox_addTask_name.Text;
+            string info = textBox_addTask_info.Text;
+            User responsible = comboBox_addTask_responsible.SelectedItem as User;
+            User verify = comboBox_addTask_verify.SelectedItem as User;
+
+            Scrumble.CreateTask(name, info, responsible, verify);
+
+            InputBox.Visibility = Visibility.Collapsed;
+
+            textBox_addTask_name.Text = "";
+            textBox_addTask_info.Text = "";
+            comboBox_addTask_verify.SelectedItem = null;
+            comboBox_addTask_responsible.SelectedItem = null;
+        }
     }
 }

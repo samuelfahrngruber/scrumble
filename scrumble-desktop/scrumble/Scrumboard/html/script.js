@@ -5,7 +5,7 @@
 var tasks = [];
 
 var state2column = {
-    "SPRINTBACKLOG": "column-sprintbacklog",
+    "SPRINT_BACKLOG": "column-sprintbacklog",
     "IN_PROGRESS": "column-inprogress",
     "TO_VERIFY": "column-intest",
     "DONE": "column-done"
@@ -27,7 +27,7 @@ function refreshClasses() {
             var index = ui.item.index();
             var column = ui.item.parent();
             console.log("new position of " + ui.item.attr("id") + ": (column: " + column.attr("id") + ", row: " + index + ")");
-            changeTaskState(Number(ui.item.attr("id")), column2state[column.attr("id")]);
+            changeTaskState(Number(ui.item.attr("id")), column2state[column.attr("id")], index - 1);
         }
     });
 
@@ -56,8 +56,8 @@ function addTask(taskWrapper) {
     refreshClasses();
 }
 
-function changeTaskState(taskid, newTaskState) {
-    scrumble_scrumboardInterface.changeTaskState(taskid, newTaskState);
+function changeTaskState(taskid, newTaskState, position) {
+    scrumble_scrumboardInterface.changeTaskState(taskid, newTaskState, position);
 }
 
 window.onerror = function (errorMessage, url, lineNumber) {

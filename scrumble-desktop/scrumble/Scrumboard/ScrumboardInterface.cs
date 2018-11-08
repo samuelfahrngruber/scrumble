@@ -22,9 +22,17 @@ namespace scrumble.Scrumboard
             return new ScrumboardInterface(csContext);
         }
 
-        public void changeTaskState(int taskId, string taskState)
+        public void changeTaskState(int taskId, string taskState, int position)
         {
-            Scrumble.WrapperFactory.CreateTaskWrapper(taskId).State = taskState;
+            try
+            {
+                Scrumble.WrapperFactory.CreateTaskWrapper(taskId).WrappedValue.Position = position;
+                Scrumble.WrapperFactory.CreateTaskWrapper(taskId).State = taskState;
+            }
+            catch(Exception ex)
+            {
+                Scrumble.Log(ex.Message + "\n" + ex.StackTrace, "#FF0000");
+            }
         }
     }
 }
