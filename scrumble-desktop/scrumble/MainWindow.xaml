@@ -43,7 +43,7 @@
             <GridSplitter Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="1" ShowsPreview="True" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
 
             <!-- Project Overview -->
-            <StackPanel x:Name="section_ProjectOverview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Orientation="Vertical">
+            <StackPanel x:Name="section_ProjectOverview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Orientation="Vertical" >
                 <TextBlock Text="Project Overview" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
                 <Separator Margin="20, 0"></Separator>
                 <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap">

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ScrumbleLib.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +22,6 @@ namespace ScrumbleLib.Data
             this.Number = number;
             this.Start = start;
             this.Deadline = deadline;
-
         }
     }
 }

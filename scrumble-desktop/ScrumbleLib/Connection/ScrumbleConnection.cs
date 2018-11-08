@@ -31,54 +31,83 @@ namespace ScrumbleLib.Connection
             return getUrlForType(typeof(T)) + wrapper.Id;
         }
 
-        public static void Update<T>(IDataWrapper<T> wrapper)
+        private static string getUrlForWrapperType<T>(IDataWrapper<T> wrapper)
+        {
+            return getUrlForType(typeof(T));
+        }
+
+        public static IDataWrapper<T> Update<T>(IDataWrapper<T> wrapper)
         {
             string url = getUrlForWrapper(wrapper);
             string json = wrapper.ToJson();
 
             HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = client.PutAsync(url, content).Result;
-
             Scrumble.Log("PUT: " + url, "#00FFFF");
             Scrumble.Log(json, "#00FFFF");
-        }
 
-        public static void Add<T>(IDataWrapper<T> wrapper)
-        {
-            string url = getUrlForWrapper(wrapper);
-            string json = wrapper.ToJson();
-            Scrumble.Log("POST: " + url, "#FFFF00");
-            Scrumble.Log(json, "#FFFF00");
-        }
+            HttpResponseMessage response = client.PutAsync(url, content).Result;
 
-        public static Project GetProject(Project project)
-        {
-            ProjectWrapper wrapper = ProjectWrapper.GetInstance(project);
-            int projectId = wrapper.Id;
-            //json = "{" +
-            //    "\"id\":" + projectId + "," +
-            //    "\"name\":\"SCRUMBLE" + projectId + "\"," +
-            //    "\"currentsprint\":" + 666 + "," +
-            //    "\"productowner\":" + projectId * 2 + "" +
-            //    "}";
-            string url = getUrlForWrapper(wrapper);
-            string json = "";
-            HttpResponseMessage response = client.GetAsync(url).Result;
             if (response.IsSuccessStatusCode)
                 json = response.Content.ReadAsStringAsync().Result;
             else
-                throw new Exception("invalid get at " + url + "for id " + wrapper.Id);
-            Scrumble.Log("GET - Project:", "#00FF00");
-            Scrumble.Log(json, "#00FF00");
-            wrapper.ApplyJson(json);
-            return project;
+                throw new Exception("invalid PUT at " + url + "for id " + wrapper.Id);
+
+            Scrumble.Log("Result:", "#00FFFF");
+            Scrumble.Log(json, "#00FFFF");
+
+            //wrapper.ApplyJson(json);
+            return wrapper;
         }
 
-        public static Project GetTeam(Project project)
+        public static IDataWrapper<T> Add<T>(IDataWrapper<T> wrapper)
         {
+            string url = getUrlForWrapperType(wrapper);
+            string json = wrapper.ToJson();
 
-            ProjectWrapper wrapper = ProjectWrapper.GetInstance(project);
+            HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            Scrumble.Log("POST: " + url, "#FFFF00");
+            Scrumble.Log(json, "#FFFF00");
+
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
+
+            if (response.IsSuccessStatusCode)
+                json = response.Content.ReadAsStringAsync().Result;
+            else
+                throw new Exception("invalid POST at " + url + "for id " + wrapper.Id);
+
+            Scrumble.Log("Result:", "#FFFF00");
+            Scrumble.Log(json, "#FFFF00");
+
+            //wrapper.ApplyJson(json);
+            return wrapper;
+        }
+
+        public static IDataWrapper<T> Get<T>(IDataWrapper<T> wrapper)
+        {
+            int id = wrapper.Id;
+            string url = getUrlForWrapper(wrapper);
+            string json = "";
+
+            Scrumble.Log("GET - " + wrapper.WrappedValue.GetType().Name + ":", "#00FF00");
+
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+            if (response.IsSuccessStatusCode)
+                json = response.Content.ReadAsStringAsync().Result;
+            else
+                throw new Exception("invalid GET at " + url + "for id " + wrapper.Id);
+
+            Scrumble.Log("Result:", "#00FF00");
+            Scrumble.Log(json, "#00FF00");
+
+            wrapper.ApplyJson(json);
+            return wrapper;
+        }
+
+        public static ProjectWrapper GetTeam(ProjectWrapper wrapper)
+        {
             int projectId = wrapper.Id;
 
             string url = getUrlForWrapper(wrapper) + "/user";
@@ -93,62 +122,12 @@ namespace ScrumbleLib.Connection
 
             wrapper.ApplyTeamJson(json);
 
-            return project;
+            return wrapper;
         }
 
-        public static User GetUser(User user)
-        {
-            UserWrapper wrapper = UserWrapper.GetInstance(user);
-            int userId = wrapper.Id;
-            //string json = "{" +
-            //    "\"id\":" + userId + "," +
-            //    "\"username\":\"USER" + userId + "\"" +
-            //    "}";
-            string url = getUrlForWrapper(wrapper);
-            string json = "";
-            HttpResponseMessage response = client.GetAsync(url).Result;
-            if (response.IsSuccessStatusCode)
-                json = response.Content.ReadAsStringAsync().Result;
-            else
-                throw new Exception("invalid get at " + url + "for id " + wrapper.Id);
-            Scrumble.Log("GET - User:", "#00FF00");
-            Scrumble.Log(json, "#00FF00");
-            wrapper.ApplyJson(json);
-            return user;
-        }
-
-        public static Data.Task GetTask(Data.Task task)
-        {
-            TaskWrapper wrapper = TaskWrapper.GetInstance(task);
-            int taskId = task.Id;
-            //string json = "{" +
-            //    "\"id\":" + taskId + "," +
-            //    "\"name\":\"Task" + taskId + "\"," +
-            //    "\"info\":\"TASKINFO" + taskId + taskId + taskId + taskId + "\"," +
-            //    "\"rejections\":" + 2 + "," +
-            //    "\"responsibleuser\":" + taskId % 3 + "," +
-            //    "\"verifyinguser\":" + taskId * 100 + "," +
-            //    "\"sprint\":" + taskId + "," +
-            //    "\"state\":\"" + "INTEST" + "\"" +
-            //    "}";
-            string url = getUrlForWrapper(wrapper);
-            string json = "";
-            HttpResponseMessage response = client.GetAsync(url).Result;
-            if (response.IsSuccessStatusCode)
-                json = response.Content.ReadAsStringAsync().Result;
-            else
-                throw new Exception("invalid get at " + url + "for id " + wrapper.Id);
-            Scrumble.Log("GET - Task:", "#00FF00");
-            Scrumble.Log(json, "#00FF00");
-            wrapper.ApplyJson(json);
-            return task;
-        }
-
-        public static void GetScrumboard(int projectId)
+        public static ProjectWrapper GetProjectTasks(ProjectWrapper wrapper)
         {
             List<Data.Task> scrumboard = new List<Data.Task>();
-
-            ProjectWrapper wrapper = ProjectWrapper.GetInstance(projectId);
 
             string url = getUrlForWrapper(wrapper) + "/task";
             string json = "";
@@ -160,31 +139,9 @@ namespace ScrumbleLib.Connection
             Scrumble.Log("GET - Project-Tasks:", "#00FF00");
             Scrumble.Log(json, "#00FF00");
 
-            Scrumble.ScrumboardFromJson(json);
-        }
+            Scrumble.TasksFromJson(json);
 
-        public static Sprint GetSprint(Sprint sprint)
-        {
-            SprintWrapper wrapper = SprintWrapper.GetInstance(sprint);
-            int sprintId = wrapper.Id;
-            //string json = "{" +
-            //    "\"id\":" + sprintId + "," +
-            //    "\"project\":" + sprintId + "," +
-            //    "\"number\":" + 0 + "," +
-            //    "\"start\":\"" + new DateTime() + "\"," +
-            //    "\"deadline\":\"" + new DateTime() + "\"" +
-            //    "}";
-            string url = getUrlForWrapper(wrapper);
-            string json = "";
-            HttpResponseMessage response = client.GetAsync(url).Result;
-            if (response.IsSuccessStatusCode)
-                json = response.Content.ReadAsStringAsync().Result;
-            else
-                throw new Exception("invalid get at " + url + "for id " + wrapper.Id);
-            Scrumble.Log("GET - Sprint:", "#00FF00");
-            Scrumble.Log(json, "#00FF00");
-            wrapper.ApplyJson(json);
-            return sprint;
+            return wrapper;
         }
     }
 }

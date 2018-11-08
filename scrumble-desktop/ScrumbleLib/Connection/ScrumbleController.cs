@@ -1,5 +1,6 @@
 ﻿using ScrumbleLib.Connection.Wrapper;
 using ScrumbleLib.Data;
+using ScrumbleLib.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,19 +11,23 @@ namespace ScrumbleLib.Connection
 {
     internal static class ScrumbleController
     {
-        public static int currentUser { get; private set; } = -1;
-        public static int currentProject { get; private set; } = -1;
+        public static User currentUser { get; private set; } = null;
+        public static Project currentProject { get; private set; } = null;
 
         public static IndexSet<Project> Projects { get; private set; } = new IndexSet<Project>();
         public static IndexSet<Sprint> Sprints { get; private set; } = new IndexSet<Sprint>();
         public static IndexSet<Data.Task> Tasks { get; private set; } = new IndexSet<Data.Task>();
+        public static IndexSet<User> Users { get; private set; } = new IndexSet<User>();
 
-        internal static void SetCurrentProject(int projectId)
+        public static void SetCurrentProject(Project project)
         {
-            currentProject = projectId;
+            currentProject = project;
         }
 
-        public static IndexSet<User> Users { get; private set; } = new IndexSet<User>();
+        public static void SetCurrentProject(int projectId)
+        {
+            currentProject = GetProject(projectId);
+        }
 
         public static Project GetProject(int id)
         {
@@ -32,15 +37,17 @@ namespace ScrumbleLib.Connection
             }
             Project project = new Project(id);
             Projects.Add(project);
-            project = ScrumbleConnection.GetProject(project);
-            project = ScrumbleConnection.GetTeam(project);
+            ProjectWrapper pw = ProjectWrapper.GetInstance(project);
+            ScrumbleConnection.Get(pw);
+            ScrumbleConnection.GetTeam(pw);
             Scrumble.OnProjectAdded(project);
             return project;
         }
 
-        public static void GetScrumboard()
+        public static void GetProjectTasks()
         {
-            ScrumbleConnection.GetScrumboard(currentProject);
+            ProjectWrapper pw = ProjectWrapper.GetInstance(currentProject.Id);
+            ScrumbleConnection.GetProjectTasks(pw);
         }
 
         public static User GetUser(int id)
@@ -51,7 +58,8 @@ namespace ScrumbleLib.Connection
             }
             User user = new User(id);
             Users.Add(user);
-            user = ScrumbleConnection.GetUser(user);
+            UserWrapper uw = UserWrapper.GetInstance(user);
+            ScrumbleConnection.Get(uw);
             Scrumble.OnUserAdded(user);
             return user;
         }
@@ -64,9 +72,16 @@ namespace ScrumbleLib.Connection
             }
             Data.Task task = new Data.Task(id);
             Tasks.Add(task);
-            task = ScrumbleConnection.GetTask(task);
+            TaskWrapper tw = TaskWrapper.GetInstance(task);
+            ScrumbleConnection.Get(tw);
             Scrumble.OnTaskAdded(task);
             return task;
+        }
+
+        public static Data.Task AddTask(Data.Task task)
+        {
+            TaskWrapper tw = TaskWrapper.GetInstance(task);
+            return ScrumbleConnection.Add(tw).WrappedValue;
         }
 
         public static Sprint GetSprint(int id)
@@ -77,7 +92,8 @@ namespace ScrumbleLib.Connection
             }
             Sprint sprint = new Sprint(id);
             Sprints.Add(sprint);
-            sprint = ScrumbleConnection.GetSprint(sprint);
+            SprintWrapper sw = SprintWrapper.GetInstance(sprint);
+            ScrumbleConnection.Get(sw);
             Scrumble.OnSprintAdded(sprint);
             return sprint;
         }
@@ -85,19 +101,18 @@ namespace ScrumbleLib.Connection
 
         public static bool Login(string username, string password)
         {
-            currentUser = 23;
-            currentProject = 4;
+            currentUser = GetUser(23);
             return true;
         }
 
 
         private static bool isLoggedIn()
         {
-            return currentUser >= 0;
+            return currentUser != null;
         }
         private static bool isProjectSet()
         {
-            return currentProject >= 0;
+            return currentProject != null;
         }
         private static void assertLoggedIn()
         {

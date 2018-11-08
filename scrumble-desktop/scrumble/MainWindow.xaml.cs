@@ -44,18 +44,29 @@ namespace scrumble
             chromiumWebBrowser_scrumBoard.RegisterJsObject("scrumble_scrumboardInterface", scrumboardInterface);
 
             Scrumble.Login("user", "pw");
+            setCurrentProject(22);
+
+            Window_Loaded(null, null);
+
+            initializeInformation();
+
+            initializeMenu();
+            initializeProjectOverview();
+
+            initializeMyTasks();
+            initializeSelectedTask();
         }
 
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            await Dispatcher.BeginInvoke((Action)(() => initializeInformation()));
+            //await Dispatcher.BeginInvoke((Action)(() => initializeInformation()));
 
-            await Dispatcher.BeginInvoke((Action)(() => initializeMenu()));
-            await Dispatcher.BeginInvoke((Action)(() => initializeProjectOverview()));
+            //await Dispatcher.BeginInvoke((Action)(() => initializeMenu()));
+            //await Dispatcher.BeginInvoke((Action)(() => initializeProjectOverview()));
 
-            await Dispatcher.BeginInvoke((Action)(() => initializeMyTasks()));
-            await Dispatcher.BeginInvoke((Action)(() => initializeSelectedTask()));
+            //await Dispatcher.BeginInvoke((Action)(() => initializeMyTasks()));
+            //await Dispatcher.BeginInvoke((Action)(() => initializeSelectedTask()));
         }
 
         private void initializeCef()
@@ -81,7 +92,6 @@ namespace scrumble
         {
 
             Scrumble.WrapperFactory.CreateProjectWrapper(22);
-            setCurrentProject(22);
             section_ProjectOverview.Visibility = Visibility.Visible;
         }
         
@@ -101,7 +111,7 @@ namespace scrumble
         private void initializeMyTasks()
         {
             setMyTasks();
-            Scrumble.MyTasks.CollectionChanged += new NotifyCollectionChangedEventHandler(MyTasksChanged);
+            Scrumble.GetMyTasks().CollectionChanged += new NotifyCollectionChangedEventHandler(MyTasksChanged);
             section_MyTasks.Visibility = Visibility.Visible;
         }
 
@@ -159,17 +169,17 @@ namespace scrumble
                 comboBox_addTask_responsible.ItemsSource = currentProject.WrappedValue.Team;
                 comboBox_addTask_verify.ItemsSource = currentProject.WrappedValue.Team;
 
-                treeViewItem_productBacklog.ItemsSource = Scrumble.ProductBacklog;
+                treeViewItem_productBacklog.ItemsSource = Scrumble.GetProductBacklog();
             }));
         }
 
         private void setMyTasks()
         {
             Dispatcher.BeginInvoke((Action)(() => { 
-                treeViewItem_myTasks_sprintBacklog.ItemsSource = Scrumble.MyTasks.Where(task => task.WrappedValue.State == TaskState.SPRINT_BACKLOG);
-                treeViewItem_myTasks_inProgress.ItemsSource = Scrumble.MyTasks.Where(task => task.WrappedValue.State == TaskState.IN_PROGRESS);
-                treeViewItem_myTasks_inTest.ItemsSource = Scrumble.MyTasks.Where(task => task.WrappedValue.State == TaskState.TO_VERIFY);
-                treeViewItem_myTasks_done.ItemsSource = Scrumble.MyTasks.Where(task => task.WrappedValue.State == TaskState.DONE);
+                treeViewItem_myTasks_sprintBacklog.ItemsSource = Scrumble.GetMyTasks().Where(task => task.WrappedValue.State == TaskState.SPRINT_BACKLOG);
+                treeViewItem_myTasks_inProgress.ItemsSource = Scrumble.GetMyTasks().Where(task => task.WrappedValue.State == TaskState.IN_PROGRESS);
+                treeViewItem_myTasks_inTest.ItemsSource = Scrumble.GetMyTasks().Where(task => task.WrappedValue.State == TaskState.TO_VERIFY);
+                treeViewItem_myTasks_done.ItemsSource = Scrumble.GetMyTasks().Where(task => task.WrappedValue.State == TaskState.DONE);
             }));
         }
 
@@ -333,7 +343,18 @@ namespace scrumble
             User responsible = comboBox_addTask_responsible.SelectedItem as User;
             User verify = comboBox_addTask_verify.SelectedItem as User;
 
-            Scrumble.CreateTask(name, info, responsible, verify);
+            ScrumbleLib.Data.Task t = new ScrumbleLib.Data.Task(-1, 
+                name, 
+                info, 
+                0, 
+                responsible, 
+                verify, 
+                Scrumble.GetCurrentProject().WrappedValue.CurrentSprint, 
+                Scrumble.GetCurrentProject().WrappedValue, 
+                TaskState.SPRINT_BACKLOG, 
+                0);
+
+            Scrumble.AddTask(t);
 
             InputBox.Visibility = Visibility.Collapsed;
 

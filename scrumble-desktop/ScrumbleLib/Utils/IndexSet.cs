@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ScrumbleLib.Connection.Wrapper;
 
-namespace ScrumbleLib.Connection
+namespace ScrumbleLib.Utils
 {
     public class IndexSet<T> where T : IIndexable
     {

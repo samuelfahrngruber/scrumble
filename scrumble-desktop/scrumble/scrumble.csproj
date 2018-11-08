@@ -197,6 +197,7 @@
     <Resource Include="res\add.png" />
     <Resource Include="res\remove.png" />
     <Resource Include="res\reload.png" />
+    <SplashScreen Include="res\scrumble.png" />
     <Content Include="Scrumboard\html\index.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

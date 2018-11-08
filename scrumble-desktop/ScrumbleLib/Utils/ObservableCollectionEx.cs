@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ScrumbleLib.Connection
+namespace ScrumbleLib.Utils
 {
     public class ObservableCollectionEx<T> : ObservableCollection<T> where T : INotifyPropertyChanged
     {

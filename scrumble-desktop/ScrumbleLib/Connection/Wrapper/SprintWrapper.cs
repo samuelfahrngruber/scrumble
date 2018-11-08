@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using ScrumbleLib.Connection.Json;
 using ScrumbleLib.Data;
+using ScrumbleLib.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
