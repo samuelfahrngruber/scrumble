@@ -81,7 +81,19 @@ namespace ScrumbleLib.Connection
         public static Data.Task AddTask(Data.Task task)
         {
             TaskWrapper tw = TaskWrapper.GetInstance(task);
-            return ScrumbleConnection.Add(tw).WrappedValue;
+            ScrumbleConnection.Add(tw);
+            Tasks.Add(tw.WrappedValue);
+            Scrumble.OnTaskAdded(tw.WrappedValue);
+            return tw.WrappedValue;
+        }
+
+        public static Data.Task DeleteTask(int taskId)
+        {
+            TaskWrapper tw = TaskWrapper.GetInstance(taskId);
+            ScrumbleConnection.Delete(tw);
+            Tasks.Remove(taskId);
+            Scrumble.OnTaskRemoved(tw.WrappedValue);
+            return tw.WrappedValue;
         }
 
         public static Sprint GetSprint(int id)

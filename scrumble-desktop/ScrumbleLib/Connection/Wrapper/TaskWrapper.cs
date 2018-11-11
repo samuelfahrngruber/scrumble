@@ -84,18 +84,28 @@ namespace ScrumbleLib.Connection.Wrapper
 
         public void ApplyJson(JObject jsonObject)
         {
+            if (jsonObject.ContainsKey("id")) WrappedValue.Id = (int)jsonObject["id"];
+            if (jsonObject.ContainsKey("name")) WrappedValue.Name = (string)jsonObject["name"]; // username
+            if (jsonObject.ContainsKey("info")) WrappedValue.Info = (string)jsonObject["info"];
+            if (jsonObject.ContainsKey("rejections")) WrappedValue.Rejections = (int)jsonObject["rejections"];
+            if (jsonObject.ContainsKey("responsible")) WrappedValue.ResponsibleUser = ScrumbleController.GetUser((int)jsonObject["responsible"]);
+            if (jsonObject.ContainsKey("verify")) WrappedValue.VerifyingUser = ScrumbleController.GetUser((int)jsonObject["verify"]);
+            if (jsonObject.ContainsKey("sprint")) { int? sprint = (int?)jsonObject["sprint"]; WrappedValue.Sprint = sprint == null ? null : ScrumbleController.GetSprint((int)sprint); }
+            if (jsonObject.ContainsKey("project")) WrappedValue.Project = ScrumbleController.GetProject((int)jsonObject["project"]);
+            if (jsonObject.ContainsKey("state")) WrappedValue.State = TaskStateParser.Parse((string)jsonObject["state"]);
+            if (jsonObject.ContainsKey("position")) WrappedValue.Position = (int)jsonObject["position"];
             //ScrumBoardColumn state = (ScrumBoardColumn)Enum.Parse(typeof(ScrumBoardColumn), (string)jsonObject["state"]);
-            ApplyFields(
-               (int)jsonObject["id"],
-               (string)jsonObject["name"],
-               (string)jsonObject["info"],
-               (int)jsonObject["rejections"],
-               (int)jsonObject["responsible"], //responsibleUser
-               (int)jsonObject["verify"], //verifyingUser
-               (int?)jsonObject["sprint"],
-               (int)jsonObject["project"],
-               (string)jsonObject["state"],
-               (int)jsonObject["position"]);
+            //ApplyFields(
+            //   (int)jsonObject["id"],
+            //   (string)jsonObject["name"],
+            //   (string)jsonObject["info"],
+            //   (int)jsonObject["rejections"],
+            //   (int)jsonObject["responsible"], //responsibleUser
+            //   (int)jsonObject["verify"], //verifyingUser
+            //   (int?)jsonObject["sprint"],
+            //   (int)jsonObject["project"],
+            //   (string)jsonObject["state"],
+            //   (int)jsonObject["position"]);
         }
 
         public void ApplyFields(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int? sprint, int project, string state, int position)

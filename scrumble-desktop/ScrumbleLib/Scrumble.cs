@@ -14,9 +14,9 @@ namespace ScrumbleLib
 {
     public static class Scrumble
     {
-        internal static ObservableCollectionEx<TaskWrapper> MyTasks { get; private set; } = new ObservableCollectionEx<TaskWrapper>();
-        internal static ObservableCollectionEx<TaskWrapper> Scrumboard { get; private set; } = new ObservableCollectionEx<TaskWrapper>();
-        internal static ObservableCollectionEx<TaskWrapper> ProductBacklog { get; private set; } = new ObservableCollectionEx<TaskWrapper>();
+        internal static ObservableCollectionEx<TaskWrapper> MyTasks { get; private set; } = null;
+        internal static ObservableCollectionEx<TaskWrapper> Scrumboard { get; private set; } = null;
+        internal static ObservableCollectionEx<TaskWrapper> ProductBacklog { get; private set; } = null;
 
         internal static ProjectWrapper currentProject { get; set; } = null;
 
@@ -97,7 +97,7 @@ namespace ScrumbleLib
         {
             if (task.Sprint != null
                 && (task.ResponsibleUser.Id == ScrumbleController.currentUser.Id || task.VerifyingUser.Id == ScrumbleController.currentUser.Id)
-                && task.Project.CurrentSprint.Id == task.Sprint.Id)
+                && ScrumbleController.currentProject.CurrentSprint.Id == task.Sprint.Id)
             {
                 TaskWrapper tw = TaskWrapper.GetInstance(task.Id);
                 int index = GetMyTasks().IndexOf(tw);
@@ -132,6 +132,13 @@ namespace ScrumbleLib
             }
         }
 
+        public static void OnTaskRemoved(Data.Task wrappedValue)
+        {
+            GetMyTasks().Remove(TaskWrapper.GetInstance(wrappedValue));
+            GetScrumboard().Remove(TaskWrapper.GetInstance(wrappedValue));
+            GetProductBacklog().Remove(TaskWrapper.GetInstance(wrappedValue));
+        }
+
         internal static void OnSprintAdded(Sprint sprint)
         {
             // todo implement
@@ -164,6 +171,11 @@ namespace ScrumbleLib
         public static void AddTask(Data.Task task)
         {
             ScrumbleController.AddTask(task);
+        }
+
+        public static void DeleteTask(int taskId)
+        {
+            ScrumbleController.DeleteTask(taskId);
         }
     }
 }

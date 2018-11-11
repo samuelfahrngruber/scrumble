@@ -79,18 +79,11 @@ namespace ScrumbleLib.Connection.Wrapper
             string json = JsonConvert.SerializeObject(this, Formatting.Indented, settings);
             return json;
         }
-
-        public void ApplyFields(int id, string username)
-        {
-            WrappedValue.Id = id;
-            WrappedValue.Username = username;
-        }
-
+        
         public void ApplyJson(JObject jsonObject)
         {
-            ApplyFields(
-                (int)jsonObject["id"],
-                (string)jsonObject["name"]); // username
+            if (jsonObject.ContainsKey("id")) WrappedValue.Id = (int)jsonObject["id"];
+            if (jsonObject.ContainsKey("name")) WrappedValue.Username = (string)jsonObject["name"]; // username
         }
 
         public void ApplyJson(string json)

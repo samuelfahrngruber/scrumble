@@ -80,24 +80,28 @@ namespace ScrumbleLib.Connection.Wrapper
             return json;
         }
 
-        public void ApplyFields(int id, int project, int number, DateTime start, DateTime deadline)
-        {
-            WrappedValue.Id = id;
-            WrappedValue.Project = ScrumbleController.GetProject(project);
-            WrappedValue.Number = number;
-            WrappedValue.Start = start;
-            WrappedValue.Deadline = deadline;
-        }
+        //public void ApplyFields(int id, int project, int number, DateTime start, DateTime deadline)
+        //{
+        //    WrappedValue.Id = id;
+        //    WrappedValue.Project = ScrumbleController.GetProject(project);
+        //    WrappedValue.Number = number;
+        //    WrappedValue.Start = start;
+        //    WrappedValue.Deadline = deadline;
+        //}
 
         public void ApplyJson(JObject jsonObject)
         {
-
-            ApplyFields(
-                (int)jsonObject["id"],
-                (int)jsonObject["project"],
-                (int)jsonObject["number"],
-                DateTime.Parse((string)jsonObject["startdate"]),
-                DateTime.Parse((string)jsonObject["deadline"]));
+            if (jsonObject.ContainsKey("id")) WrappedValue.Id = (int)jsonObject["id"];
+            if (jsonObject.ContainsKey("project")) WrappedValue.Project = ScrumbleController.GetProject((int)jsonObject["project"]);
+            if (jsonObject.ContainsKey("number")) WrappedValue.Number = (int)jsonObject["number"];
+            if (jsonObject.ContainsKey("startdate")) WrappedValue.Start = DateTime.Parse((string)jsonObject["startdate"]);
+            if (jsonObject.ContainsKey("deadline")) WrappedValue.Deadline = DateTime.Parse((string)jsonObject["deadline"]);
+            //ApplyFields(
+            //    (int)jsonObject["id"],
+            //    (int)jsonObject["project"],
+            //    (int)jsonObject["number"],
+            //    DateTime.Parse((string)jsonObject["startdate"]),
+            //    DateTime.Parse((string)jsonObject["deadline"]));
         }
 
         public void ApplyJson(string json)

@@ -29,6 +29,8 @@ namespace scrumble
         private TaskWrapper selectedTask = null;
         private ProjectWrapper currentProject = null;
 
+        private int? temp_removeTask = null;
+
         public MainWindow()
         {
             initializeCef();
@@ -123,11 +125,16 @@ namespace scrumble
         }
 
 
-        private void setSelectedTask(int id)
+        public void setSelectedTask(int id)
+        {
+            setSelectedTask(Scrumble.WrapperFactory.CreateTaskWrapper(id));
+        }
+
+        private void setSelectedTask(TaskWrapper tw)
         {
             if (selectedTask != null)
                 selectedTask.PropertyChanged -= refreshSelectedTask;
-            selectedTask = Scrumble.WrapperFactory.CreateTaskWrapper(id);
+            selectedTask = tw;
             refreshSelectedTask(null, null);
             selectedTask.PropertyChanged += refreshSelectedTask;
         }
@@ -253,7 +260,7 @@ namespace scrumble
             }
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                foreach (TaskWrapper task in e.NewItems)
+                foreach (TaskWrapper task in e.OldItems)
                 {
                     //removeTaskFromScrumboard(task);
                 }
@@ -273,7 +280,7 @@ namespace scrumble
 
         private void setScrumboardContent(bool force)
         {
-            foreach(TaskWrapper task in Scrumble.GetScrumboard(true))
+            foreach(TaskWrapper task in Scrumble.GetScrumboard(force))
             {
                 addTaskToScrumboard(task);
             }
@@ -362,6 +369,48 @@ namespace scrumble
             textBox_addTask_info.Text = "";
             comboBox_addTask_verify.SelectedItem = null;
             comboBox_addTask_responsible.SelectedItem = null;
+        }
+
+        private void treeView_myTasks_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            TaskWrapper tw = treeView_myTasks.SelectedItem as TaskWrapper;
+            if(tw != null)
+            {
+                setSelectedTask(tw);
+            }
+        }
+
+        private void treeView_projectOverview_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            TaskWrapper tw = treeView_projectOverview.SelectedItem as TaskWrapper;
+            if(tw != null)
+            {
+                setSelectedTask(tw);
+            }
+        }
+
+        public void showRemoveTaskPopup(int taskid)
+        {
+            temp_removeTask = taskid;
+            Dispatcher.BeginInvoke((Action)(() => { grid_removeTaskDialog.Visibility = System.Windows.Visibility.Visible; }));
+        }
+
+        private void button_closeRemoveTask_Click(object sender, RoutedEventArgs e)
+        {
+            grid_removeTaskDialog.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+        private void button_removeTask_Click(object sender, RoutedEventArgs e)
+        {
+            if (radioButton_removeTask_pbl.IsChecked == true)
+            {
+                TaskWrapper tw = Scrumble.WrapperFactory.CreateTaskWrapper((int)temp_removeTask);
+                //tw.State = TaskState.PRODUCT_BACKLOG.ToString();
+            }
+            else if (radioButton_removeTask_delete.IsChecked == true)
+            {
+                Scrumble.DeleteTask((int)temp_removeTask);
+            }
         }
     }
 }

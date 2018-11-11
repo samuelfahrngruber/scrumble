@@ -80,6 +80,26 @@ namespace ScrumbleLib.Connection
             Scrumble.Log("Result:", "#FFFF00");
             Scrumble.Log(json, "#FFFF00");
 
+            wrapper.ApplyJson(json);
+            return wrapper;
+        }
+
+        public static IDataWrapper<T> Delete<T>(IDataWrapper<T> wrapper)
+        {
+            string url = getUrlForWrapper(wrapper);
+
+            Scrumble.Log("DELETE: " + url, "#fc622a");
+
+            //HttpResponseMessage response = client.DeleteAsync(url).Result;
+
+            //if (response.IsSuccessStatusCode)
+            //    json = response.Content.ReadAsStringAsync().Result;
+            //else
+            //    throw new Exception("invalid POST at " + url + "for id " + wrapper.Id);
+
+            //Scrumble.Log("Result:", "#FFFF00");
+            //Scrumble.Log(json, "#FFFF00");
+
             //wrapper.ApplyJson(json);
             return wrapper;
         }

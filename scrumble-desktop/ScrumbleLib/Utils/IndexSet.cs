@@ -52,5 +52,15 @@ namespace ScrumbleLib.Utils
         {
             return data.ContainsKey(item.Id);
         }
+        
+        public bool Remove(int key)
+        {
+            return data.Remove(key);
+        }
+
+        public bool Remove(T item)
+        {
+            return data.Remove(item.Id);
+        }
     }
 }

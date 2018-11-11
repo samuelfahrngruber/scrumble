@@ -34,5 +34,29 @@ namespace scrumble.Scrumboard
                 Scrumble.Log(ex.Message + "\n" + ex.StackTrace, "#FF0000");
             }
         }
+        public void showInfo(int taskId)
+        {
+            try
+            {
+                csContext.setSelectedTask(taskId);
+            }
+            catch (Exception ex)
+            {
+                Scrumble.Log(ex.Message + "\n" + ex.StackTrace, "#FF0000");
+            }
+        }
+
+        public void deleteTask(int taskId)
+        {
+            try
+            {
+                //Scrumble.DeleteTask(taskId);
+                csContext.showRemoveTaskPopup(taskId);
+            }
+            catch (Exception ex)
+            {
+                Scrumble.Log(ex.Message + "\n" + ex.StackTrace, "#FF0000");
+            }
+        }
     }
 }

@@ -22,7 +22,7 @@ function refreshClasses() {
         connectWith: ".column",
         handle: ".portlet-header",
         cancel: ".portlet-toggle",
-        placeholder: "portlet-placeholder ui-corner-all",
+        placeholder: "portlet-placeholder",
         stop: (event, ui) => {
             var index = ui.item.index();
             var column = ui.item.parent();
@@ -32,9 +32,7 @@ function refreshClasses() {
     });
 
     $(".portlet")
-      .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
-      .find(".portlet-header")
-      .addClass("ui-widget-header ui-corner-all")
+      .addClass("ui-widget ui-widget-content ui-helper-clearfix")
 
     $(".portlet-toggle").click(function () {
         var icon = $(this);
@@ -47,7 +45,24 @@ function addTask(taskWrapper) {
     var column = $("#" + state2column[taskWrapper.state.toUpperCase()]);
 
     var taskdiv = $('<div class="portlet" id="' + taskWrapper.id + '"></div>');
-    var header = $('<div class="portlet-header">' + taskWrapper.name + '<div>');
+
+    var header = $('<div class="portlet-header"></div>');
+
+    var header_text = $('<div class="portlet-header-text">' + taskWrapper.name + '</div>');
+    var header_btn_del = $('<div class="portlet-button-delete" onclick="deleteTask(' + taskWrapper.id + ')"><i class="fas fa-times-circle"></i></div>');
+    var header_btn_info = $('<div class="portlet-button-info" onclick="showInfo(' + taskWrapper.id + ')"><i class="fas fa-info-circle"></i></div>');
+    header.append(header_text);
+    header.append(header_btn_info);
+    header.append(header_btn_del);
+
+    //<div class="portlet">
+    //   <div class="portlet-header">
+    //        <div class="portlet-header-text">documentation</div>
+    //        <div class="portlet-button-delete"><i class="fas fa-times-circle"></i></div>
+    //        <div class="portlet-button-info"><i class="fas fa-info-circle"></i></div>
+    //   </div>
+    //   <div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
+    //</div>
     var content = $('<div class="portlet-content">' + taskWrapper.info + '</div>');
     taskdiv.append(header);
     taskdiv.append(content);
@@ -60,8 +75,15 @@ function changeTaskState(taskid, newTaskState, position) {
     scrumble_scrumboardInterface.changeTaskState(taskid, newTaskState, position);
 }
 
+function showInfo(taskid) {
+    scrumble_scrumboardInterface.showInfo(taskid);
+}
+
+function deleteTask(taskid) {
+    scrumble_scrumboardInterface.deleteTask(taskid);
+}
+
 window.onerror = function (errorMessage, url, lineNumber) {
     alert(errorMessage);
 }
-window.onc
 

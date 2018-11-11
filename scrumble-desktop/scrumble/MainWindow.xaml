@@ -62,22 +62,7 @@
                     <Run Text="Sprint Deadline: "></Run>
                     <Run x:Name="textBlock_projectOverview_currentSprintDeadline" FontWeight="Medium" Text="Mi., 31.10.2018"></Run>
                 </TextBlock>
-                <TreeView Margin="5" BorderThickness="0" FontSize="18" FontWeight="Light">
-
-
-
-                    <TreeView.Resources>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
-                      Color="Transparent" />
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"
-                      Color="Black" />
-                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
-                      Color="Transparent" />
-                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
-                      Color="Black" />
-                    </TreeView.Resources>
-
-
+                <TreeView x:Name="treeView_projectOverview" Margin="5" BorderThickness="0" FontSize="18" FontWeight="Light" SelectedItemChanged="treeView_projectOverview_SelectedItemChanged">
                     <TreeViewItem x:Name="treeViewItem_teamMembers" IsExpanded="True" Margin="5" HorizontalContentAlignment="Stretch">
                         <TreeViewItem.Header>
                             <StackPanel Orientation="Horizontal">
@@ -151,6 +136,30 @@
                 </Border>
             </Grid>
 
+            <Grid Grid.Column="1" Grid.Row="1" x:Name="grid_removeTaskDialog" Visibility="Collapsed">
+                <Grid Background="Black" Opacity="0.5"/>
+                <Border
+            MinWidth="400"
+            Background="White" 
+            CornerRadius="10" 
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center">
+                    <StackPanel>
+                        <TextBlock Text="Remove Task" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                        <Separator Margin="20,10"></Separator>
+
+                        <TextBlock Text="What do you want to do?" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
+                        <RadioButton x:Name="radioButton_removeTask_pbl" GroupName="RemoveType" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" Content="Move task to product Backlog" IsChecked="True"/>
+                        <RadioButton x:Name="radioButton_removeTask_delete" GroupName="RemoveType" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" Content="Remove task completely" />
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button x:Name="button_closeRemoveTask" Padding="2" Margin="20" Width="100" FontSize="15" FontWeight="Light" Content="Cancel" Click="button_closeRemoveTask_Click" ></Button>
+                            <Button x:Name="button_removeTask" Padding="2" Margin="20" Width="100" FontSize="15" FontWeight="Light" Content="Remove" Background="LightCoral" Click="button_removeTask_Click"></Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
 
             <!-- my tasks -->
             <Grid Grid.Column="2" Grid.Row="0" Grid.RowSpan="3">
@@ -167,7 +176,7 @@
                 <StackPanel x:Name="section_MyTasks" Grid.Row="0" Grid.Column="0" Orientation="Vertical">
                     <TextBlock Text="My Tasks" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
                     <Separator Margin="20, 0"></Separator>
-                    <TreeView Margin="5" BorderThickness="0" FontSize="18" FontWeight="Light" >
+                    <TreeView x:Name="treeView_myTasks" Margin="5" BorderThickness="0" FontSize="18" FontWeight="Light" SelectedItemChanged="treeView_myTasks_SelectedItemChanged" >
                         <TreeViewItem x:Name="treeViewItem_myTasks_sprintBacklog" IsExpanded="True" Margin="5">
                             <TreeViewItem.Header>
                                 <StackPanel Orientation="Horizontal">
