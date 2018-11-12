@@ -7,7 +7,7 @@ drop table sc_ProjectLogEntry cascade constraints;
 
 create Table sc_User(
  id number Primary Key,
- username varchar2(30),
+ username varchar2(30) unique,
  password varchar2(30)
 );
 
