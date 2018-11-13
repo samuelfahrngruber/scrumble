@@ -4,14 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.llollox.androidtoggleswitch.widgets.ToggleSwitch
 import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.R
+import com.spogss.scrumble.activity.MainActivity
 import com.spogss.scrumble.adapter.CustomDragItemAdapter
+import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.PopupController
 import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.data.Task
@@ -19,6 +21,7 @@ import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.viewItem.CustomDragItem
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
 import com.woxthebox.draglistview.BoardView
+import kotlinx.android.synthetic.main.fragment_scrum_board.*
 
 
 class ScrumBoardFragment: Fragment() {
@@ -29,7 +32,6 @@ class ScrumBoardFragment: Fragment() {
                               savedInstanceState: Bundle?): View? {
 
         mView = inflater.inflate(R.layout.fragment_scrum_board, container, false)
-
         setupBoardView()
 
         val fab = mView.findViewById(R.id.fab_add_task) as FloatingActionButton
@@ -41,14 +43,13 @@ class ScrumBoardFragment: Fragment() {
         return mView
     }
 
-    private fun addTask(view: View) {
-        val checkedPosition = view.findViewById<ToggleSwitch>(R.id.popup_add_task_toggle_button).checkedPosition!!
-        val name = view.findViewById<MaterialEditText>(R.id.popup_add_task_name).text.toString()
-        val info = view.findViewById<MaterialEditText>(R.id.popup_add_task_info).text.toString()
-        val responsible = view.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_responsible).text.toString()
-        val verify = view.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_verify).text.toString()
+    private fun addTask(customView: View) {
+        val checkedPosition = customView.findViewById<ToggleSwitch>(R.id.popup_add_task_toggle_button).checkedPosition!!
+        val name = customView.findViewById<MaterialEditText>(R.id.popup_add_task_name).text.toString()
+        val info = customView.findViewById<MaterialEditText>(R.id.popup_add_task_info).text.toString()
+        val responsible = customView.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_responsible).text.toString()
+        val verify = customView.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_verify).text.toString()
 
-        val id = ScrumbleController.tasks.maxBy { it.id }!!.id + 1
         val responsibleUser = ScrumbleController.users.find { it.name == responsible }!!
         val verifyUser = ScrumbleController.users.find { it.name == verify }!!
         val state = if(checkedPosition == 0) TaskState.PRODUCT_BACKLOG else TaskState.SPRINT_BACKLOG
@@ -59,18 +60,23 @@ class ScrumBoardFragment: Fragment() {
         }
         else 0
 
-        val task = Task(id, responsibleUser, verifyUser, name, info, 0, state, position, sprint, ScrumbleController.currentProject!!)
+        val task = Task(-1, responsibleUser, verifyUser, name, info, 0, state, position, sprint, ScrumbleController.currentProject!!)
 
+        MiscUIController.startLoadingAnimation(view!!, context!!)
         ScrumbleController.addTask(task, {
             task.id = it
-        }, { showError(it) })
+            ScrumbleController.tasks.add(task)
+            if(checkedPosition != 0)
+                setupBoardView()
 
-        ScrumbleController.tasks.add(task)
-        if(checkedPosition != 0)
-            setupBoardView()
+            MiscUIController.stopLoadingAnimation(view!!, context!!)
+        }, {
+            MiscUIController.stopLoadingAnimation(view!!, context!!)
+            MiscUIController.showError(context!!, it)
+        })
     }
 
-    private fun setupBoardView() {
+    fun setupBoardView() {
         val boardView = mView.findViewById(R.id.board_view) as BoardView
         boardView.setSnapToColumnsWhenScrolling(true)
         boardView.setSnapToColumnWhenDragging(true)
@@ -95,24 +101,25 @@ class ScrumBoardFragment: Fragment() {
                 .sortedBy { it.position }.forEach { tempItems.add(Pair(it.id, it)) }
         items.add(tempItems)
 
-        val adapter = CustomDragItemAdapter(tempItems, R.layout.board_view_column_item, R.id.item_layout, true, context!!)
+        val adapter = CustomDragItemAdapter(tempItems, R.layout.board_view_column_item, R.id.item_layout, true, context!!, this)
         val header = View.inflate(context, R.layout.board_view_column_header, null)
         (header.findViewById(R.id.column_header_text_view) as TextView).text = taskState.toString().replace('_', ' ')
         boardView.addColumn(adapter, header, null, false)
-    }
-
-    private fun showError(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     inner class ColumnChangeListener: BoardView.BoardListener {
         override fun onItemDragEnded(fromColumn: Int, fromRow: Int, toColumn: Int, toRow: Int){
             if(fromRow != toRow || fromColumn != toColumn) {
                 val task = items[toColumn][toRow].second
-                task.state = TaskState.values()[toColumn + 1]
+                val newState = TaskState.values()[toColumn + 1]
+
+                if(task.state != newState || task.position != toRow)
+                    ScrumbleController.updatePositions(task.position, toRow, task.state, newState, task.sprint!!)
+
+                task.state = newState
                 task.position = toRow
 
-                ScrumbleController.updateTask(task.id, task, { }, { showError(it) })
+                ScrumbleController.updateTask(task.id, task, { }, { MiscUIController.showError(context!!, it) })
             }
         }
 

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".activity.LoginActivity">
+
+    <ImageView android:src="@drawable/sc_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/login_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:singleLine="true"
+        android:hint="@string/username"
+        app:met_floatingLabel="highlight"
+        app:met_primaryColor="@color/colorAccent" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/login_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textWebPassword"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:singleLine="true"
+        android:hint="@string/password"
+        app:met_floatingLabel="highlight"
+        app:met_primaryColor="@color/colorAccent" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/login_password_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textWebPassword"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:singleLine="true"
+        android:hint="@string/confirm_password"
+        app:met_floatingLabel="highlight"
+        app:met_primaryColor="@color/colorAccent"
+        android:visibility="gone"/>
+
+    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+        android:id="@+id/login_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/colorAccent"
+        android:textColor="@color/colorPrimary"
+        app:spinning_bar_color="@color/colorPrimary"
+        app:spinning_bar_padding="6dp"
+        android:text="@string/login"/>
+
+    <TextView
+        android:id="@+id/text_view_switch_login_register"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:gravity="center_horizontal"
+        android:textColor="@color/colorAccent"
+        android:text="@string/login_message"/>
+
+</LinearLayout>

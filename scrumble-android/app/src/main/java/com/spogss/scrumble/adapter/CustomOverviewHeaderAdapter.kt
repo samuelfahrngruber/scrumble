@@ -20,7 +20,7 @@ import com.spogss.scrumble.data.User
 
 
 class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, private val team: MutableList<User>, private val sprints: MutableList<Sprint>,
-                                  private val backlog: MutableList<Task>, private val context: Context): RecyclerView.Adapter<CustomOverviewHeaderAdapter.ViewHolder>() {
+                                  val backlog: MutableList<Task>, private val context: Context): RecyclerView.Adapter<CustomOverviewHeaderAdapter.ViewHolder>() {
     private val expandState = SparseBooleanArray()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -58,15 +58,15 @@ class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, priv
         holder.listProjectOverview.layoutManager = LinearLayoutManager(context)
         when(header) {
             context.resources.getString(R.string.team) -> {
-                val teamAdapter = CustomProjectOverviewAdapter(team, context)
+                val teamAdapter = CustomProjectOverviewAdapter(team, context, this)
                 holder.listProjectOverview.adapter = teamAdapter
             }
             context.resources.getString(R.string.sprints) -> {
-                val sprintAdapter = CustomProjectOverviewAdapter(sprints, context)
+                val sprintAdapter = CustomProjectOverviewAdapter(sprints, context, this)
                 holder.listProjectOverview.adapter = sprintAdapter
             }
             context.resources.getString(R.string.product_backlog) -> {
-                val backlogAdapter = CustomProjectOverviewAdapter(backlog, context)
+                val backlogAdapter = CustomProjectOverviewAdapter(backlog, context, this)
                 holder.listProjectOverview.adapter = backlogAdapter
             }
         }

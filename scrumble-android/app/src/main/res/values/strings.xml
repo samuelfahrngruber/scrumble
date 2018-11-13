@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">scrumble</string>
 
+    <string name="login">Login</string>
+    <string name="sign_up">Sign up</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="login_message">No account yet? Create one</string>
+    <string name="sign_up_message">Already a member? Login</string>
+
     <string name="my_tasks">My Tasks</string>
     <string name="scrum_board">Scrum Board</string>
     <string name="daily_scrum">Daily Scrum</string>
@@ -31,6 +39,10 @@
     <string name="rejections">Rejections</string>
     <string name="close">Close</string>
 
+    <string name="error_username">Please pick between 3 and 30 characters</string>
+    <string name="error_username_exists">Username is not available. Please pick another one</string>
+    <string name="error_password">Please pick between 5 and 30 characters</string>
+    <string name="error_confirm_password">Passwords do not match</string>
     <string name="error_enter_name">Please enter a name</string>
     <string name="error_enter_info">Please enter some information about the task</string>
     <string name="error_select_team_member">Please select a team member</string>

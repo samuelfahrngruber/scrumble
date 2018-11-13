@@ -55,7 +55,8 @@ object PopupController {
         if(task == null) {
             rejectionsEditText.visibility = View.GONE
             toggleSwitch.setCheckedPosition(0)
-            //TODO: Disable ToggleSwitch when currentSprint = null
+            if(ScrumbleController.currentProject!!.currentSprint == null)
+                toggleSwitch.isEnabled = false
 
             setupTaskSpinner(customView, context)
         }
@@ -122,21 +123,21 @@ object PopupController {
         return closePopup
     }
 
-    fun setupProjectPopup(context: Context, callback: () -> Unit) {
+    fun setupProjectPopup(context: Context, callback: (view: View) -> Unit) {
         setupSpeedDialPopups(context.resources.getString(R.string.project), context, {
             setupAddProjectAddTeamMemberCustomView(R.layout.popup_project, context)
         }, {
             addProjectButtonClick(it, context)
         }, callback)
     }
-    fun setupTeamMemberPopup(context: Context, callback: () -> Unit) {
+    fun setupTeamMemberPopup(context: Context, callback: (view: View) -> Unit) {
         setupSpeedDialPopups(context.resources.getString(R.string.team_member), context, {
             setupAddProjectAddTeamMemberCustomView(R.layout.popup_team_member, context)
         }, {
             addTeamMemberButtonClick(it)
         }, callback)
     }
-    fun setupSprintPopup(context: Context, callback: () -> Unit, sprint: Sprint? = null) {
+    fun setupSprintPopup(context: Context, callback: (view: View) -> Unit, sprint: Sprint? = null) {
         setupSpeedDialPopups(context.resources.getString(R.string.sprint), context, {
             setupAddSprintCustomView(context, sprint)
         }, {
@@ -145,7 +146,7 @@ object PopupController {
     }
 
     private fun setupSpeedDialPopups(title: String, context: Context, customization: () -> View,
-                                     buttonCallBack: (view: View) -> Boolean, callback: () -> Unit) {
+                                     buttonCallBack: (view: View) -> Boolean, callback: (view: View) -> Unit) {
         val dialogBuilder = MaterialDialog.Builder(context)
         dialogBuilder.setTitle(title)
         dialogBuilder.setTitleColor(ContextCompat.getColor(context, R.color.colorAccent))
@@ -160,10 +161,10 @@ object PopupController {
 
         val dialog = dialogBuilder.create()
         dialog.setOnShowListener {
-            dialog.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener { _ ->
+            dialog.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener {
                 if(buttonCallBack(customView)) {
                     dialog.dismiss()
-                    callback()
+                    callback(customView)
                 }
             }
         }
@@ -202,7 +203,6 @@ object PopupController {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
                     if (teamMemberEditText.text.trim().toString().trim() != "") {
                         //TODO: check if team member exists
-                        //TODO: check if team member does not already work at the current project
 
                         listView.adapter.addItem(adapter.itemCount, Pair(adapter.itemCount, User(adapter.itemCount, teamMemberEditText.text.trim().toString(), "")))
                         teamMemberEditText.setText("")
@@ -230,9 +230,6 @@ object PopupController {
             closePopup = false
         }
 
-        //TODO: check if Product Owner exist
-        //TODO: add project
-
         return closePopup
     }
     private fun addTeamMemberButtonClick(customView: View): Boolean {
@@ -248,15 +245,15 @@ object PopupController {
         val adapter = FastItemAdapter<CustomSelectableItem>()
 
         if(sprint == null) {
-            //TODO: set next sprint number
-            sprintNumberEditText.setText("1")
+            val sprintNumber = if(ScrumbleController.sprints.size > 0) ScrumbleController.sprints.maxBy { it.number }!!.number + 1 else 1
+            sprintNumberEditText.setText(sprintNumber.toString())
             setupDatePicker(customView, context)
             adapter.add(ScrumbleController.tasks.filter { it.state == TaskState.PRODUCT_BACKLOG }.map { CustomSelectableItem(it) })
         }
         else {
             sprintNumberEditText.setText(sprint.number.toString())
             setupDatePicker(customView, context, sprint)
-            adapter.add(ScrumbleController.tasks.filter { it.state == TaskState.PRODUCT_BACKLOG || (it.sprint != null && it.sprint!!.id == sprint.id) }.map { CustomSelectableItem(it) })
+            adapter.add(ScrumbleController.tasks.filter { it.state == TaskState.PRODUCT_BACKLOG || (it.sprint != null && it.sprint!!.id == sprint.id) }.sortedByDescending { it.state }.map { CustomSelectableItem(it) })
         }
 
         adapter.withSelectable(true)
@@ -291,12 +288,18 @@ object PopupController {
             endDateEditText.setText(dateFormatter.format(endCal.time))
         }, calender)
         endCal.set(calender.get(Calendar.YEAR), calender.get(Calendar.MONTH), calender.get(Calendar.DAY_OF_MONTH))
-        endPicker.minDate = endCal
+        if(sprint != null) {
+            val tempCal = Calendar.getInstance()
+            tempCal.time = sprint.startDate
+            tempCal.add(Calendar.DAY_OF_MONTH, 1)
+            endPicker.minDate = tempCal
+        }
+        else endPicker.minDate = endCal
         endPicker.setTitle(context.resources.getString(R.string.deadline))
         endPicker.vibrate(false)
 
         if(sprint != null) calender.time = sprint.startDate else calender.add(Calendar.DAY_OF_MONTH, -1)
-        val startPicker = DatePickerDialog.newInstance { _, year, monthOfYear, dayOfMonth ->
+        val startPicker = DatePickerDialog.newInstance ({ _, year, monthOfYear, dayOfMonth ->
             startCal.set(year, monthOfYear, dayOfMonth)
             startDateEditText.setText(dateFormatter.format(startCal.time))
 
@@ -308,7 +311,7 @@ object PopupController {
                 endCal.set(endPicker.minDate.get(Calendar.YEAR), endPicker.minDate.get(Calendar.MONTH), endPicker.minDate.get(Calendar.DAY_OF_MONTH))
                 endDateEditText.setText(dateFormatter.format(endCal.time))
             }
-        }
+        }, calender)
         startCal.set(calender.get(Calendar.YEAR), calender.get(Calendar.MONTH), calender.get(Calendar.DAY_OF_MONTH))
         startPicker.setTitle(context.resources.getString(R.string.start_date))
         startPicker.vibrate(false)

@@ -28,7 +28,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
@@ -64,5 +64,7 @@ dependencies {
     implementation 'com.mikepenz:fastadapter:3.3.1'
     implementation 'com.mikepenz:fastadapter-commons:3.3.1'
     //imageProgress
-    implementation (name: 'progressimage-debug', ext:'aar')
+    implementation(name: 'progressimage-debug', ext: 'aar')
+    //progressButton
+    implementation 'br.com.simplepass:loading-button-android:1.14.0'
 }

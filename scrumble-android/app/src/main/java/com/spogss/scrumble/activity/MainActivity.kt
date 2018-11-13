@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.spogss.scrumble.R
+import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.fragment.DailyScrumFragment
 import com.spogss.scrumble.fragment.MyTasksFragment
@@ -69,14 +70,10 @@ class MainActivity : AppCompatActivity() {
                     image_progress.setProgress(72, 77)
                     ScrumbleController.loadTasks(22, {
                         image_progress.setProgress(77, 100); init()
-                    }, { showError(it) })
-                }, { showError(it) })
-            }, { showError(it) })
-        }, { showError(it) } )
-    }
-
-    private fun showError(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    }, { MiscUIController.showError(this, it) })
+                }, { MiscUIController.showError(this, it) })
+            }, { MiscUIController.showError(this, it) })
+        }, { MiscUIController.showError(this, it) } )
     }
 
     private fun init() {

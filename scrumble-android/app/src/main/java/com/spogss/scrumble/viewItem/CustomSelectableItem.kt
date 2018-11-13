@@ -29,7 +29,7 @@ class CustomSelectableItem(val task: Task?): AbstractItem<CustomSelectableItem, 
         super.bindView(viewHolder, payloads)
 
         viewHolder.checkBox.isChecked = isSelected
-        viewHolder.taskName.text = task?.name ?: ""
+        viewHolder.taskName.text = task?.toString() ?: ""
     }
 
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {

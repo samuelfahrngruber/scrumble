@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.spogss.scrumble.R
 import com.spogss.scrumble.adapter.CustomDragItemAdapter
+import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.data.Project
 import com.spogss.scrumble.data.Task
@@ -19,18 +20,19 @@ import com.woxthebox.draglistview.DragListView
 
 
 class MyTasksFragment: Fragment() {
+    private lateinit var mView: View
     private val items = mutableListOf<Pair<Int, Task>>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_my_tasks, container, false)
+        mView = inflater.inflate(R.layout.fragment_my_tasks, container, false)
 
-        setupDragListView(view)
+        setupDragListView()
 
-        return view
+        return mView
     }
 
-    private fun setupDragListView(view: View) {
-        val dragListView = view.findViewById<DragListView>(R.id.drag_list_view)
+    fun setupDragListView() {
+        val dragListView = mView.findViewById<DragListView>(R.id.drag_list_view)
         dragListView.recyclerView.isVerticalScrollBarEnabled = true
         dragListView.isDragEnabled = true
         dragListView.setLayoutManager(LinearLayoutManager(context))
@@ -49,11 +51,16 @@ class MyTasksFragment: Fragment() {
             override fun onItemDragEnded(fromPosition: Int, toPosition: Int) {
                 if(fromPosition != toPosition) {
                     val task = items[toPosition].second
-                    task.state = items[toPosition - 1].second.state
-                    task.position = items.filter { it.second.state == task.state }.indexOf(items[toPosition])
+                    val newState = items[toPosition - 1].second.state
+                    val newPosition = items.filter { it.second.state == task.state }.indexOf(items[toPosition]) - 1
 
-                    Toast.makeText(context!!, "new state: ${task.state}, new position: ${task.position}", Toast.LENGTH_SHORT).show()
-                }
+                    if(task.state != newState || task.position != toPosition)
+                        ScrumbleController.updatePositions(task.position, newPosition, task.state, newState, task.sprint!!)
+
+                    task.state = newState
+                    task.position = newPosition
+
+                    ScrumbleController.updateTask(task.id, task, { }, { MiscUIController.showError(context!!, it) })                }
             }
 
             override fun onItemDragging(itemPosition: Int, x: Float, y: Float) {}
@@ -71,7 +78,7 @@ class MyTasksFragment: Fragment() {
             }
         }
 
-        val adapter = CustomDragItemAdapter(items, R.layout.board_view_column_item, R.id.item_layout, true, context!!)
+        val adapter = CustomDragItemAdapter(items, R.layout.board_view_column_item, R.id.item_layout, true, context!!, this)
         dragListView.setAdapter(adapter, false)
     }
 

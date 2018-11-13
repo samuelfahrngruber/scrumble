@@ -5,13 +5,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.R
+import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.PopupController
+import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.data.Task
+import com.spogss.scrumble.fragment.MyTasksFragment
+import com.spogss.scrumble.fragment.ScrumBoardFragment
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
 import com.woxthebox.draglistview.DragItemAdapter
+import org.w3c.dom.DocumentFragment
 
 
 class CustomDragItemAdapter
@@ -20,12 +29,14 @@ class CustomDragItemAdapter
     private var mGrabHandleId = 0
     private var mDragOnLongPress = false
     private var context: Context
+    private var fragment: Fragment
 
-    constructor(list: MutableList<Pair<Int, Task>>, res: Int, mGrabHandleId: Int, mDragOnLongPress: Boolean, context: Context) {
+    constructor(list: MutableList<Pair<Int, Task>>, res: Int, mGrabHandleId: Int, mDragOnLongPress: Boolean, context: Context, fragment: Fragment) {
         this.res = res
         this.mGrabHandleId = mGrabHandleId
         this.mDragOnLongPress = mDragOnLongPress
         this.context = context
+        this.fragment = fragment
         itemList = list
     }
 
@@ -68,7 +79,34 @@ class CustomDragItemAdapter
             val task = view.tag as Task
 
             if(task.id >= 0)
-                PopupController.setupTaskPopup(context, {}, task)
+                PopupController.setupTaskPopup(context, { updateTask(task, it) }, task)
+        }
+
+        private fun updateTask(task: Task, view: View) {
+            val name = view.findViewById<MaterialEditText>(R.id.popup_add_task_name).text.toString()
+            val info = view.findViewById<MaterialEditText>(R.id.popup_add_task_info).text.toString()
+            val responsible = view.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_responsible).text.toString()
+            val verify = view.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_verify).text.toString()
+
+            val responsibleUser = ScrumbleController.users.find { it.name == responsible }!!
+            val verifyUser = ScrumbleController.users.find { it.name == verify }!!
+
+            val oldName = task.name
+
+            if(task.name != name || task.info != info || task.responsible.id != responsibleUser.id || task.verify.id != verifyUser.id) {
+                task.name = name
+                task.info = info
+                task.responsible = responsibleUser
+                task.verify = verifyUser
+
+                ScrumbleController.updateTask(task.id, task, {}, { MiscUIController.showError(context, it) } )
+
+                if(task.name != oldName)
+                if(fragment is ScrumBoardFragment)
+                    (fragment as ScrumBoardFragment).setupBoardView()
+                else if(fragment is MyTasksFragment)
+                    (fragment as MyTasksFragment).setupDragListView()
+            }
         }
 
         override fun onItemLongClicked(view: View): Boolean {

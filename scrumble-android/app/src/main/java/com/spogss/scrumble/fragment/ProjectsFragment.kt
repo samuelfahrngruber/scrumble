@@ -6,16 +6,27 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.leinardi.android.speeddial.SpeedDialActionItem
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.R
+import com.spogss.scrumble.activity.MainActivity
 import com.spogss.scrumble.adapter.CustomOverviewHeaderAdapter
+import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.PopupController
 import com.spogss.scrumble.controller.ScrumbleController
+import com.spogss.scrumble.data.Project
+import com.spogss.scrumble.data.Sprint
 import com.spogss.scrumble.enums.TaskState
+import com.spogss.scrumble.viewItem.CustomSelectableItem
+import com.woxthebox.draglistview.DragListView
 import kotlinx.android.synthetic.main.fragment_projects.*
 
 
 class ProjectsFragment: Fragment() {
+    private lateinit var customOverviewHeaderAdapter: CustomOverviewHeaderAdapter
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
@@ -55,12 +66,14 @@ class ProjectsFragment: Fragment() {
 
     private fun setupProjectsList() {
         //list_headers.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-        list_headers.layoutManager = LinearLayoutManager(context)
-        list_headers.adapter = CustomOverviewHeaderAdapter(mutableListOf(
+        customOverviewHeaderAdapter = CustomOverviewHeaderAdapter(mutableListOf(
                 context!!.resources.getString(R.string.team),
                 context!!.resources.getString(R.string.sprints),
                 context!!.resources.getString(R.string.product_backlog)), ScrumbleController.users, ScrumbleController.sprints,
                 ScrumbleController.tasks.filter { it.state == TaskState.PRODUCT_BACKLOG }.toMutableList(), context!!)
+
+        list_headers.layoutManager = LinearLayoutManager(context)
+        list_headers.adapter = customOverviewHeaderAdapter
     }
 
     private fun setupSpeedDial() {
@@ -84,19 +97,67 @@ class ProjectsFragment: Fragment() {
             var retVal = true
             when(actionItem.id) {
                 R.id.fab_add_project -> {
-                    PopupController.setupProjectPopup(context!!) { speed_dial.close() }
+                    PopupController.setupProjectPopup(context!!) {
+                        speed_dial.close()
+                        addProject(it)
+                    }
                 }
                 R.id.fab_add_sprint -> {
-                    //TODO: check if there is a current project
-                    PopupController.setupSprintPopup(context!!, { speed_dial.close() })
+                    if(ScrumbleController.currentProject != null)
+                        PopupController.setupSprintPopup(context!!, {
+                            speed_dial.close()
+                            addSprint(it)
+                        })
+                    else
+                        MiscUIController.showError(context!!, "Please create a project first")
                 }
                 R.id.fab_add_team_member -> {
-                    //TODO: check if there is a current project
-                    PopupController.setupTeamMemberPopup(context!!) { speed_dial.close() }
+                    if(ScrumbleController.currentProject != null)
+                        PopupController.setupTeamMemberPopup(context!!) { speed_dial.close() }
+                    else
+                        MiscUIController.showError(context!!, "Please create a project first")
                 }
                 else -> retVal = false
             }
             retVal
         }
+    }
+
+    private fun addProject(customView: View) {
+        val nameEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_project_name)
+        val productOwnerEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_project_product_owner)
+        val listView = customView.findViewById<DragListView>(R.id.swipe_list_add_team_member)
+    }
+
+    private fun addSprint(customView: View) {
+        val sprintNumberEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_number)
+        val selectListTask = customView.findViewById<RecyclerView>(R.id.popup_add_sprint_tasks)
+
+        val sprint = Sprint(-1, sprintNumberEditText.text.toString().toInt(), PopupController.startCal.time, PopupController.endCal.time, ScrumbleController.currentProject!!)
+
+        var maxPos = ScrumbleController.tasks.filter { it.sprint != null &&
+                it.sprint!!.id == ScrumbleController.currentProject!!.currentSprint!!.id &&
+                it.state == TaskState.SPRINT_BACKLOG }.maxBy { it.position }?.position ?: -1
+
+        val tasksToAdd = (selectListTask.adapter as FastItemAdapter<CustomSelectableItem>).adapterItems
+                .filter { it.isSelected }.map { it.task!!.position = ++maxPos; it.task!! }
+
+        MiscUIController.startLoadingAnimation(view!!, context!!)
+        ScrumbleController.addSprint(sprint, {id ->
+            sprint.id = id
+            ScrumbleController.sprints.add(sprint)
+            customOverviewHeaderAdapter.notifyDataSetChanged()
+
+            tasksToAdd.forEach { task ->
+                task.state = TaskState.SPRINT_BACKLOG
+                task.sprint = sprint
+                customOverviewHeaderAdapter.backlog.remove(task)
+                ScrumbleController.updateTask(task.id, task, { }, { MiscUIController.showError(context!!, it) })
+            }
+            MiscUIController.stopLoadingAnimation(view!!, context!!)
+        }, {
+            MiscUIController.stopLoadingAnimation(view!!, context!!)
+            MiscUIController.showError(context!!, it)
+        })
     }
 }
