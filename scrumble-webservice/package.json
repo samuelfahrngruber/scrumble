@@ -1,11 +1,17 @@
 {
   "name": "scrumble-webservice",
   "version": "1.0.0",
-  "description": "scrumble webservice",
-  "main": "backend.js",
+  "description": "Scrumble is a mobile Scrum board and this is the webservice for it lol xD",
+  "main": "main.js",
   "scripts": {
+    "start": "node main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Simon Schadenbauer and Gabs Webs",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.3"
+  }
 }
