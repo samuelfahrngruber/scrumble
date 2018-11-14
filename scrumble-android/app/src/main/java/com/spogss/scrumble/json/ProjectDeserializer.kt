@@ -25,7 +25,7 @@ class ProjectDeserializer: JsonDeserializer<Project> {
 
         val project = Project(id, name, productOwner, currentSprint)
         val sprintJson = jsonObject.get("currentSprint")
-        if(sprintJson != null) {
+        if(!sprintJson.isJsonNull) {
             currentSprint = Sprint(sprintJson.asInt, 0, Date(), Date(), project)
             project.currentSprint = currentSprint
         }

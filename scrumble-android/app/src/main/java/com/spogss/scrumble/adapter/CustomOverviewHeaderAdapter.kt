@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,7 @@ import com.github.aakira.expandablelayout.ExpandableLayoutListenerAdapter
 import com.github.aakira.expandablelayout.ExpandableLinearLayout
 import com.github.aakira.expandablelayout.Utils
 import com.spogss.scrumble.R
+import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.data.Sprint
 import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.data.User
@@ -58,8 +60,10 @@ class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, priv
         holder.listProjectOverview.layoutManager = LinearLayoutManager(context)
         when(header) {
             context.resources.getString(R.string.team) -> {
-                val teamAdapter = CustomProjectOverviewAdapter(team, context, this)
-                holder.listProjectOverview.adapter = teamAdapter
+                if(ScrumbleController.isCurrentProjectSpecified()) {
+                    val teamAdapter = CustomProjectOverviewAdapter(team, context, this)
+                    holder.listProjectOverview.adapter = teamAdapter
+                }
             }
             context.resources.getString(R.string.sprints) -> {
                 val sprintAdapter = CustomProjectOverviewAdapter(sprints, context, this)

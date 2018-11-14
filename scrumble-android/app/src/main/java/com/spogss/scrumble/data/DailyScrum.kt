@@ -3,7 +3,7 @@ package com.spogss.scrumble.data
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DailyScrum(val id: Int, val teamMember: User, val date: Date, var description: String, var task: Task? = null) {
+class DailyScrum(val id: String, val user: User, val date: Date, var description: String, project: Project, var task: Task? = null) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -16,7 +16,7 @@ class DailyScrum(val id: Int, val teamMember: User, val date: Date, var descript
     }
 
     override fun hashCode(): Int {
-        return id
+        return id.hashCode()
     }
 
     fun weekday(): String {

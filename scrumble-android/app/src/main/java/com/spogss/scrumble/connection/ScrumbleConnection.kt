@@ -17,4 +17,8 @@ object ScrumbleConnection {
     fun put(url: String, body: JSONObject): Response {
         return khttp.put(baseUrl + url, json = body)
     }
+
+    fun delete(url: String): Response {
+        return khttp.delete(baseUrl + url)
+    }
 }

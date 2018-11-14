@@ -16,7 +16,7 @@ object MiscUIController {
     fun startLoadingAnimation(view: View, context: Context) {
         val progressBarHolder = view.findViewById<FrameLayout>(R.id.progress_bar_holder)
         progressBarHolder.visibility = View.VISIBLE
-        (context as MainActivity).window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        (context as MainActivity).window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
     fun stopLoadingAnimation(view: View, context: Context) {

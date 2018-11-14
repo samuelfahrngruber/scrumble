@@ -27,7 +27,7 @@ class CustomTimeLineAdapter(private val layoutInflater: LayoutInflater, private 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val dailyScrumEntry = data[position]
-        holder.name.text = dailyScrumEntry.teamMember.toString()
+        holder.name.text = dailyScrumEntry.user.toString()
         holder.description.setText(dailyScrumEntry.description)
 
         holder.description.setOnFocusChangeListener { _, b ->

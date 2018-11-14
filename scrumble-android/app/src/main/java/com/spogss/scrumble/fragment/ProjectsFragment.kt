@@ -1,5 +1,6 @@
 package com.spogss.scrumble.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -16,7 +17,6 @@ import com.spogss.scrumble.adapter.CustomOverviewHeaderAdapter
 import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.PopupController
 import com.spogss.scrumble.controller.ScrumbleController
-import com.spogss.scrumble.data.Project
 import com.spogss.scrumble.data.Sprint
 import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.viewItem.CustomSelectableItem
@@ -37,7 +37,8 @@ class ProjectsFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupTextViews()
+        if(ScrumbleController.isCurrentProjectSpecified())
+            setupTextViews()
         setupProjectsList()
         setupSpeedDial()
     }
@@ -49,19 +50,31 @@ class ProjectsFragment: Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.menu_item_change_project -> PopupController.setupRecyclerViewPopup(context!!, { Toast.makeText(context, it.name, Toast.LENGTH_SHORT).show() }, resources.getString(R.string.project), ScrumbleController.projects)
+            R.id.menu_item_change_project -> PopupController.setupRecyclerViewPopup(context!!, {
+                saveCurrentProjectToSharedPreferences(it.id)
+                (context as MainActivity).finish()
+                (context as MainActivity).startActivity((context as MainActivity).intent)
+            }, resources.getString(R.string.project), ScrumbleController.projects)
         }
         return super.onOptionsItemSelected(item)
     }
 
     private fun setupTextViews() {
         product_owner_text_view.setText(ScrumbleController.currentProject!!.productOwner.toString())
-        sprint_text_view.setText(ScrumbleController.currentProject!!.currentSprint!!.toString())
-        sprint_text_view2.setText(ScrumbleController.currentProject!!.currentSprint!!.timeSpan())
+        product_owner_text_view.setOnClickListener {
+            PopupController.setupRecyclerViewPopup(context!!, { user ->
+                Toast.makeText(context, user.toString(), Toast.LENGTH_SHORT).show()
+            }, resources.getString(R.string.product_owner), ScrumbleController.users.filter { user ->
+                user.id != ScrumbleController.currentProject!!.productOwner.id }.toMutableList())
+        }
 
-        product_owner_text_view.setOnClickListener { PopupController.setupRecyclerViewPopup(context!!, { Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show() }, resources.getString(R.string.product_owner), ScrumbleController.users)}
-        sprint_text_view.setOnClickListener { PopupController.setupSprintPopup(context!!, {}, ScrumbleController.currentProject!!.currentSprint!!) }
-        sprint_text_view2.setOnClickListener { PopupController.setupSprintPopup(context!!, {}, ScrumbleController.currentProject!!.currentSprint!!) }
+        if(ScrumbleController.isCurrentSprintSpecified()) {
+            sprint_text_view.setText(ScrumbleController.currentProject!!.currentSprint!!.toString())
+            sprint_text_view2.setText(ScrumbleController.currentProject!!.currentSprint!!.timeSpan())
+
+            sprint_text_view.setOnClickListener { PopupController.setupSprintPopup(context!!, {}, ScrumbleController.currentProject!!.currentSprint!!) }
+            sprint_text_view2.setOnClickListener { PopupController.setupSprintPopup(context!!, {}, ScrumbleController.currentProject!!.currentSprint!!) }
+        }
     }
 
     private fun setupProjectsList() {
@@ -103,19 +116,19 @@ class ProjectsFragment: Fragment() {
                     }
                 }
                 R.id.fab_add_sprint -> {
-                    if(ScrumbleController.currentProject != null)
+                    if(ScrumbleController.isCurrentProjectSpecified())
                         PopupController.setupSprintPopup(context!!, {
                             speed_dial.close()
                             addSprint(it)
                         })
                     else
-                        MiscUIController.showError(context!!, "Please create a project first")
+                        MiscUIController.showError(context!!, resources.getString(R.string.error_current_project))
                 }
                 R.id.fab_add_team_member -> {
-                    if(ScrumbleController.currentProject != null)
+                    if(ScrumbleController.isCurrentProjectSpecified())
                         PopupController.setupTeamMemberPopup(context!!) { speed_dial.close() }
                     else
-                        MiscUIController.showError(context!!, "Please create a project first")
+                        MiscUIController.showError(context!!, resources.getString(R.string.error_current_project))
                 }
                 else -> retVal = false
             }
@@ -135,9 +148,11 @@ class ProjectsFragment: Fragment() {
 
         val sprint = Sprint(-1, sprintNumberEditText.text.toString().toInt(), PopupController.startCal.time, PopupController.endCal.time, ScrumbleController.currentProject!!)
 
-        var maxPos = ScrumbleController.tasks.filter { it.sprint != null &&
+        var maxPos = if(ScrumbleController.isCurrentSprintSpecified())
+            ScrumbleController.tasks.filter { it.sprint != null &&
                 it.sprint!!.id == ScrumbleController.currentProject!!.currentSprint!!.id &&
                 it.state == TaskState.SPRINT_BACKLOG }.maxBy { it.position }?.position ?: -1
+            else -1
 
         val tasksToAdd = (selectListTask.adapter as FastItemAdapter<CustomSelectableItem>).adapterItems
                 .filter { it.isSelected }.map { it.task!!.position = ++maxPos; it.task!! }
@@ -159,5 +174,10 @@ class ProjectsFragment: Fragment() {
             MiscUIController.stopLoadingAnimation(view!!, context!!)
             MiscUIController.showError(context!!, it)
         })
+    }
+
+    private fun saveCurrentProjectToSharedPreferences(projectId: Int) {
+        val sharedPreferences = (context as MainActivity).getPreferences(Context.MODE_PRIVATE)
+        sharedPreferences.edit().putInt(ScrumbleController.currentUser.id.toString(), projectId).apply()
     }
 }

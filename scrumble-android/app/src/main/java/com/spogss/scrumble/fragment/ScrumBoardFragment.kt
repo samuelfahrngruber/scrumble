@@ -4,14 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.llollox.androidtoggleswitch.widgets.ToggleSwitch
 import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.R
-import com.spogss.scrumble.activity.MainActivity
 import com.spogss.scrumble.adapter.CustomDragItemAdapter
 import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.PopupController
@@ -21,7 +19,6 @@ import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.viewItem.CustomDragItem
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
 import com.woxthebox.draglistview.BoardView
-import kotlinx.android.synthetic.main.fragment_scrum_board.*
 
 
 class ScrumBoardFragment: Fragment() {
@@ -32,13 +29,19 @@ class ScrumBoardFragment: Fragment() {
                               savedInstanceState: Bundle?): View? {
 
         mView = inflater.inflate(R.layout.fragment_scrum_board, container, false)
-        setupBoardView()
+
+        if(ScrumbleController.isCurrentSprintSpecified())
+            setupBoardView()
 
         val fab = mView.findViewById(R.id.fab_add_task) as FloatingActionButton
         fab.setOnClickListener {
-            PopupController.setupTaskPopup(context!!, { view ->
-                addTask(view)
-            })
+            if(ScrumbleController.isCurrentSprintSpecified()) {
+                PopupController.setupTaskPopup(context!!, { view ->
+                    addTask(view)
+                })
+            }
+            else
+                MiscUIController.showError(context!!, resources.getString(R.string.error_current_project_current_sprint))
         }
         return mView
     }

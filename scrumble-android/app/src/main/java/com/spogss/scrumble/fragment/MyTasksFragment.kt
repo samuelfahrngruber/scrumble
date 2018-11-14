@@ -26,7 +26,8 @@ class MyTasksFragment: Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_my_tasks, container, false)
 
-        setupDragListView()
+        if(ScrumbleController.isCurrentSprintSpecified())
+            setupDragListView()
 
         return mView
     }

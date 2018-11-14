@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
@@ -20,7 +19,6 @@ import com.spogss.scrumble.fragment.MyTasksFragment
 import com.spogss.scrumble.fragment.ScrumBoardFragment
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
 import com.woxthebox.draglistview.DragItemAdapter
-import org.w3c.dom.DocumentFragment
 
 
 class CustomDragItemAdapter

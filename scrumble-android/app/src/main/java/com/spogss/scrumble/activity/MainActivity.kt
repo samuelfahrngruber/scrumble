@@ -1,5 +1,6 @@
 package com.spogss.scrumble.activity
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.text.Spannable
@@ -61,29 +62,43 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         supportActionBar!!.hide()
+        loadData(loadCurrentProjectFromSharedPreferences())
+    }
 
-        ScrumbleController.loadTeam(22, {
-            image_progress.setProgress(5)
-            ScrumbleController.loadProjects(23, {
-                image_progress.setProgress(5, 72)
-                ScrumbleController.loadSprints(22, {
-                    image_progress.setProgress(72, 77)
-                    ScrumbleController.loadTasks(22, {
-                        image_progress.setProgress(77, 100); init()
+    private fun loadData(projectId: Int) {
+        if(projectId > -1) {
+            ScrumbleController.loadCurrentProject(projectId, {
+                image_progress.setProgress(5)
+                ScrumbleController.loadTeam(ScrumbleController.currentProject!!.id, {
+                    image_progress.setProgress(5, 10)
+                    ScrumbleController.loadProjects(ScrumbleController.currentUser.id, {
+                        image_progress.setProgress(10, 72)
+                        ScrumbleController.loadSprints(ScrumbleController.currentProject!!.id, {
+                            image_progress.setProgress(72, 77)
+                            ScrumbleController.loadTasks(ScrumbleController.currentProject!!.id, {
+                                image_progress.setProgress(77, 100); init(1300)
+                            }, { MiscUIController.showError(this, it) })
+                        }, { MiscUIController.showError(this, it) })
                     }, { MiscUIController.showError(this, it) })
                 }, { MiscUIController.showError(this, it) })
             }, { MiscUIController.showError(this, it) })
-        }, { MiscUIController.showError(this, it) } )
+        }
+        else {
+            ScrumbleController.loadProjects(ScrumbleController.currentUser.id, {
+                image_progress.setProgress(100)
+                init(1300)
+            }, { MiscUIController.showError(this, it) })
+        }
     }
 
-    private fun init() {
+    private fun init(delay: Long) {
         val handler = Handler()
         handler.postDelayed({
             supportActionBar!!.show()
             image_progress.visibility = View.GONE
             navigation.visibility = View.VISIBLE
             frame_layout.visibility = View.VISIBLE
-        }, 1300)
+        }, delay)
 
         setupFragments()
 
@@ -102,5 +117,10 @@ class MainActivity : AppCompatActivity() {
         val formattedText = SpannableString(newTitle)
         formattedText.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorAccent)), 0, formattedText.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
         title = formattedText
+    }
+
+    private fun loadCurrentProjectFromSharedPreferences(): Int {
+        val sharedPreferences = getPreferences(Context.MODE_PRIVATE)
+        return sharedPreferences.getInt(ScrumbleController.currentUser.id.toString(), -1)
     }
 }

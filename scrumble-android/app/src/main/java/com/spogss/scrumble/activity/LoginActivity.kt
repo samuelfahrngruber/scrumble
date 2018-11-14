@@ -1,11 +1,18 @@
 package com.spogss.scrumble.activity
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
 import com.spogss.scrumble.R
+import com.spogss.scrumble.controller.ScrumbleController
+import com.spogss.scrumble.data.User
 import kotlinx.android.synthetic.main.activity_login.*
+
 
 class LoginActivity : AppCompatActivity() {
     private var login = true
@@ -21,6 +28,11 @@ class LoginActivity : AppCompatActivity() {
                 login()
             else
                 signUp()
+
+            val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+            inputManager.hideSoftInputFromWindow(currentFocus!!.windowToken,
+                    InputMethodManager.HIDE_NOT_ALWAYS)
         }
     }
 
@@ -44,20 +56,52 @@ class LoginActivity : AppCompatActivity() {
     private fun login() {
         if(validate()) {
             login_button.startAnimation()
-            Toast.makeText(this, "login", Toast.LENGTH_SHORT).show()
+
+            val user = User(-1, login_username.text.toString().trimStart().trimEnd(),
+                    login_password.text.toString())
+
+            disableEverything()
+            ScrumbleController.login(user, {
+                user.id = it
+                ScrumbleController.currentUser = user
+                ScrumbleController.users.add(user)
+
+                //TODO: save in shared preferences
+
+                startMainActivity()
+            }, {
+                login_username.error = it
+                login_password.error = it
+                login_button.revertAnimation()
+                enableEverything()
+            })
         }
     }
 
     private fun signUp() {
         if(validate()) {
             login_button.startAnimation()
-            Toast.makeText(this, "register", Toast.LENGTH_SHORT).show()
+
+            val user = User(-1, login_username.text.toString().trimStart().trimEnd(),
+                    login_password.text.toString())
+
+            disableEverything()
+            ScrumbleController.register(user, {
+                user.id = it
+                ScrumbleController.currentUser = user
+
+                startMainActivity()
+            }, {
+                login_username.error = it
+                login_button.revertAnimation()
+                enableEverything()
+            })
         }
     }
 
     private fun validate(): Boolean {
         val username = login_username.text.toString().trimStart().trimEnd()
-        val password = login_password.text.toString().trimStart().trimEnd()
+        val password = login_password.text.toString()
 
         var success = true
 
@@ -75,5 +119,19 @@ class LoginActivity : AppCompatActivity() {
         }
 
         return success
+    }
+
+    private fun startMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun disableEverything() {
+        this.window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+    }
+
+    private fun enableEverything() {
+        this.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 }

@@ -49,6 +49,8 @@
     <string name="error_enter_product_owner">Please specify a product owner</string>
     <string name="error_enter_sprint_number">Please specify a sprint number</string>
     <string name="error_sprint_number_integer">The sprint number can only be a number</string>
+    <string name="error_current_project_current_sprint">Please create a project first and specify a current sprint</string>
+    <string name="error_current_project">Please create a project first</string>
 
     <string name="missing">MISSING</string>
 
