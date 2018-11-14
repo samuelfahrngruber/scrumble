@@ -44,3 +44,6 @@ Data model:
 ### November
 
 [2018-11-05](https://docs.google.com/document/d/1PTnoygVCLBF4noy9rkdfZD8rWnfif_mimEbTottGHp8/edit?usp=sharing)
+
+[2018-11-12](https://docs.google.com/document/d/1ShYYD-QTPSleP-UG5dpimOAy_0C6be1nWc8xJNgvzbI/edit?usp=sharing)
+
