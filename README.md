@@ -20,8 +20,6 @@ with various utilities to simplify project development.
 
 [Architecture](https://drive.google.com/file/d/1YIi5ONN6RXLwBg_hGWoYYh-4-1DUeQ-p/view?usp=sharing) (basic architecture)
 
-[Daily-Scrum Protocol](https://docs.google.com/spreadsheets/d/1t_5jstsjgp5X96Bj1UjHfc2r9S3Zre9wwdr6FJAflk0/edit?usp=sharing)
-
 [Webservice Description](https://docs.google.com/document/d/1n7DMO2ZAo60nKiIRyApaHwPvQansGYB_qu9Vq15YLac/edit?usp=sharing) (definition of the webservice calls and short description of the functionality)
 
 
