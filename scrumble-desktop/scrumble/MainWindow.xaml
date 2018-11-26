@@ -46,23 +46,30 @@
             <StackPanel x:Name="section_ProjectOverview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Orientation="Vertical" >
                 <TextBlock Text="Project Overview" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
                 <Separator Margin="20, 0"></Separator>
-                <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap">
-                    <Run Text="Project Name: "></Run>
-                    <Run x:Name="textBlock_projectOverview_name" FontWeight="Medium" Text="Scrumble"></Run>
-                </TextBlock>
-                <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap">
-                    <Run Text="Product Owner: "></Run>
-                    <Run x:Name="textBlock_projectOverview_productOwner" FontWeight="Medium" Text="BestProductOwner"></Run>
-                </TextBlock>
-                <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap">
-                    <Run Text="Current Sprint: "></Run>
-                    <Run x:Name="textBlock_projectOverview_currentSprint" FontWeight="Medium" Text="#1"></Run>
-                </TextBlock>
-                <TextBlock FontSize="18" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap">
-                    <Run Text="Sprint Deadline: "></Run>
-                    <Run x:Name="textBlock_projectOverview_currentSprintDeadline" FontWeight="Medium" Text="Mi., 31.10.2018"></Run>
-                </TextBlock>
-                <TreeView x:Name="treeView_projectOverview" Margin="5" BorderThickness="0" FontSize="18" FontWeight="Light" SelectedItemChanged="treeView_projectOverview_SelectedItemChanged">
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"></RowDefinition>
+                        <RowDefinition Height="1*"></RowDefinition>
+                        <RowDefinition Height="1*"></RowDefinition>
+                        <RowDefinition Height="1*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Project Name: " FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalAlignment="Center"></TextBlock>
+                    <TextBlock x:Name="textBlock_projectOverview_name" Grid.Row="0" Grid.Column="1" FontWeight="Medium" Text="Scrumble" TextWrapping="Wrap"  VerticalAlignment="Center" FontSize="15"></TextBlock>
+
+                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Product Owner: " FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalAlignment="Center"></TextBlock>
+                    <TextBlock x:Name="textBlock_projectOverview_productOwner" Grid.Row="1" Grid.Column="1" FontWeight="Medium" Text="BestProductOwner" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="15"></TextBlock>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Current Sprint: " FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalAlignment="Center"></TextBlock>
+                    <TextBlock x:Name="textBlock_projectOverview_currentSprint" Grid.Row="2" Grid.Column="1" FontWeight="Medium" Text="#1" TextWrapping="Wrap"  VerticalAlignment="Center" FontSize="15"></TextBlock>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" Text="Sprint Deadline:" VerticalAlignment="Center"></TextBlock>
+                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="textBlock_projectOverview_currentSprintDeadline" FontWeight="Medium" Text="Mi., 31.10.2018" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="15"></TextBlock>
+                </Grid>
+                <TreeView x:Name="treeView_projectOverview" Margin="5" BorderThickness="0" FontSize="15" FontWeight="Light" SelectedItemChanged="treeView_projectOverview_SelectedItemChanged">
                     <TreeViewItem x:Name="treeViewItem_teamMembers" IsExpanded="True" Margin="5" HorizontalContentAlignment="Stretch">
                         <TreeViewItem.Header>
                             <StackPanel Orientation="Horizontal">
@@ -86,9 +93,9 @@
                     <Button x:Name="toolBarButton_addTask" ToolTip="Add Task" Click="toolBarButton_addTask_Click">
                         <Image Source="res/add.png" Height="25px" />
                     </Button>
-                    <Button ToolTip="Add Task">
+                    <!--<Button ToolTip="Add Task">
                         <Image Source="res/remove.png" Height="25px" />
-                    </Button>
+                    </Button>-->
                     <Button x:Name="toolBarButton_refreshBoard" ToolTip="Refresh Scrumboard" Click="toolBarButton_refreshBoard_Click">
                         <Image Source="res/reload.png" Height="25px" />
                     </Button>
@@ -224,7 +231,43 @@
                         <Run Text="Rejections: "></Run>
                         <Run x:Name="textBlock_selectedTask_rejections" FontWeight="Medium" Text="3"></Run>
                     </TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" Text="Color: "></TextBlock>
+                        <Button x:Name="button_chooseTaskColor" Background="#FFFFFF" Content="Choose..." Click="button_chooseTaskColor_Click"></Button>
+                    </StackPanel>
                 </StackPanel>
+                <Grid Grid.Column="0" Grid.Row="1" x:Name="inputBox_colorSelector" Visibility="Collapsed">
+                    <Grid Background="Black" Opacity="0.5"/>
+                    <Border
+                            Margin="10px"
+                            MinWidth="100"
+                            Background="White" 
+                            CornerRadius="10" 
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center">
+                        <StackPanel>
+                            <TextBlock Text="Choose Color" FontSize="25" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                            <ListBox Name="listBox_brushes" ItemsSource="{Binding}" Margin="10" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <!-- Item Panel Template just for show items in warp mode -->
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <!-- Items Data Template -->
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Rectangle Fill="{Binding}" Stroke="Black" Margin="3" StrokeThickness="1" Height="25" Width="25"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button x:Name="button_closeChooseColor" Padding="2" Margin="10" Width="80px" FontSize="15" FontWeight="Light" Content="Close" Click="button_closeChooseColor_Click"></Button>
+                                <Button x:Name="button_selectColor" Padding="2" Margin="10" Width="80px" FontSize="15" FontWeight="Light" Content="Select" Click="button_selectColor_Click"></Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </Grid>
             <Grid x:Name="section_Information" Grid.Row="2" Grid.Column="1">
                 <Grid.ColumnDefinitions>

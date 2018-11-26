@@ -94,21 +94,11 @@ namespace ScrumbleLib.Connection.Wrapper
             if (jsonObject.ContainsKey("project")) WrappedValue.Project = ScrumbleController.GetProject((int)jsonObject["project"]);
             if (jsonObject.ContainsKey("state")) WrappedValue.State = TaskStateParser.Parse((string)jsonObject["state"]);
             if (jsonObject.ContainsKey("position")) WrappedValue.Position = (int)jsonObject["position"];
-            //ScrumBoardColumn state = (ScrumBoardColumn)Enum.Parse(typeof(ScrumBoardColumn), (string)jsonObject["state"]);
-            //ApplyFields(
-            //   (int)jsonObject["id"],
-            //   (string)jsonObject["name"],
-            //   (string)jsonObject["info"],
-            //   (int)jsonObject["rejections"],
-            //   (int)jsonObject["responsible"], //responsibleUser
-            //   (int)jsonObject["verify"], //verifyingUser
-            //   (int?)jsonObject["sprint"],
-            //   (int)jsonObject["project"],
-            //   (string)jsonObject["state"],
-            //   (int)jsonObject["position"]);
+            if (jsonObject.ContainsKey("color")) WrappedValue.Color = (string)jsonObject["color"];
+
         }
 
-        public void ApplyFields(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int? sprint, int project, string state, int position)
+        public void ApplyFields(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int? sprint, int project, string state, int position, string color)
         {
             WrappedValue.Id = id;
             WrappedValue.Name = name;
@@ -120,6 +110,7 @@ namespace ScrumbleLib.Connection.Wrapper
             WrappedValue.Project = ScrumbleController.GetProject(project);
             WrappedValue.State = TaskStateParser.Parse(state);
             WrappedValue.Position = position;
+            WrappedValue.Color = color;
         }
 
         public int Id
@@ -207,15 +198,24 @@ namespace ScrumbleLib.Connection.Wrapper
             }
         }
 
-        public int Sprint
+        public int? Sprint
         {
             get
             {
-                return WrappedValue.Sprint == null ? -1 : WrappedValue.Sprint.Id;
+                int? sprintid;
+                if(WrappedValue.Sprint == null)
+                {
+                    sprintid = null;
+                }
+                else
+                {
+                    sprintid = WrappedValue.Sprint.Id;
+                }
+                return sprintid;
             }
             set
             {
-                WrappedValue.Sprint = ScrumbleController.GetSprint(value);
+                WrappedValue.Sprint = value == null ? null : ScrumbleController.GetSprint((int)value);
                 OnPropertyChanged("Sprint");
                 ScrumbleConnection.Update(this);
             }
@@ -259,6 +259,20 @@ namespace ScrumbleLib.Connection.Wrapper
             {
                 WrappedValue.Position = value;
                 OnPropertyChanged("Position");
+                ScrumbleConnection.Update(this);
+            }
+        }
+
+        public string Color
+        {
+            get
+            {
+                return WrappedValue.Color;
+            }
+            set
+            {
+                WrappedValue.Color = value;
+                OnPropertyChanged("Color");
                 ScrumbleConnection.Update(this);
             }
         }

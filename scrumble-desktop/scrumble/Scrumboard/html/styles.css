@@ -81,4 +81,6 @@
   padding-left: 0.5em;
   cursor: move;
   font-weight:bold;
+  overflow:hidden;
+  text-overflow:ellipsis;
  }

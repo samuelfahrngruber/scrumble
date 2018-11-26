@@ -71,6 +71,10 @@ function addTask(taskWrapper) {
     refreshClasses();
 }
 
+function removeTask(taskWrapper) {
+    $("#" + taskWrapper.id).remove();
+}
+
 function changeTaskState(taskid, newTaskState, position) {
     scrumble_scrumboardInterface.changeTaskState(taskid, newTaskState, position);
 }

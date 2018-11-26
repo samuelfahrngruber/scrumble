@@ -90,17 +90,12 @@ namespace ScrumbleLib.Connection
 
             Scrumble.Log("DELETE: " + url, "#fc622a");
 
-            //HttpResponseMessage response = client.DeleteAsync(url).Result;
+            HttpResponseMessage response = client.DeleteAsync(url).Result;
 
-            //if (response.IsSuccessStatusCode)
-            //    json = response.Content.ReadAsStringAsync().Result;
-            //else
-            //    throw new Exception("invalid POST at " + url + "for id " + wrapper.Id);
+            if (!response.IsSuccessStatusCode)
+                throw new Exception("invalid DELETE at " + url + "for id " + wrapper.Id);
 
-            //Scrumble.Log("Result:", "#FFFF00");
-            //Scrumble.Log(json, "#FFFF00");
-
-            //wrapper.ApplyJson(json);
+            Scrumble.Log("Successfully deleted", "#fc622a");
             return wrapper;
         }
 

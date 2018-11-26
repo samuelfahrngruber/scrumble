@@ -31,6 +31,8 @@ namespace scrumble
 
         private int? temp_removeTask = null;
 
+        private List<string> taskColors;
+
         public MainWindow()
         {
             initializeCef();
@@ -122,6 +124,23 @@ namespace scrumble
             Scrumble.WrapperFactory.CreateTaskWrapper(18);
             setSelectedTask(18);
             section_SelectedTask.Visibility = Visibility.Visible;
+
+            taskColors = new List<string>();
+
+            taskColors.Add("#FDD7FF");
+            taskColors.Add("#FF8EEC");
+            taskColors.Add("#8A79FF");
+            taskColors.Add("#4FA5FF");
+            taskColors.Add("#73FFE8");
+            taskColors.Add("#39FFB0");
+            taskColors.Add("#B5FF8D");
+            taskColors.Add("#FFF082");
+            taskColors.Add("#FFB841");
+            taskColors.Add("#FF8080");
+            taskColors.Add("#FF9EA6");
+            taskColors.Add("#FFFFFF");
+
+            listBox_brushes.DataContext = taskColors;
         }
 
 
@@ -147,6 +166,12 @@ namespace scrumble
             currentProject = Scrumble.WrapperFactory.CreateProjectWrapper(id);
             refreshCurrentProject(null, null);
             currentProject.PropertyChanged += refreshCurrentProject;
+            //Scrumble.GetProductBacklog().CollectionChanged += refreshProductBacklog;
+        }
+
+        private void refreshProductBacklog(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            refreshCurrentProject(null, null);
         }
 
         private async void refreshSelectedTask(object sender, PropertyChangedEventArgs e)
@@ -158,6 +183,7 @@ namespace scrumble
                 textBlock_selectedTask_responsible.Text = selectedTask.WrappedValue.ResponsibleUser.Username.ToString();
                 textBlock_selectedTask_verify.Text = selectedTask.WrappedValue.VerifyingUser.Username.ToString();
                 textBlock_selectedTask_rejections.Text = selectedTask.Rejections.ToString();
+                button_chooseTaskColor.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom(selectedTask.Color));
             }));
         }
 
@@ -168,7 +194,7 @@ namespace scrumble
                 textBlock_projectOverview_name.Text = currentProject.Name;
                 textBlock_projectOverview_productOwner.Text = currentProject.WrappedValue.ProductOwner.ToString();
 
-                textBlock_projectOverview_currentSprint.Text = "#" + currentProject.CurrentSprint;
+                textBlock_projectOverview_currentSprint.Text = "#" + currentProject.WrappedValue.CurrentSprint.Number;
                 textBlock_projectOverview_currentSprintDeadline.Text = currentProject.WrappedValue.CurrentSprint.Deadline.ToString("dddd, dd.MM.yyyy");
 
                 treeViewItem_teamMembers.ItemsSource = currentProject.WrappedValue.Team;
@@ -195,6 +221,14 @@ namespace scrumble
             if (chromiumWebBrowser_scrumBoard.CanExecuteJavascriptInMainFrame)
             {
                 JavascriptResponse response = await chromiumWebBrowser_scrumBoard.EvaluateScriptAsync("addTask(" + wrapper.ToJson() + ");");
+            }
+        }
+
+        private async void removeTaskFromScrumboard(TaskWrapper wrapper)
+        {
+            if (chromiumWebBrowser_scrumBoard.CanExecuteJavascriptInMainFrame)
+            {
+                JavascriptResponse response = await chromiumWebBrowser_scrumBoard.EvaluateScriptAsync("removeTask(" + wrapper.ToJson() + ");");
             }
         }
 
@@ -263,6 +297,7 @@ namespace scrumble
                 foreach (TaskWrapper task in e.OldItems)
                 {
                     //removeTaskFromScrumboard(task);
+                    removeTaskFromScrumboard(task);
                 }
             }
             if (e.Action == NotifyCollectionChangedAction.Move)
@@ -289,11 +324,6 @@ namespace scrumble
         private void setScrumboardContent()
         {
             setScrumboardContent(false);
-        }
-
-        private void addTaskToScrumboardTMP()
-        {
-            addTaskToScrumboard(Scrumble.WrapperFactory.CreateTaskWrapper(3));
         }
 
         public void LogDev(string text, string hexcolor)
@@ -359,7 +389,8 @@ namespace scrumble
                 Scrumble.GetCurrentProject().WrappedValue.CurrentSprint, 
                 Scrumble.GetCurrentProject().WrappedValue, 
                 TaskState.SPRINT_BACKLOG, 
-                0);
+                0,
+                "#FFFFFF"); // todo colorpicker
 
             Scrumble.AddTask(t);
 
@@ -405,12 +436,33 @@ namespace scrumble
             if (radioButton_removeTask_pbl.IsChecked == true)
             {
                 TaskWrapper tw = Scrumble.WrapperFactory.CreateTaskWrapper((int)temp_removeTask);
-                //tw.State = TaskState.PRODUCT_BACKLOG.ToString();
+                tw.WrappedValue.Sprint = null;
+                tw.State = TaskState.PRODUCT_BACKLOG.ToString();
+                removeTaskFromScrumboard(tw);
             }
             else if (radioButton_removeTask_delete.IsChecked == true)
             {
                 Scrumble.DeleteTask((int)temp_removeTask);
             }
+            grid_removeTaskDialog.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+        private void button_closeChooseColor_Click(object sender, RoutedEventArgs e)
+        {
+            inputBox_colorSelector.Visibility = Visibility.Collapsed;
+        }
+
+        private void button_chooseTaskColor_Click(object sender, RoutedEventArgs e)
+        {
+            listBox_brushes.SelectedItem = selectedTask.Color;
+            inputBox_colorSelector.Visibility = Visibility.Visible;
+        }
+
+        private void button_selectColor_Click(object sender, RoutedEventArgs e)
+        {
+            string col = listBox_brushes.SelectedItem as string;
+            selectedTask.Color = col;
+            inputBox_colorSelector.Visibility = Visibility.Collapsed;
         }
     }
 }

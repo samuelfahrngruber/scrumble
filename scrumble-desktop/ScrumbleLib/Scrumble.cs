@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using ScrumbleLib.Data;
 using Newtonsoft.Json.Linq;
 using ScrumbleLib.Utils;
+using System.Collections.Specialized;
 
 namespace ScrumbleLib
 {
@@ -26,12 +27,35 @@ namespace ScrumbleLib
 
         public static ObservableCollectionEx<TaskWrapper> GetScrumboard(bool forceLoad = false)
         {
+            if (Scrumboard == null) {
+                Scrumboard = new ObservableCollectionEx<TaskWrapper>();
+                Scrumboard.CollectionChanged += taskPropertyChanged;
+            }
+
             if (forceLoad == true || Scrumboard == null)
             {
-                Scrumboard = new ObservableCollectionEx<TaskWrapper>();
+                //ObservableCollectionEx<TaskWrapper> oldscrumboard;
+                Scrumboard.Clear();
+                //Scrumboard = new ObservableCollectionEx<TaskWrapper>();
                 ScrumbleController.GetProjectTasks();
             }
             return Scrumboard;
+        }
+
+        private static void taskPropertyChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if(e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                RefreshObservableTaskCollections();
+            }
+        }
+
+        private static void RefreshObservableTaskCollections()
+        {
+            foreach(Data.Task t in ScrumbleController.Tasks.Values)
+            {
+
+            }
         }
 
         public static ObservableCollectionEx<TaskWrapper> GetMyTasks(bool forceLoad = false)
