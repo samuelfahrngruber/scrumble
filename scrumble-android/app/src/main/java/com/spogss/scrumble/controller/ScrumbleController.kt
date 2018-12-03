@@ -63,6 +63,21 @@ object ScrumbleController {
                 uiThread { onError(response.text) }
         }
     }
+    fun getTeamMemberByName(name: String, onSuccess: (user: User) -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val response = ScrumbleConnection.get("/user?name=$name")
+
+            if(response.statusCode in 200..299) {
+                val gson = GsonBuilder().registerTypeAdapter(User::class.java, UserDeserializer())
+                        .serializeNulls().create()
+
+                val user = gson.fromJson(response.jsonArray[0].toString(), User::class.java)
+                uiThread { onSuccess(user) }
+            }
+            else
+                uiThread { onError(response.text) }
+        }
+    }
 
     fun loadProjects(userId: Int, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
         doAsync {
@@ -99,6 +114,30 @@ object ScrumbleController {
                 uiThread { onError(response.text) }
         }
 
+    }
+    fun addProject(project: Project, onSuccess: (id: Int) -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val gson = GsonBuilder().registerTypeAdapter(Project::class.java, ProjectSerializer())
+                    .serializeNulls().create()
+            val response = ScrumbleConnection.post("/project", JSONObject(gson.toJson(project)))
+
+            if(response.statusCode in 200..299)
+                uiThread { onSuccess(response.jsonObject.getInt("id")) }
+            else
+                uiThread { onError(response.text) }
+        }
+    }
+    fun updateProject(projectId: Int, project: Project, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val gson = GsonBuilder().registerTypeAdapter(Project::class.java, ProjectSerializer())
+                    .serializeNulls().create()
+            val response = ScrumbleConnection.put("/project/$projectId", JSONObject(gson.toJson(project)))
+
+            if (response.statusCode in 200..299)
+                uiThread { onSuccess() }
+            else
+                uiThread { onError(response.text) }
+        }
     }
 
     fun loadSprints(projectId: Int, onSuccess: () -> Unit, onError: (message: String) -> Unit) {

@@ -1,50 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <com.rengwuxian.materialedittext.MaterialEditText
-        android:id="@+id/popup_add_project_name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:layout_marginBottom="@dimen/twelve_dp"
-        android:hint="@string/name"
-        app:met_floatingLabel="highlight"
-        app:met_primaryColor="@color/colorAccent" />
+        android:orientation="vertical">
 
-    <com.rengwuxian.materialedittext.MaterialEditText
-        android:id="@+id/popup_add_project_product_owner"
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/popup_add_project_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/twenty_four_dp"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
+            android:layout_marginBottom="@dimen/twelve_dp"
+            android:hint="@string/name"
+            app:met_floatingLabel="highlight"
+            app:met_primaryColor="@color/colorAccent" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/popup_add_project_product_owner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/twenty_four_dp"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
+            android:layout_marginBottom="@dimen/twelve_dp"
+            android:focusable="false"
+            android:hint="@string/product_owner"
+            app:met_floatingLabel="highlight"
+            app:met_primaryColor="@color/colorAccent" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/popup_add_team_member"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/twenty_four_dp"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
+            android:layout_marginBottom="6dp"
+            android:hint="@string/team_member"
+            app:met_floatingLabel="highlight"
+            app:met_primaryColor="@color/colorAccent" />
+
+        <com.woxthebox.draglistview.DragListView
+            android:id="@+id/swipe_list_add_team_member"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/progress_bar_holder"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:layout_marginBottom="@dimen/twelve_dp"
-        android:hint="@string/product_owner"
-        app:met_floatingLabel="highlight"
-        app:met_primaryColor="@color/colorAccent" />
+        android:layout_height="match_parent"
+        android:alpha="0.4"
+        android:animateLayoutChanges="true"
+        android:background="#000000"
+        android:visibility="gone">
 
-    <com.rengwuxian.materialedittext.MaterialEditText
-        android:id="@+id/popup_add_team_member"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:layout_marginBottom="6dp"
-        android:hint="@string/team_member"
-        app:met_floatingLabel="highlight"
-        app:met_primaryColor="@color/colorAccent" />
-
-    <com.woxthebox.draglistview.DragListView
-        android:id="@+id/swipe_list_add_team_member"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp" />
-
-</LinearLayout>
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true" />
+    </FrameLayout>
+</RelativeLayout>

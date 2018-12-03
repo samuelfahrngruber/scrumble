@@ -1,6 +1,7 @@
 package com.spogss.scrumble.adapter
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,6 +61,7 @@ class CustomDragItemAdapter
         else {
             holder.text.text = task.toString()
             holder.cardView.foreground = ContextCompat.getDrawable(context, R.drawable.sc_card_view_selector)
+            holder.cardView.setCardBackgroundColor(Color.parseColor(task.color))
         }
 
         holder.itemView.tag = mItemList[position].second
@@ -85,21 +87,24 @@ class CustomDragItemAdapter
             val info = view.findViewById<MaterialEditText>(R.id.popup_add_task_info).text.toString()
             val responsible = view.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_responsible).text.toString()
             val verify = view.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_verify).text.toString()
+            val color = view.findViewById<TextView>(R.id.popup_add_task_color).tag as String
 
             val responsibleUser = ScrumbleController.users.find { it.name == responsible }!!
             val verifyUser = ScrumbleController.users.find { it.name == verify }!!
 
             val oldName = task.name
+            val oldColor = task.color
 
-            if(task.name != name || task.info != info || task.responsible.id != responsibleUser.id || task.verify.id != verifyUser.id) {
+            if(task.name != name || task.info != info || task.color != color || task.responsible.id != responsibleUser.id || task.verify.id != verifyUser.id) {
                 task.name = name
                 task.info = info
+                task.color = color
                 task.responsible = responsibleUser
                 task.verify = verifyUser
 
                 ScrumbleController.updateTask(task.id, task, {}, { MiscUIController.showError(context, it) } )
 
-                if(task.name != oldName)
+                if(task.name != oldName || task.color != oldColor)
                 if(fragment is ScrumBoardFragment)
                     (fragment as ScrumBoardFragment).setupBoardView()
                 else if(fragment is MyTasksFragment)

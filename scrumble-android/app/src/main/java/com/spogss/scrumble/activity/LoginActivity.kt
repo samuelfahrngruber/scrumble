@@ -19,15 +19,27 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
         supportActionBar!!.hide()
+
+        val user = loadCredentialsFromSharedPreferences()
+        if(user == null)
+            initUI()
+        else {
+            login(user.name, user.password, true)
+        }
+    }
+
+    private fun initUI(){
+        setContentView(R.layout.activity_login)
 
         text_view_switch_login_register.setOnClickListener { switchLoginRegister() }
         login_button.setOnClickListener {
-            if(login)
-                login()
-            else
-                signUp()
+            if(validate()) {
+                if (login)
+                    login(login_username.text.toString().trim(), login_password.text.toString(), false)
+                else
+                    signUp(login_username.text.toString().trim(), login_password.text.toString())
+            }
 
             val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
@@ -53,37 +65,37 @@ class LoginActivity : AppCompatActivity() {
         login = !login
     }
 
-    private fun login() {
-        if(validate()) {
-            login_button.startAnimation()
+    private fun login(username: String, password: String, automatic: Boolean) {
+            val user = User(-1, username, password)
 
-            val user = User(-1, login_username.text.toString().trimStart().trimEnd(),
-                    login_password.text.toString())
-
-            disableEverything()
+            if(!automatic) {
+                login_button.startAnimation()
+                disableEverything()
+            }
             ScrumbleController.login(user, {
                 user.id = it
                 ScrumbleController.currentUser = user
                 ScrumbleController.users.add(user)
 
-                //TODO: save in shared preferences
+                saveCredentialsToSharedPreferences(user.name, user.password)
 
                 startMainActivity()
             }, {
-                login_username.error = it
-                login_password.error = it
-                login_button.revertAnimation()
-                enableEverything()
+                if(!automatic) {
+                    login_username.error = it
+                    login_password.error = it
+                    login_button.revertAnimation()
+                    enableEverything()
+                }
+                else
+                    initUI()
             })
-        }
     }
 
-    private fun signUp() {
-        if(validate()) {
+    private fun signUp(username: String, password: String) {
             login_button.startAnimation()
 
-            val user = User(-1, login_username.text.toString().trimStart().trimEnd(),
-                    login_password.text.toString())
+            val user = User(-1, username, password)
 
             disableEverything()
             ScrumbleController.register(user, {
@@ -96,7 +108,6 @@ class LoginActivity : AppCompatActivity() {
                 login_button.revertAnimation()
                 enableEverything()
             })
-        }
     }
 
     private fun validate(): Boolean {
@@ -113,6 +124,10 @@ class LoginActivity : AppCompatActivity() {
             login_password.error = resources.getString(R.string.error_password)
             success = false
         }
+        if(username.contains(" ")) {
+            login_username.error = "No whitespaces please"
+            success = false
+        }
         if(!login && (login_password_confirm.text.toString().trimStart().trimEnd().isEmpty() || login_password_confirm.text.toString().trimStart().trimEnd() != password)) {
             login_password_confirm.error = resources.getString(R.string.error_confirm_password)
             success = false
@@ -125,6 +140,22 @@ class LoginActivity : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun saveCredentialsToSharedPreferences(name: String, password: String) {
+        val sp = getPreferences(Context.MODE_PRIVATE)
+        sp.edit().putString("username", name).putString("password", password).apply()
+    }
+
+    private fun loadCredentialsFromSharedPreferences(): User? {
+        val sp = getPreferences(Context.MODE_PRIVATE)
+        val username = sp.getString("username", null)
+        val password = sp.getString("password", null)
+
+        if(username == null || password == null)
+            return null
+        else
+            return User(-1, username, password)
     }
 
     private fun disableEverything() {

@@ -104,8 +104,6 @@ class CustomProjectOverviewAdapter<T>(private val data: MutableList<T>, private 
         val responsibleUser = ScrumbleController.users.find { it.name == responsible }!!
         val verifyUser = ScrumbleController.users.find { it.name == verify }!!
 
-        val oldName = task.name
-
         if(task.name != name || task.info != info || task.responsible.id != responsibleUser.id || task.verify.id != verifyUser.id) {
             task.name = name
             task.info = info

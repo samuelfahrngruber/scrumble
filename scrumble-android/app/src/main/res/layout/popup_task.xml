@@ -61,6 +61,19 @@
         app:met_primaryColor="@color/colorAccent"
         android:focusable="false"/>
 
+    <TextView
+        android:id="@+id/popup_add_task_color"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/twelve_dp"
+        android:gravity="center_vertical"
+        android:text="@string/color"
+        android:textSize="18sp"
+        android:background="@drawable/sc_rectangle"
+        android:focusable="false"/>
+
     <com.llollox.androidtoggleswitch.widgets.ToggleSwitch
         android:id="@+id/popup_add_task_toggle_button"
         android:layout_width="match_parent"

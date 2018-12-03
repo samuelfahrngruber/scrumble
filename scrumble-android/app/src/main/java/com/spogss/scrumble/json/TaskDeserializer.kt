@@ -20,9 +20,10 @@ class TaskDeserializer: JsonDeserializer<Task> {
         val rejections = jsonObject.get("rejections").asInt
         val state = TaskState.valueOf(jsonObject.get("state").asString)
         val position = jsonObject.get("position").asInt
+        val color = jsonObject.get("color").asString
         val sprint = if(jsonObject.get("sprint").isJsonNull) null else ScrumbleController.sprints.find { it.id == jsonObject.get("sprint").asInt }
         val project = ScrumbleController.projects.find { it.id == jsonObject.get("project").asInt }?: ScrumbleController.currentProject!!
 
-        return Task(id, responsible, verify, name, info, rejections, state, position, sprint, project)
+        return Task(id, responsible, verify, name, info, rejections, state, position, color, sprint, project)
     }
 }

@@ -88,7 +88,7 @@ class MyTasksFragment: Fragment() {
         val tempProject = Project(-1, "", tempUser)
         val tempItems = mutableListOf(Pair(headerId, Task(headerId, tempUser, tempUser,
                 state.toString().replace('_', ' '), "", -1,
-                state, -1, null, tempProject)))
+                state, -1, "", null, tempProject)))
 
         tasks.sortedBy { it.position }.forEach { tempItems.add(Pair(it.id, it)) }
 

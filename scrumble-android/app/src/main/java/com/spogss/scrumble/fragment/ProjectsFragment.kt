@@ -18,6 +18,7 @@ import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.PopupController
 import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.data.Sprint
+import com.spogss.scrumble.data.User
 import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.viewItem.CustomSelectableItem
 import com.woxthebox.draglistview.DragListView
@@ -61,9 +62,15 @@ class ProjectsFragment: Fragment() {
 
     private fun setupTextViews() {
         product_owner_text_view.setText(ScrumbleController.currentProject!!.productOwner.toString())
+
         product_owner_text_view.setOnClickListener {
+
             PopupController.setupRecyclerViewPopup(context!!, { user ->
-                Toast.makeText(context, user.toString(), Toast.LENGTH_SHORT).show()
+                ScrumbleController.currentProject!!.productOwner = user
+                product_owner_text_view.setText(user.toString())
+                ScrumbleController.updateProject(ScrumbleController.currentProject!!.id, ScrumbleController.currentProject!!,
+                        {}, { message ->  MiscUIController.showError(context!!, message) })
+
             }, resources.getString(R.string.product_owner), ScrumbleController.users.filter { user ->
                 user.id != ScrumbleController.currentProject!!.productOwner.id }.toMutableList())
         }
@@ -126,7 +133,10 @@ class ProjectsFragment: Fragment() {
                 }
                 R.id.fab_add_team_member -> {
                     if(ScrumbleController.isCurrentProjectSpecified())
-                        PopupController.setupTeamMemberPopup(context!!) { speed_dial.close() }
+                        PopupController.setupTeamMemberPopup(context!!) {
+                            speed_dial.close()
+                            addTeamMember(it)
+                        }
                     else
                         MiscUIController.showError(context!!, resources.getString(R.string.error_current_project))
                 }
@@ -137,16 +147,21 @@ class ProjectsFragment: Fragment() {
     }
 
     private fun addProject(customView: View) {
-        val nameEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_project_name)
-        val productOwnerEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_project_product_owner)
-        val listView = customView.findViewById<DragListView>(R.id.swipe_list_add_team_member)
+        val name = customView.findViewById<MaterialEditText>(R.id.popup_add_project_name).text.toString()
+        val productOwner = ScrumbleController.currentUser
+        val team = customView.findViewById<DragListView>(R.id.swipe_list_add_team_member).adapter.itemList
+
+        team.forEach {
+            val user = (it as Pair<Int, User>).second
+            println(user)
+        }
     }
 
     private fun addSprint(customView: View) {
-        val sprintNumberEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_number)
+        val sprintNumber = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_number).text.toString().toInt()
         val selectListTask = customView.findViewById<RecyclerView>(R.id.popup_add_sprint_tasks)
 
-        val sprint = Sprint(-1, sprintNumberEditText.text.toString().toInt(), PopupController.startCal.time, PopupController.endCal.time, ScrumbleController.currentProject!!)
+        val sprint = Sprint(-1, sprintNumber, PopupController.startCal.time, PopupController.endCal.time, ScrumbleController.currentProject!!)
 
         var maxPos = if(ScrumbleController.isCurrentSprintSpecified())
             ScrumbleController.tasks.filter { it.sprint != null &&
@@ -174,6 +189,14 @@ class ProjectsFragment: Fragment() {
             MiscUIController.stopLoadingAnimation(view!!, context!!)
             MiscUIController.showError(context!!, it)
         })
+    }
+
+    private fun addTeamMember(customView: View) {
+        val team = customView.findViewById<DragListView>(R.id.swipe_list_add_team_member).adapter.itemList
+        team.forEach {
+            val user = (it as Pair<Int, User>).second
+            println(user)
+        }
     }
 
     private fun saveCurrentProjectToSharedPreferences(projectId: Int) {

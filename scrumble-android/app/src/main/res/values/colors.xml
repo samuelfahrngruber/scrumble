@@ -10,4 +10,20 @@
 
     <color name="datepicker_primary">@android:color/holo_blue_dark</color>
     <color name="datepicker_primary_dark">@android:color/holo_blue_light</color>
+
+
+    <array name="palette">
+        <item>#ffffff</item>
+        <item>#fdd7ff</item>
+        <item>#ff8eec</item>
+        <item>#8A79FF</item>
+        <item>#4fa5ff</item>
+        <item>#73ffe8</item>
+        <item>#39FFB0</item>
+        <item>#b5ff8d</item>
+        <item>#fff082</item>
+        <item>#ffb481</item>
+        <item>#ff8080</item>
+        <item>#ff9ea6</item>
+    </array>
 </resources>

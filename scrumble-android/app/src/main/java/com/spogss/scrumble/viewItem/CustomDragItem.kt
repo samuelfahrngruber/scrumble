@@ -25,6 +25,7 @@ class CustomDragItem(private val context: Context, res: Int): DragItem(context, 
         dragCard.cardElevation = clickedCard.cardElevation
         // I know the dragView is a FrameLayout and that is why I can use setForeground below api level 23
         dragCard.foreground = ContextCompat.getDrawable(context, R.drawable.sc_card_view_selector)
+        dragCard.setCardBackgroundColor(clickedCard.cardBackgroundColor)
     }
 
     override fun onMeasureDragView(clickedView: View, dragView: View) {

@@ -16,7 +16,11 @@ class TaskSerializer: JsonSerializer<Task> {
         jsonObject.addProperty("rejections", task.rejections)
         jsonObject.addProperty("state", task.state.toString())
         jsonObject.addProperty("position", task.position)
-        jsonObject.addProperty("sprint", if(task.sprint == null) null else task.sprint!!.id)
+        jsonObject.addProperty("color", task.color)
+        if(task.sprint == null)
+            jsonObject.add("sprint", JsonNull.INSTANCE)
+        else
+            jsonObject.addProperty("sprint", task.sprint!!.id)
         jsonObject.addProperty("project", task.project.id)
 
         return jsonObject

@@ -19,6 +19,7 @@ import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.viewItem.CustomDragItem
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
 import com.woxthebox.draglistview.BoardView
+import org.jetbrains.anko.find
 
 
 class ScrumBoardFragment: Fragment() {
@@ -52,6 +53,7 @@ class ScrumBoardFragment: Fragment() {
         val info = customView.findViewById<MaterialEditText>(R.id.popup_add_task_info).text.toString()
         val responsible = customView.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_responsible).text.toString()
         val verify = customView.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_verify).text.toString()
+        val color = customView.findViewById<TextView>(R.id.popup_add_task_color).tag as String
 
         val responsibleUser = ScrumbleController.users.find { it.name == responsible }!!
         val verifyUser = ScrumbleController.users.find { it.name == verify }!!
@@ -63,7 +65,7 @@ class ScrumBoardFragment: Fragment() {
         }
         else 0
 
-        val task = Task(-1, responsibleUser, verifyUser, name, info, 0, state, position, sprint, ScrumbleController.currentProject!!)
+        val task = Task(-1, responsibleUser, verifyUser, name, info, 0, state, position, color, sprint, ScrumbleController.currentProject!!)
 
         MiscUIController.startLoadingAnimation(view!!, context!!)
         ScrumbleController.addTask(task, {

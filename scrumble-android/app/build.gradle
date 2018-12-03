@@ -29,7 +29,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
     testImplementation 'junit:junit:4.12'
@@ -67,4 +67,6 @@ dependencies {
     implementation(name: 'progressimage-debug', ext: 'aar')
     //progressButton
     implementation 'br.com.simplepass:loading-button-android:1.14.0'
+    //colorPicker
+    implementation 'com.thebluealliance:spectrum:0.7.1'
 }

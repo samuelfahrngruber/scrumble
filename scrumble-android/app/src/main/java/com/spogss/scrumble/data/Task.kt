@@ -3,7 +3,7 @@ package com.spogss.scrumble.data
 import com.spogss.scrumble.enums.TaskState
 
 class Task(var id: Int, var responsible: User, var verify: User, var name: String, var info: String,
-           var rejections: Int, var state: TaskState, var position: Int, var sprint: Sprint?, val project: Project) {
+           var rejections: Int, var state: TaskState, var position: Int, var color: String, var sprint: Sprint?, val project: Project) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
