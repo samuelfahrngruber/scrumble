@@ -89,13 +89,15 @@ class CustomDragItemAdapter
             val verify = view.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_verify).text.toString()
             val color = view.findViewById<TextView>(R.id.popup_add_task_color).tag as String
 
-            val responsibleUser = ScrumbleController.users.find { it.name == responsible }!!
-            val verifyUser = ScrumbleController.users.find { it.name == verify }!!
+            val responsibleUser = if(responsible.isNotEmpty()) ScrumbleController.users.find { it.name == responsible }!! else null
+            val verifyUser = if(verify.isNotEmpty()) ScrumbleController.users.find { it.name == verify }!! else null
 
             val oldName = task.name
             val oldColor = task.color
+            val oldRespName = task.responsible?.name?: ""
+            val oldVerName = task.verify?.name?: ""
 
-            if(task.name != name || task.info != info || task.color != color || task.responsible.id != responsibleUser.id || task.verify.id != verifyUser.id) {
+            if(task.name != name || task.info != info || task.color != color || task.responsible != responsibleUser || task.verify != verifyUser) {
                 task.name = name
                 task.info = info
                 task.color = color
@@ -104,7 +106,7 @@ class CustomDragItemAdapter
 
                 ScrumbleController.updateTask(task.id, task, {}, { MiscUIController.showError(context, it) } )
 
-                if(task.name != oldName || task.color != oldColor)
+                if(task.name != oldName || task.color != oldColor || task.responsible?.name?: "" != oldRespName || task.verify?.name?: "" != oldVerName)
                 if(fragment is ScrumBoardFragment)
                     (fragment as ScrumBoardFragment).setupBoardView()
                 else if(fragment is MyTasksFragment)

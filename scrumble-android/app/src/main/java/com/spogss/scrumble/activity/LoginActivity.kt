@@ -3,11 +3,13 @@ package com.spogss.scrumble.activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.spogss.scrumble.R
 import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.data.User
@@ -21,11 +23,16 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar!!.hide()
 
-        val user = loadCredentialsFromSharedPreferences()
-        if(user == null)
+        if(intent.getBooleanExtra("logout", false)) {
+            deleteCredentialsFromSharedPreferences()
             initUI()
+        }
         else {
-            login(user.name, user.password, true)
+            val user = loadCredentialsFromSharedPreferences()
+            if (user == null)
+                initUI()
+            else
+                login(user.name, user.password, true)
         }
     }
 
@@ -75,7 +82,6 @@ class LoginActivity : AppCompatActivity() {
             ScrumbleController.login(user, {
                 user.id = it
                 ScrumbleController.currentUser = user
-                ScrumbleController.users.add(user)
 
                 saveCredentialsToSharedPreferences(user.name, user.password)
 
@@ -147,15 +153,20 @@ class LoginActivity : AppCompatActivity() {
         sp.edit().putString("username", name).putString("password", password).apply()
     }
 
+    private fun deleteCredentialsFromSharedPreferences() {
+        val sp = getPreferences(Context.MODE_PRIVATE)
+        sp.edit().remove("username").remove("password").apply()
+    }
+
     private fun loadCredentialsFromSharedPreferences(): User? {
         val sp = getPreferences(Context.MODE_PRIVATE)
         val username = sp.getString("username", null)
         val password = sp.getString("password", null)
 
-        if(username == null || password == null)
-            return null
+        return if(username == null || password == null)
+            null
         else
-            return User(-1, username, password)
+            User(-1, username, password)
     }
 
     private fun disableEverything() {

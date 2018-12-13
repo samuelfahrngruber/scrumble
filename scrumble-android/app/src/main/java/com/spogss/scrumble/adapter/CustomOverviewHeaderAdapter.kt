@@ -2,6 +2,7 @@ package com.spogss.scrumble.adapter
 
 import android.animation.ObjectAnimator
 import android.content.Context
+import android.content.Intent
 import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
@@ -15,10 +16,16 @@ import com.github.aakira.expandablelayout.ExpandableLayoutListenerAdapter
 import com.github.aakira.expandablelayout.ExpandableLinearLayout
 import com.github.aakira.expandablelayout.Utils
 import com.spogss.scrumble.R
+import com.spogss.scrumble.activity.LoginActivity
+import com.spogss.scrumble.activity.MainActivity
+import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.data.Sprint
 import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.data.User
+import com.woxthebox.draglistview.DragListView
+import com.woxthebox.draglistview.swipe.ListSwipeHelper
+import com.woxthebox.draglistview.swipe.ListSwipeItem
 
 
 class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, private val team: MutableList<User>, private val sprints: MutableList<Sprint>,
@@ -61,8 +68,47 @@ class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, priv
         when(header) {
             context.resources.getString(R.string.team) -> {
                 if(ScrumbleController.isCurrentProjectSpecified()) {
-                    val teamAdapter = CustomProjectOverviewAdapter(team, context, this)
-                    holder.listProjectOverview.adapter = teamAdapter
+                    holder.listProjectOverview.visibility = View.GONE
+
+                    holder.listProjectOverviewSwipe.setLayoutManager(LinearLayoutManager(context))
+                    holder.listProjectOverviewSwipe.isDragEnabled = false
+                    holder.listProjectOverviewSwipe.visibility = View.VISIBLE
+
+                    val userItems = team.map { Pair(it.id, it) }.toMutableList()
+                    val teamAdapter = CustomSwipeItemAdapter(userItems, R.layout.item_list_swipeable, R.id.item_layout, false, context!!)
+                    holder.listProjectOverviewSwipe.setAdapter(teamAdapter, true)
+
+                    holder.listProjectOverviewSwipe.setSwipeListener(object : ListSwipeHelper.OnSwipeListener {
+                        override fun onItemSwipeEnded(item: ListSwipeItem, swipedDirection: ListSwipeItem.SwipeDirection?) {
+                            if (swipedDirection == ListSwipeItem.SwipeDirection.LEFT) {
+                                val userItem = item.tag as Pair<Int, User>
+                                val pos = holder.listProjectOverviewSwipe.adapter.getPositionForItem(userItem)
+
+                                holder.listProjectOverviewSwipe.adapter.removeItem(pos)
+                                ScrumbleController.users.remove(userItem.second)
+
+                                ScrumbleController.tasks.forEach {
+                                    if(it.responsible == userItem.second)
+                                        it.responsible = null
+                                    if(it.verify == userItem.second)
+                                        it.verify = null
+                                }
+
+                                ScrumbleController.removeTeamMember(ScrumbleController.currentProject!!.id, userItem.second.id, {}, {
+                                    MiscUIController.showError(context, it)
+                                })
+
+                                if(userItem.second == ScrumbleController.currentUser) {
+                                    deleteCurrentProjectFromSharedPreferences(userItem.second)
+                                    (context as MainActivity).finish()
+                                    context.startActivity(context.intent)
+                                }
+                            }
+                        }
+
+                        override fun onItemSwiping(item: ListSwipeItem?, swipedDistanceX: Float) {}
+                        override fun onItemSwipeStarted(item: ListSwipeItem?) {}
+                    })
                 }
             }
             context.resources.getString(R.string.sprints) -> {
@@ -76,9 +122,13 @@ class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, priv
         }
     }
 
-
     override fun getItemCount(): Int {
         return headers.size
+    }
+
+    private fun deleteCurrentProjectFromSharedPreferences(user: User) {
+        val sp = (context as MainActivity).getPreferences(Context.MODE_PRIVATE)
+        sp.edit().remove(user.id.toString()).apply()
     }
 
 
@@ -88,6 +138,7 @@ class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, priv
         var rlTriangle = v.findViewById<View>(R.id.rl_triangle) as RelativeLayout
         var expandableLayout = v.findViewById<View>(R.id.expandableLayout_header) as ExpandableLinearLayout
         var listProjectOverview = v.findViewById<View>(R.id.list_project_overview) as RecyclerView
+        var listProjectOverviewSwipe = v.findViewById<View>(R.id.list_project_overview_swipe) as DragListView
 
         fun createRotateAnimator(target: View, from: Float, to: Float): ObjectAnimator {
             val animator = ObjectAnimator.ofFloat(target, "rotation", from, to)

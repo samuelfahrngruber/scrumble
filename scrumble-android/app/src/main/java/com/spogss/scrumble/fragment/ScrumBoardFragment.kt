@@ -33,6 +33,8 @@ class ScrumBoardFragment: Fragment() {
 
         if(ScrumbleController.isCurrentSprintSpecified())
             setupBoardView()
+        else
+            mView.findViewById<TextView>(R.id.text_view_no_current_project).visibility = View.VISIBLE
 
         val fab = mView.findViewById(R.id.fab_add_task) as FloatingActionButton
         fab.setOnClickListener {
@@ -44,6 +46,7 @@ class ScrumBoardFragment: Fragment() {
             else
                 MiscUIController.showError(context!!, resources.getString(R.string.error_current_project_current_sprint))
         }
+
         return mView
     }
 
@@ -55,8 +58,8 @@ class ScrumBoardFragment: Fragment() {
         val verify = customView.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_verify).text.toString()
         val color = customView.findViewById<TextView>(R.id.popup_add_task_color).tag as String
 
-        val responsibleUser = ScrumbleController.users.find { it.name == responsible }!!
-        val verifyUser = ScrumbleController.users.find { it.name == verify }!!
+        val responsibleUser = if(responsible.isNotEmpty()) ScrumbleController.users.find { it.name == responsible }!! else null
+        val verifyUser = if(verify.isNotEmpty()) ScrumbleController.users.find { it.name == verify }!! else null
         val state = if(checkedPosition == 0) TaskState.PRODUCT_BACKLOG else TaskState.SPRINT_BACKLOG
         val sprint = if(checkedPosition == 0) null else ScrumbleController.currentProject!!.currentSprint
         val position = if(checkedPosition != 0) {

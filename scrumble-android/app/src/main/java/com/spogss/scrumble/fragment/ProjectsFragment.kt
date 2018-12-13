@@ -1,9 +1,9 @@
 package com.spogss.scrumble.fragment
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,11 +12,13 @@ import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.R
+import com.spogss.scrumble.activity.LoginActivity
 import com.spogss.scrumble.activity.MainActivity
 import com.spogss.scrumble.adapter.CustomOverviewHeaderAdapter
 import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.PopupController
 import com.spogss.scrumble.controller.ScrumbleController
+import com.spogss.scrumble.data.Project
 import com.spogss.scrumble.data.Sprint
 import com.spogss.scrumble.data.User
 import com.spogss.scrumble.enums.TaskState
@@ -45,7 +47,7 @@ class ProjectsFragment: Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.change_project, menu)
+        inflater.inflate(R.menu.project, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -56,6 +58,12 @@ class ProjectsFragment: Fragment() {
                 (context as MainActivity).finish()
                 (context as MainActivity).startActivity((context as MainActivity).intent)
             }, resources.getString(R.string.project), ScrumbleController.projects)
+            R.id.menu_item_logout -> {
+                val intent = Intent(context, LoginActivity::class.java)
+                intent.putExtra("logout", true)
+                (context as MainActivity).finish()
+                startActivity(intent)
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -79,8 +87,8 @@ class ProjectsFragment: Fragment() {
             sprint_text_view.setText(ScrumbleController.currentProject!!.currentSprint!!.toString())
             sprint_text_view2.setText(ScrumbleController.currentProject!!.currentSprint!!.timeSpan())
 
-            sprint_text_view.setOnClickListener { PopupController.setupSprintPopup(context!!, {}, ScrumbleController.currentProject!!.currentSprint!!) }
-            sprint_text_view2.setOnClickListener { PopupController.setupSprintPopup(context!!, {}, ScrumbleController.currentProject!!.currentSprint!!) }
+            sprint_text_view.setOnClickListener { PopupController.setupSprintPopup(context!!, { view -> updateSprint(ScrumbleController.currentProject!!.currentSprint!!, view) }, ScrumbleController.currentProject!!.currentSprint!!) }
+            sprint_text_view2.setOnClickListener { PopupController.setupSprintPopup(context!!, { view -> updateSprint(ScrumbleController.currentProject!!.currentSprint!!, view) }, ScrumbleController.currentProject!!.currentSprint!!) }
         }
     }
 
@@ -150,11 +158,66 @@ class ProjectsFragment: Fragment() {
         val name = customView.findViewById<MaterialEditText>(R.id.popup_add_project_name).text.toString()
         val productOwner = ScrumbleController.currentUser
         val team = customView.findViewById<DragListView>(R.id.swipe_list_add_team_member).adapter.itemList
+                .map { (it as Pair<Int, User>).second }.toMutableList()
+        team.add(ScrumbleController.currentUser)
 
-        team.forEach {
-            val user = (it as Pair<Int, User>).second
-            println(user)
+        val project = Project(-1, name, productOwner)
+        MiscUIController.startLoadingAnimation(view!!, context!!)
+        ScrumbleController.addProject(project, {id ->
+            project.id = id
+
+            ScrumbleController.addTeamMembers(project.id, team, {
+                saveCurrentProjectToSharedPreferences(project.id)
+                (context as MainActivity).finish()
+                (context as MainActivity).startActivity((context as MainActivity).intent)
+            }, {
+                MiscUIController.showError(context!!, it)
+                MiscUIController.stopLoadingAnimation(view!!, context!!)
+            })
+        }, {
+            MiscUIController.showError(context!!, it)
+            MiscUIController.startLoadingAnimation(view!!, context!!)
+        })
+    }
+
+    private fun updateSprint(sprint: Sprint, customView: View) {
+        val sprintNumberEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_number)
+        val selectListTask = customView.findViewById<RecyclerView>(R.id.popup_add_sprint_tasks)
+
+        sprint.number = sprintNumberEditText.text.toString().toInt()
+        sprint.startDate = PopupController.startCal.time
+        sprint.deadline = PopupController.endCal.time
+
+        var maxPos = ScrumbleController.tasks.filter { it.sprint != null &&  it.sprint!!.id == sprint.id &&
+                it.state == TaskState.SPRINT_BACKLOG }.maxBy { it.position }?.position ?: -1
+
+        val tasksToAUpdate = (selectListTask.adapter as FastItemAdapter<CustomSelectableItem>).adapterItems
+                .filter { it.isSelected && it.task!!.sprint == null || !it.isSelected && it.task!!.sprint != null }
+                .map {
+                    if(it.isSelected) {
+                        it.task!!.sprint = sprint
+                        it.task.state = TaskState.SPRINT_BACKLOG
+                        it.task.position = ++maxPos
+                        customOverviewHeaderAdapter.backlog.remove(it.task)
+                    }
+                    else {
+                        it.task!!.sprint = null
+                        it.task.state = TaskState.PRODUCT_BACKLOG
+                        it.task.position = 0
+                        customOverviewHeaderAdapter.backlog.add(it.task)
+                    }
+                    it.task
+                }
+
+        ScrumbleController.updateSprint(sprint.id, sprint, {}, { MiscUIController.showError(context!!, it) })
+        tasksToAUpdate.forEach { task ->
+            ScrumbleController.updateTask(task!!.id, task, {}, { MiscUIController.showError(context!!, it) })
         }
+
+        sprint_text_view.setText(sprint.toString())
+        sprint_text_view2.setText(sprint.timeSpan())
+        customOverviewHeaderAdapter.notifyDataSetChanged()
+
     }
 
     private fun addSprint(customView: View) {
@@ -193,10 +256,13 @@ class ProjectsFragment: Fragment() {
 
     private fun addTeamMember(customView: View) {
         val team = customView.findViewById<DragListView>(R.id.swipe_list_add_team_member).adapter.itemList
-        team.forEach {
-            val user = (it as Pair<Int, User>).second
-            println(user)
-        }
+                .map { (it as Pair<Int, User>).second }.toMutableList()
+
+        ScrumbleController.users.addAll(team)
+        ScrumbleController.users.sortBy { it.name }
+        customOverviewHeaderAdapter.notifyDataSetChanged()
+
+        ScrumbleController.addTeamMembers(ScrumbleController.currentProject!!.id, team, {}, { MiscUIController.showError(context!!, it) })
     }
 
     private fun saveCurrentProjectToSharedPreferences(projectId: Int) {

@@ -34,6 +34,7 @@
     <string name="product_backlog">Product Backlog</string>
 
     <string name="change_project">Change project</string>
+    <string name="logout">Logout</string>
 
     <string name="responsible">Responsible</string>
     <string name="verify">Verify</string>
@@ -53,6 +54,8 @@
     <string name="error_sprint_number_exists">A sprint with this number already exists</string>
     <string name="error_current_project_current_sprint">Please create a project first and specify a current sprint</string>
     <string name="error_current_project">Please create a project first</string>
+
+    <string name="no_current_project">No current project specified\nYou should select or create one</string>
 
     <string name="missing">MISSING</string>
 

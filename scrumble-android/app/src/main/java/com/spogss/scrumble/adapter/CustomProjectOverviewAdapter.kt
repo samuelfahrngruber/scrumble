@@ -100,13 +100,15 @@ class CustomProjectOverviewAdapter<T>(private val data: MutableList<T>, private 
         val info = view.findViewById<MaterialEditText>(R.id.popup_add_task_info).text.toString()
         val responsible = view.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_responsible).text.toString()
         val verify = view.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_verify).text.toString()
+        val color = view.findViewById<TextView>(R.id.popup_add_task_color).tag as String
 
-        val responsibleUser = ScrumbleController.users.find { it.name == responsible }!!
-        val verifyUser = ScrumbleController.users.find { it.name == verify }!!
+        val responsibleUser = if(responsible.isNotEmpty()) ScrumbleController.users.find { it.name == responsible }!! else null
+        val verifyUser = if(verify.isNotEmpty()) ScrumbleController.users.find { it.name == verify }!! else null
 
-        if(task.name != name || task.info != info || task.responsible.id != responsibleUser.id || task.verify.id != verifyUser.id) {
+        if(task.name != name || task.info != info || task.color != color || task.responsible != responsibleUser || task.verify != verifyUser) {
             task.name = name
             task.info = info
+            task.color = color
             task.responsible = responsibleUser
             task.verify = verifyUser
 

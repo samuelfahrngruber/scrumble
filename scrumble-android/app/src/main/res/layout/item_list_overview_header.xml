@@ -45,6 +45,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <com.woxthebox.draglistview.DragListView
+            android:id="@+id/list_project_overview_swipe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
 
     </com.github.aakira.expandablelayout.ExpandableLinearLayout>
 </RelativeLayout>

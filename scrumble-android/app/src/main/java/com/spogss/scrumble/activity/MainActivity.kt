@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         var selectedFragment = fragments[0]
         when (item.itemId) {
             R.id.navigation_my_tasks -> {
-                setupTitle(resources.getString(R.string.my_tasks))
+                setupTitle("${ScrumbleController.currentUser.name.capitalize()}'${if(!ScrumbleController.currentUser.name.endsWith("s")) "s" else ""} Tasks")
             }
             R.id.navigation_scrum_board -> {
                 selectedFragment = fragments[1]
@@ -60,8 +60,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         supportActionBar!!.hide()
+
+        ScrumbleController.currentProject = null
+        ScrumbleController.users.clear()
+        ScrumbleController.projects.clear()
+        ScrumbleController.sprints.clear()
+        ScrumbleController.tasks.clear()
+
         loadData(loadCurrentProjectFromSharedPreferences())
     }
 

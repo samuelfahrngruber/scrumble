@@ -13,8 +13,13 @@ class TaskDeserializer: JsonDeserializer<Task> {
         val jsonObject = json.asJsonObject
 
         val id = jsonObject.get("id").asInt
-        val responsible = ScrumbleController.users.find { it.id == jsonObject.get("responsible").asInt }!!
-        val verify = ScrumbleController.users.find { it.id == jsonObject.get("verify").asInt }!!
+
+        val responsible = if(jsonObject.get("responsible").isJsonNull) null
+            else ScrumbleController.users.find { it.id == jsonObject.get("responsible").asInt }!!
+
+        val verify = if(jsonObject.get("verify").isJsonNull) null
+            else ScrumbleController.users.find { it.id == jsonObject.get("verify").asInt }!!
+
         val name = jsonObject.get("name").asString
         val info = jsonObject.get("info").asString
         val rejections = jsonObject.get("rejections").asInt

@@ -8,6 +8,7 @@ import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.json.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import org.json.JSONArray
 import org.json.JSONObject
 
 object ScrumbleController {
@@ -63,6 +64,21 @@ object ScrumbleController {
                 uiThread { onError(response.text) }
         }
     }
+    fun getUserById(userId: Int, onSuccess: (user: User) -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val response = ScrumbleConnection.get("/user/$userId")
+
+            if(response.statusCode in 200..299) {
+                val gson = GsonBuilder().registerTypeAdapter(User::class.java, UserDeserializer())
+                        .serializeNulls().create()
+
+                val user = gson.fromJson(response.jsonObject.toString(), User::class.java)
+                uiThread { onSuccess(user) }
+            }
+            else
+                uiThread { onError(response.text) }
+        }
+    }
     fun getTeamMemberByName(name: String, onSuccess: (user: User) -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val response = ScrumbleConnection.get("/user?name=$name")
@@ -74,6 +90,28 @@ object ScrumbleController {
                 val user = gson.fromJson(response.jsonArray[0].toString(), User::class.java)
                 uiThread { onSuccess(user) }
             }
+            else
+                uiThread { onError(response.text) }
+        }
+    }
+    fun addTeamMembers(projectId: Int, team: MutableList<User>, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val gson = GsonBuilder().registerTypeAdapter(Array<User>::class.java, UserSerializer())
+                    .serializeNulls().create()
+            val response = ScrumbleConnection.post("/project/$projectId/user", JSONArray(gson.toJson(team)))
+
+            if(response.statusCode in 200..299)
+                uiThread { onSuccess() }
+            else
+                uiThread { onError(response.text) }
+        }
+    }
+    fun removeTeamMember(projectId: Int, userId: Int, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val response = ScrumbleConnection.delete("/project/$projectId/user/$userId")
+
+            if(response.statusCode in 200..299)
+                uiThread { onSuccess() }
             else
                 uiThread { onError(response.text) }
         }
@@ -113,7 +151,6 @@ object ScrumbleController {
             } else
                 uiThread { onError(response.text) }
         }
-
     }
     fun addProject(project: Project, onSuccess: (id: Int) -> Unit, onError: (message: String) -> Unit) {
         doAsync {

@@ -9,8 +9,17 @@ class TaskSerializer: JsonSerializer<Task> {
         val jsonObject = JsonObject()
 
         jsonObject.addProperty("id", task.id)
-        jsonObject.addProperty("responsible", task.responsible.id)
-        jsonObject.addProperty("verify", task.verify.id)
+
+        if(task.responsible == null)
+            jsonObject.add("responsible", JsonNull.INSTANCE)
+        else
+            jsonObject.addProperty("responsible", task.responsible!!.id)
+
+        if(task.verify == null)
+            jsonObject.add("verify", JsonNull.INSTANCE)
+        else
+            jsonObject.addProperty("verify", task.verify!!.id)
+
         jsonObject.addProperty("name", task.name)
         jsonObject.addProperty("info", task.info)
         jsonObject.addProperty("rejections", task.rejections)

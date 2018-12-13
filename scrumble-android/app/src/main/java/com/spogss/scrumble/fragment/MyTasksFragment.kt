@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +18,7 @@ import com.spogss.scrumble.data.User
 import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.viewItem.CustomDragItem
 import com.woxthebox.draglistview.DragListView
+import kotlinx.android.synthetic.main.fragment_my_tasks.*
 
 
 class MyTasksFragment: Fragment() {
@@ -28,6 +30,8 @@ class MyTasksFragment: Fragment() {
 
         if(ScrumbleController.isCurrentSprintSpecified())
             setupDragListView()
+        else
+            mView.findViewById<TextView>(R.id.text_view_no_current_project).visibility = View.VISIBLE
 
         return mView
     }
@@ -71,7 +75,7 @@ class MyTasksFragment: Fragment() {
 
         items.clear()
         val myTasks = ScrumbleController.tasks.filter { it.sprint != null && it.sprint!!.id == ScrumbleController.currentProject!!.currentSprint!!.id }
-                .filter { it.responsible.id == ScrumbleController.currentUser.id || it.verify.id == ScrumbleController.currentUser.id }
+                .filter { it.responsible == ScrumbleController.currentUser || it.verify == ScrumbleController.currentUser }
         TaskState.values().forEachIndexed { index, taskState ->
             if(taskState != TaskState.PRODUCT_BACKLOG) {
                 val tasks = myTasks.filter { it.state == taskState }.toMutableList()

@@ -67,6 +67,9 @@ object PopupController {
             if (ScrumbleController.currentProject!!.currentSprint == null)
                 toggleSwitch.isEnabled = false
 
+            (colorTextView.background as GradientDrawable).setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+            colorTextView.tag = "#${Integer.toHexString(ContextCompat.getColor(context, R.color.colorPrimary)).substring(2)}"
+
             setupTaskSpinner(customView, context)
         } else {
             nameEditText.setText(task.name)
@@ -107,22 +110,25 @@ object PopupController {
         dialog!!.show()
     }
     private fun setupTaskSpinner(customView: View, context: Context, task: Task? = null) {
+        val users = mutableListOf(User(-1, "", ""))
+        users.addAll(ScrumbleController.users)
+
         val responsibleSpinner = customView.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_responsible)
-        responsibleSpinner.setAdapter(ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, ScrumbleController.users))
+        responsibleSpinner.setAdapter(ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, users))
 
         val verifySpinner = customView.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_verify)
-        verifySpinner.setAdapter(ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, ScrumbleController.users))
+        verifySpinner.setAdapter(ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, users))
 
         if (task != null) {
-            responsibleSpinner.setText(task.responsible.toString())
-            verifySpinner.setText(task.verify.toString())
+            if(task.responsible != null)
+                responsibleSpinner.setText(task.responsible!!.toString())
+            if(task.verify != null)
+                verifySpinner.setText(task.verify!!.toString())
         }
     }
     private fun taskDialogButtonClick(customView: View, context: Context): Boolean {
         val nameEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_task_name)
         val infoEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_task_info)
-        val responsibleSpinner = customView.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_responsible)
-        val verifySpinner = customView.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_verify)
 
         var closePopup = true
         if (nameEditText.text.trim().isEmpty()) {
@@ -133,28 +139,20 @@ object PopupController {
             infoEditText.error = context.resources.getString(R.string.error_enter_info)
             closePopup = false
         }
-        if (responsibleSpinner.text.trim().isEmpty()) {
-            responsibleSpinner.error = context.resources.getString(R.string.error_select_team_member)
-            closePopup = false
-        }
-        if (verifySpinner.text.trim().isEmpty()) {
-            verifySpinner.error = context.resources.getString(R.string.error_select_team_member)
-            closePopup = false
-        }
 
         return closePopup
     }
 
     fun setupProjectPopup(context: Context, callback: (view: View) -> Unit) {
         setupSpeedDialPopups(context.resources.getString(R.string.project), context, {
-            setupAddProjectAddTeamMemberCustomView(R.layout.popup_project, context)
+            setupAddProjectAddTeamMemberCustomView(R.layout.popup_project, context, true)
         }, {
             addProjectButtonClick(it, context)
         }, callback)
     }
     fun setupTeamMemberPopup(context: Context, callback: (view: View) -> Unit) {
         setupSpeedDialPopups(context.resources.getString(R.string.team_member), context, {
-            setupAddProjectAddTeamMemberCustomView(R.layout.popup_team_member, context)
+            setupAddProjectAddTeamMemberCustomView(R.layout.popup_team_member, context, false)
         }, { true }, callback)
     }
     fun setupSprintPopup(context: Context, callback: (view: View) -> Unit, sprint: Sprint? = null) {
@@ -189,7 +187,7 @@ object PopupController {
         }
         dialog!!.show()
     }
-    private fun setupAddProjectAddTeamMemberCustomView(res: Int, context: Context): View {
+    private fun setupAddProjectAddTeamMemberCustomView(res: Int, context: Context, isProject: Boolean): View {
         val customView = View.inflate(context, res, null)
         val listView = customView.findViewById<DragListView>(R.id.swipe_list_add_team_member)
         val teamMemberEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_team_member)
@@ -198,7 +196,8 @@ object PopupController {
 
         listView.setLayoutManager(LinearLayoutManager(context))
         listView.isDragEnabled = false
-        val adapter = CustomSwipeItemAdapter(mutableListOf<Pair<Int, User>>(), R.layout.item_list_swipeable, R.id.item_layout, false, context!!)
+
+        val adapter = CustomSwipeItemAdapter(mutableListOf(), R.layout.item_list_swipeable, R.id.item_layout, false, context, true)
         listView.setAdapter(adapter, true)
 
         listView.setSwipeListener(object : ListSwipeHelper.OnSwipeListener {
@@ -231,7 +230,7 @@ object PopupController {
 
                             ScrumbleController.getTeamMemberByName(name, { user ->
                                 try {
-                                    if (ScrumbleController.users.contains(user))
+                                    if (ScrumbleController.users.contains(user) && !isProject)
                                         MiscUIController.showError(context, "User is already involved in this project")
                                     else {
                                         if (!listView.adapter.itemList.contains(Pair(adapter.itemCount - 1, user)))
