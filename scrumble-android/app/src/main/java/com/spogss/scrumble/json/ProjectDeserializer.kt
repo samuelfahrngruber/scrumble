@@ -3,7 +3,6 @@ package com.spogss.scrumble.json
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.data.Project
 import com.spogss.scrumble.data.Sprint

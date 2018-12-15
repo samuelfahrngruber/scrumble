@@ -39,9 +39,8 @@ class CustomSelectableItem(val task: Task?): AbstractItem<CustomSelectableItem, 
 
     inner class CheckBoxClickEvent: ClickEventHook<CustomSelectableItem>() {
         override fun onBind(viewHolder: RecyclerView.ViewHolder): View? {
-            if (viewHolder is CustomSelectableItem.ViewHolder) {
+            if (viewHolder is CustomSelectableItem.ViewHolder)
                 return viewHolder.checkBox
-            }
             return null
         }
 

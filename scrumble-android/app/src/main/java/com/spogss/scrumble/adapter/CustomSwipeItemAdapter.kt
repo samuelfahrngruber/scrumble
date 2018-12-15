@@ -10,8 +10,6 @@ import android.widget.TextView
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import com.spogss.scrumble.R
-import com.spogss.scrumble.data.Sprint
-import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.data.User
 import com.woxthebox.draglistview.DragItemAdapter
 import com.woxthebox.draglistview.swipe.ListSwipeItem

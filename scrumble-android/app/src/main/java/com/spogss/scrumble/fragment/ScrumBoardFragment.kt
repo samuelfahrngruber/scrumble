@@ -7,19 +7,16 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.llollox.androidtoggleswitch.widgets.ToggleSwitch
-import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.R
 import com.spogss.scrumble.adapter.CustomDragItemAdapter
 import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.PopupController
 import com.spogss.scrumble.controller.ScrumbleController
+import com.spogss.scrumble.controller.UIToScrumbleController
 import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.viewItem.CustomDragItem
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
 import com.woxthebox.draglistview.BoardView
-import org.jetbrains.anko.find
 
 
 class ScrumBoardFragment: Fragment() {
@@ -40,7 +37,7 @@ class ScrumBoardFragment: Fragment() {
         fab.setOnClickListener {
             if(ScrumbleController.isCurrentSprintSpecified()) {
                 PopupController.setupTaskPopup(context!!, { view ->
-                    addTask(view)
+                    UIToScrumbleController.addTask(view, mView, context!!) { setupBoardView() }
                 })
             }
             else
@@ -48,40 +45,6 @@ class ScrumBoardFragment: Fragment() {
         }
 
         return mView
-    }
-
-    private fun addTask(customView: View) {
-        val checkedPosition = customView.findViewById<ToggleSwitch>(R.id.popup_add_task_toggle_button).checkedPosition!!
-        val name = customView.findViewById<MaterialEditText>(R.id.popup_add_task_name).text.toString()
-        val info = customView.findViewById<MaterialEditText>(R.id.popup_add_task_info).text.toString()
-        val responsible = customView.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_responsible).text.toString()
-        val verify = customView.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_verify).text.toString()
-        val color = customView.findViewById<TextView>(R.id.popup_add_task_color).tag as String
-
-        val responsibleUser = if(responsible.isNotEmpty()) ScrumbleController.users.find { it.name == responsible }!! else null
-        val verifyUser = if(verify.isNotEmpty()) ScrumbleController.users.find { it.name == verify }!! else null
-        val state = if(checkedPosition == 0) TaskState.PRODUCT_BACKLOG else TaskState.SPRINT_BACKLOG
-        val sprint = if(checkedPosition == 0) null else ScrumbleController.currentProject!!.currentSprint
-        val position = if(checkedPosition != 0) {
-            val maxPosTask = ScrumbleController.tasks.filter { it.sprint != null && it.sprint!!.id == ScrumbleController.currentProject!!.currentSprint!!.id && it.state == TaskState.SPRINT_BACKLOG }.maxBy { it.position }
-            maxPosTask?.position ?: 0
-        }
-        else 0
-
-        val task = Task(-1, responsibleUser, verifyUser, name, info, 0, state, position, color, sprint, ScrumbleController.currentProject!!)
-
-        MiscUIController.startLoadingAnimation(view!!, context!!)
-        ScrumbleController.addTask(task, {
-            task.id = it
-            ScrumbleController.tasks.add(task)
-            if(checkedPosition != 0)
-                setupBoardView()
-
-            MiscUIController.stopLoadingAnimation(view!!, context!!)
-        }, {
-            MiscUIController.stopLoadingAnimation(view!!, context!!)
-            MiscUIController.showError(context!!, it)
-        })
     }
 
     fun setupBoardView() {

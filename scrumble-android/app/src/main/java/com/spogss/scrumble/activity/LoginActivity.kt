@@ -2,16 +2,14 @@ package com.spogss.scrumble.activity
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.spogss.scrumble.R
 import com.spogss.scrumble.controller.ScrumbleController
+import com.spogss.scrumble.controller.SharedPreferencesController
 import com.spogss.scrumble.data.User
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -24,11 +22,11 @@ class LoginActivity : AppCompatActivity() {
         supportActionBar!!.hide()
 
         if(intent.getBooleanExtra("logout", false)) {
-            deleteCredentialsFromSharedPreferences()
+            SharedPreferencesController.deleteCredentialsFromSharedPreferences(this)
             initUI()
         }
         else {
-            val user = loadCredentialsFromSharedPreferences()
+            val user = SharedPreferencesController.loadCredentialsFromSharedPreferences(this)
             if (user == null)
                 initUI()
             else
@@ -83,7 +81,7 @@ class LoginActivity : AppCompatActivity() {
                 user.id = it
                 ScrumbleController.currentUser = user
 
-                saveCredentialsToSharedPreferences(user.name, user.password)
+                SharedPreferencesController.saveCredentialsToSharedPreferences(user.name, user.password, this)
 
                 startMainActivity()
             }, {
@@ -146,27 +144,6 @@ class LoginActivity : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
-    }
-
-    private fun saveCredentialsToSharedPreferences(name: String, password: String) {
-        val sp = getPreferences(Context.MODE_PRIVATE)
-        sp.edit().putString("username", name).putString("password", password).apply()
-    }
-
-    private fun deleteCredentialsFromSharedPreferences() {
-        val sp = getPreferences(Context.MODE_PRIVATE)
-        sp.edit().remove("username").remove("password").apply()
-    }
-
-    private fun loadCredentialsFromSharedPreferences(): User? {
-        val sp = getPreferences(Context.MODE_PRIVATE)
-        val username = sp.getString("username", null)
-        val password = sp.getString("password", null)
-
-        return if(username == null || password == null)
-            null
-        else
-            User(-1, username, password)
     }
 
     private fun disableEverything() {

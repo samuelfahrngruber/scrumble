@@ -2,13 +2,11 @@ package com.spogss.scrumble.adapter
 
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.content.Intent
 import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
-import android.widget.ScrollView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,20 +14,21 @@ import com.github.aakira.expandablelayout.ExpandableLayoutListenerAdapter
 import com.github.aakira.expandablelayout.ExpandableLinearLayout
 import com.github.aakira.expandablelayout.Utils
 import com.spogss.scrumble.R
-import com.spogss.scrumble.activity.LoginActivity
 import com.spogss.scrumble.activity.MainActivity
 import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.ScrumbleController
+import com.spogss.scrumble.controller.SharedPreferencesController
 import com.spogss.scrumble.data.Sprint
 import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.data.User
+import com.spogss.scrumble.fragment.ProjectsFragment
 import com.woxthebox.draglistview.DragListView
 import com.woxthebox.draglistview.swipe.ListSwipeHelper
 import com.woxthebox.draglistview.swipe.ListSwipeItem
 
 
 class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, private val team: MutableList<User>, private val sprints: MutableList<Sprint>,
-                                  val backlog: MutableList<Task>, private val context: Context): RecyclerView.Adapter<CustomOverviewHeaderAdapter.ViewHolder>() {
+                                  val backlog: MutableList<Task>, private val fragment: ProjectsFragment, private val context: Context): RecyclerView.Adapter<CustomOverviewHeaderAdapter.ViewHolder>() {
     private val expandState = SparseBooleanArray()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -99,8 +98,8 @@ class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, priv
                                 })
 
                                 if(userItem.second == ScrumbleController.currentUser) {
-                                    deleteCurrentProjectFromSharedPreferences(userItem.second)
-                                    (context as MainActivity).finish()
+                                    SharedPreferencesController.deleteCurrentProjectFromSharedPreferences(userItem.second, context as MainActivity)
+                                    context.finish()
                                     context.startActivity(context.intent)
                                 }
                             }
@@ -112,11 +111,11 @@ class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, priv
                 }
             }
             context.resources.getString(R.string.sprints) -> {
-                val sprintAdapter = CustomProjectOverviewAdapter(sprints, context, this)
+                val sprintAdapter = CustomProjectOverviewAdapter(sprints, context, this, fragment)
                 holder.listProjectOverview.adapter = sprintAdapter
             }
             context.resources.getString(R.string.product_backlog) -> {
-                val backlogAdapter = CustomProjectOverviewAdapter(backlog, context, this)
+                val backlogAdapter = CustomProjectOverviewAdapter(backlog, context, this, fragment)
                 holder.listProjectOverview.adapter = backlogAdapter
             }
         }
@@ -124,11 +123,6 @@ class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, priv
 
     override fun getItemCount(): Int {
         return headers.size
-    }
-
-    private fun deleteCurrentProjectFromSharedPreferences(user: User) {
-        val sp = (context as MainActivity).getPreferences(Context.MODE_PRIVATE)
-        sp.edit().remove(user.id.toString()).apply()
     }
 
 

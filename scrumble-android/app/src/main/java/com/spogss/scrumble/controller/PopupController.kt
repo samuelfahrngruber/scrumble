@@ -7,6 +7,8 @@ import android.text.InputType
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
+import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -34,7 +36,6 @@ import com.woxthebox.draglistview.swipe.ListSwipeItem
 import de.mrapp.android.dialog.MaterialDialog
 import de.mrapp.android.dialog.ScrollableArea
 import org.jetbrains.anko.find
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -58,12 +59,16 @@ object PopupController {
         val toggleSwitch = customView.findViewById<ToggleSwitch>(R.id.popup_add_task_toggle_button)
         val nameEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_task_name)
         val infoEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_task_info)
+        val rejectionsContainer = customView.findViewById<LinearLayout>(R.id.popup_add_task_rejections_container)
         val rejectionsEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_task_rejections)
+        val incRejectionsButton = customView.findViewById<ImageButton>(R.id.popup_add_task_increase_rejections)
+        val decRejectionsButton = customView.findViewById<ImageButton>(R.id.popup_add_task_decrease_rejections)
         val colorTextView = customView.find<TextView>(R.id.popup_add_task_color)
 
         if (task == null) {
-            rejectionsEditText.visibility = View.GONE
+            rejectionsContainer.visibility = View.GONE
             toggleSwitch.setCheckedPosition(0)
+
             if (ScrumbleController.currentProject!!.currentSprint == null)
                 toggleSwitch.isEnabled = false
 
@@ -81,6 +86,13 @@ object PopupController {
             colorTextView.tag = task.color
 
             setupTaskSpinner(customView, context, task)
+
+            incRejectionsButton.setOnClickListener { rejectionsEditText.setText((rejectionsEditText.text.toString().toInt() + 1).toString()) }
+            decRejectionsButton.setOnClickListener {
+                val rejections = rejectionsEditText.text.toString().toInt() - 1
+                if(rejections > -1)
+                    rejectionsEditText.setText(rejections.toString())
+            }
         }
 
         colorTextView.setOnClickListener {
@@ -97,17 +109,17 @@ object PopupController {
         dialogBuilder.setScrollableArea(ScrollableArea.Area.CONTENT)
         dialogBuilder.setView(customView)
 
-        dialog = dialogBuilder.create()
-        dialog!!.setOnShowListener {
-            dialog!!.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener {
+        val dial = dialogBuilder.create()
+        dial.setOnShowListener {
+            dial.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener {
                 if (taskDialogButtonClick(customView, context)) {
                     callback(customView)
-                    dialog!!.dismiss()
+                    dial.dismiss()
                 }
             }
         }
 
-        dialog!!.show()
+        dial.show()
     }
     private fun setupTaskSpinner(customView: View, context: Context, task: Task? = null) {
         val users = mutableListOf(User(-1, "", ""))
@@ -301,8 +313,17 @@ object PopupController {
         }
 
         adapter.withSelectable(true)
-        adapter.withOnPreClickListener { _, _, _, _ -> true }
         adapter.withEventHook(CustomSelectableItem(null).CheckBoxClickEvent())
+
+        adapter.withOnPreClickListener { _, _, item, position ->
+            if(item.task != null)
+                PopupController.setupTaskPopup(context, {
+                    UIToScrumbleController.updateTask(item.task, it, context) {
+                        adapter.notifyAdapterItemChanged(position)
+                    }
+                }, item.task)
+            true
+        }
 
         adapter.adapterItems.forEachIndexed { index, item ->
             if (item.task != null && item.task.state != TaskState.PRODUCT_BACKLOG)

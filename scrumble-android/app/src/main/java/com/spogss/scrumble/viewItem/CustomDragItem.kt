@@ -12,7 +12,6 @@ import android.view.animation.DecelerateInterpolator
 import android.animation.ObjectAnimator
 
 
-
 class CustomDragItem(private val context: Context, res: Int): DragItem(context, res) {
 
     override fun onBindDragView(clickedView: View, dragView: View) {

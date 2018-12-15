@@ -10,15 +10,12 @@ import androidx.annotation.NonNull
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.R
-import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.PopupController
-import com.spogss.scrumble.controller.ScrumbleController
+import com.spogss.scrumble.controller.UIToScrumbleController
 import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.fragment.MyTasksFragment
 import com.spogss.scrumble.fragment.ScrumBoardFragment
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
 import com.woxthebox.draglistview.DragItemAdapter
 
 
@@ -79,39 +76,13 @@ class CustomDragItemAdapter
             val task = view.tag as Task
 
             if(task.id >= 0)
-                PopupController.setupTaskPopup(context, { updateTask(task, it) }, task)
-        }
-
-        private fun updateTask(task: Task, view: View) {
-            val name = view.findViewById<MaterialEditText>(R.id.popup_add_task_name).text.toString()
-            val info = view.findViewById<MaterialEditText>(R.id.popup_add_task_info).text.toString()
-            val responsible = view.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_responsible).text.toString()
-            val verify = view.findViewById<MaterialBetterSpinner>(R.id.popup_add_task_verify).text.toString()
-            val color = view.findViewById<TextView>(R.id.popup_add_task_color).tag as String
-
-            val responsibleUser = if(responsible.isNotEmpty()) ScrumbleController.users.find { it.name == responsible }!! else null
-            val verifyUser = if(verify.isNotEmpty()) ScrumbleController.users.find { it.name == verify }!! else null
-
-            val oldName = task.name
-            val oldColor = task.color
-            val oldRespName = task.responsible?.name?: ""
-            val oldVerName = task.verify?.name?: ""
-
-            if(task.name != name || task.info != info || task.color != color || task.responsible != responsibleUser || task.verify != verifyUser) {
-                task.name = name
-                task.info = info
-                task.color = color
-                task.responsible = responsibleUser
-                task.verify = verifyUser
-
-                ScrumbleController.updateTask(task.id, task, {}, { MiscUIController.showError(context, it) } )
-
-                if(task.name != oldName || task.color != oldColor || task.responsible?.name?: "" != oldRespName || task.verify?.name?: "" != oldVerName)
-                if(fragment is ScrumBoardFragment)
-                    (fragment as ScrumBoardFragment).setupBoardView()
-                else if(fragment is MyTasksFragment)
-                    (fragment as MyTasksFragment).setupDragListView()
-            }
+                PopupController.setupTaskPopup(context, { UIToScrumbleController.updateTask(task, it, context) {
+                    if(fragment is ScrumBoardFragment)
+                        (fragment as ScrumBoardFragment).setupBoardView()
+                    else if(fragment is MyTasksFragment)
+                        (fragment as MyTasksFragment).setupDragListView()
+                }
+                }, task)
         }
 
         override fun onItemLongClicked(view: View): Boolean {

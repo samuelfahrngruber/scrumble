@@ -1,13 +1,11 @@
 package com.spogss.scrumble.activity
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -15,6 +13,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.spogss.scrumble.R
 import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.ScrumbleController
+import com.spogss.scrumble.controller.SharedPreferencesController
 import com.spogss.scrumble.fragment.DailyScrumFragment
 import com.spogss.scrumble.fragment.MyTasksFragment
 import com.spogss.scrumble.fragment.ProjectsFragment
@@ -68,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         ScrumbleController.sprints.clear()
         ScrumbleController.tasks.clear()
 
-        loadData(loadCurrentProjectFromSharedPreferences())
+        loadData(SharedPreferencesController.loadCurrentProjectFromSharedPreferences(this))
     }
 
     private fun loadData(projectId: Int) {
@@ -123,10 +122,5 @@ class MainActivity : AppCompatActivity() {
         val formattedText = SpannableString(newTitle)
         formattedText.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorAccent)), 0, formattedText.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
         title = formattedText
-    }
-
-    private fun loadCurrentProjectFromSharedPreferences(): Int {
-        val sharedPreferences = getPreferences(Context.MODE_PRIVATE)
-        return sharedPreferences.getInt(ScrumbleController.currentUser.id.toString(), -1)
     }
 }
