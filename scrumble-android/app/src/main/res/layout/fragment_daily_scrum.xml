@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:text="@string/no_current_project"
+        android:text="@string/error_no_current_project"
         android:textColor="@color/colorAccent"
         android:textSize="20sp"
         android:visibility="gone" />

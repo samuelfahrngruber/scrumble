@@ -115,7 +115,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun validate(): Boolean {
-        val username = login_username.text.toString().trimStart().trimEnd()
+        val username = login_username.text.toString()
         val password = login_password.text.toString()
 
         var success = true
@@ -129,10 +129,10 @@ class LoginActivity : AppCompatActivity() {
             success = false
         }
         if(username.contains(" ")) {
-            login_username.error = "No whitespaces please"
+            login_username.error = resources.getString(R.string.error_whitespaces)
             success = false
         }
-        if(!login && (login_password_confirm.text.toString().trimStart().trimEnd().isEmpty() || login_password_confirm.text.toString().trimStart().trimEnd() != password)) {
+        if(!login && (login_password_confirm.text.toString().trim().isEmpty() || login_password_confirm.text.toString().trim() != password)) {
             login_password_confirm.error = resources.getString(R.string.error_confirm_password)
             success = false
         }

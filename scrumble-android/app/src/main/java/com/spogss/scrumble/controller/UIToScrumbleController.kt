@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.llollox.androidtoggleswitch.widgets.ToggleSwitch
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import com.polyak.iconswitch.IconSwitch
 import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.R
 import com.spogss.scrumble.activity.MainActivity
@@ -79,9 +80,10 @@ object UIToScrumbleController {
         }
     }
 
-    fun addSprint(view: View, mainView: View, customOverviewHeaderAdapter: CustomOverviewHeaderAdapter, context: Context) {
+    fun addSprint(view: View, mainView: View, customOverviewHeaderAdapter: CustomOverviewHeaderAdapter, context: Context, callback: (sprint: Sprint) -> Unit) {
         val sprintNumber = view.findViewById<MaterialEditText>(R.id.popup_add_sprint_number).text.toString().toInt()
         val selectListTask = view.findViewById<RecyclerView>(R.id.popup_add_sprint_tasks)
+        val currentSprintSwitch = view.findViewById<IconSwitch>(R.id.popup_add_sprint_current_sprint)
 
         val sprint = Sprint(-1, sprintNumber, PopupController.startCal.time, PopupController.endCal.time, ScrumbleController.currentProject!!)
 
@@ -106,15 +108,22 @@ object UIToScrumbleController {
                 customOverviewHeaderAdapter.backlog.remove(task)
                 ScrumbleController.updateTask(task.id, task, { }, { MiscUIController.showError(context, it) })
             }
+
+            if(currentSprintSwitch.checked == IconSwitch.Checked.RIGHT)
+                ScrumbleController.currentProject!!.currentSprint = sprint
+
+            callback(sprint)
+
             MiscUIController.stopLoadingAnimation(mainView, context)
         }, {
             MiscUIController.stopLoadingAnimation(mainView, context)
             MiscUIController.showError(context, it)
         })
     }
-    fun updateSprint(sprint: Sprint, view: View, customOverviewHeaderAdapter: CustomOverviewHeaderAdapter, context: Context, callback: () -> Unit) {
+    fun updateSprint(sprint: Sprint, view: View, customOverviewHeaderAdapter: CustomOverviewHeaderAdapter, context: Context, callback: (isCurrent: Boolean) -> Unit) {
         val sprintNumberEditText = view.findViewById<MaterialEditText>(R.id.popup_add_sprint_number)
         val selectListTask = view.findViewById<RecyclerView>(R.id.popup_add_sprint_tasks)
+        val currentSprintSwitch = view.findViewById<IconSwitch>(R.id.popup_add_sprint_current_sprint)
 
         sprint.number = sprintNumberEditText.text.toString().toInt()
         sprint.startDate = PopupController.startCal.time
@@ -146,7 +155,7 @@ object UIToScrumbleController {
             ScrumbleController.updateTask(task!!.id, task, {}, { MiscUIController.showError(context, it) })
         }
 
-        callback()
+        callback(currentSprintSwitch.checked == IconSwitch.Checked.RIGHT)
     }
 
     fun addProject(customView: View, mainView: View, context: Context, callback: () -> Unit) {

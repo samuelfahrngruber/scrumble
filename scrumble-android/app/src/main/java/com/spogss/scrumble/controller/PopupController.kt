@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.llollox.androidtoggleswitch.widgets.ToggleSwitch
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.select.SelectExtension
+import com.polyak.iconswitch.IconSwitch
 import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.R
 import com.spogss.scrumble.activity.MainActivity
@@ -235,7 +236,7 @@ object PopupController {
                     val name = teamMemberEditText.text.toString().trimEnd()
                     if (name != "") {
                         if(name.contains(" "))
-                            MiscUIController.showError(context, "No whitespaces please")
+                            MiscUIController.showError(context, context.resources.getString(R.string.error_whitespaces))
                         else {
                             MiscUIController.startLoadingAnimation(customView, context)
                             dialog!!.getButton(MaterialDialog.BUTTON_POSITIVE).isEnabled = false
@@ -243,7 +244,7 @@ object PopupController {
                             ScrumbleController.getTeamMemberByName(name, { user ->
                                 try {
                                     if (ScrumbleController.users.contains(user) && !isProject)
-                                        MiscUIController.showError(context, "User is already involved in this project")
+                                        MiscUIController.showError(context, context.resources.getString(R.string.error_user_already_involved))
                                     else {
                                         if (!listView.adapter.itemList.contains(Pair(adapter.itemCount - 1, user)))
                                             listView.adapter.addItem(adapter.itemCount, Pair(adapter.itemCount, user))
@@ -260,7 +261,7 @@ object PopupController {
 
                             }, {
                                 try {
-                                    MiscUIController.showError(context, "No user with the given name exists")
+                                    MiscUIController.showError(context, context.resources.getString(R.string.error_username_does_not_exist))
                                     MiscUIController.stopLoadingAnimation(customView, context)
                                     dialog!!.getButton(MaterialDialog.BUTTON_POSITIVE).isEnabled = true
                                 } catch (ex: Exception) {
@@ -298,6 +299,7 @@ object PopupController {
         val customView = View.inflate(context, R.layout.popup_sprint, null)
         val sprintNumberEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_number)
         val selectListTask = customView.findViewById<RecyclerView>(R.id.popup_add_sprint_tasks)
+        val currentSprintSwitch = customView.findViewById<IconSwitch>(R.id.popup_add_sprint_current_sprint)
 
         val adapter = FastItemAdapter<CustomSelectableItem>()
 
@@ -309,6 +311,10 @@ object PopupController {
         } else {
             sprintNumberEditText.setText(sprint.number.toString())
             setupDatePicker(customView, context, sprint)
+
+            if(ScrumbleController.currentProject!!.currentSprint == sprint)
+                currentSprintSwitch.checked = IconSwitch.Checked.RIGHT
+
             adapter.add(ScrumbleController.tasks.filter { it.state == TaskState.PRODUCT_BACKLOG || (it.sprint != null && it.sprint!!.id == sprint.id) }.sortedByDescending { it.state }.map { CustomSelectableItem(it) })
         }
 

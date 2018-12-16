@@ -69,19 +69,18 @@
             app:met_floatingLabel="highlight"
             app:met_primaryColor="@color/colorAccent" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_weight="40"
-            android:layout_gravity="center"
-            android:gravity="center">
+            android:layout_gravity="center">
 
             <ImageButton
                 android:id="@+id/popup_add_task_decrease_rejections"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginEnd="10dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="60dp"
                 android:background="@drawable/sc_circle"
                 android:scaleType="fitCenter"
                 android:src="@drawable/sc_minus"
@@ -91,12 +90,13 @@
                 android:id="@+id/popup_add_task_increase_rejections"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
                 android:background="@drawable/sc_circle"
                 android:scaleType="fitCenter"
                 android:src="@drawable/sc_plus"
                 android:tint="@color/gray" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 

@@ -33,8 +33,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
     //async
     implementation 'org.jetbrains.anko:anko-common:0.9'
@@ -69,4 +69,8 @@ dependencies {
     implementation 'br.com.simplepass:loading-button-android:1.14.0'
     //colorPicker
     implementation 'com.thebluealliance:spectrum:0.7.1'
+    //switch
+    implementation 'com.polyak:icon-switch:1.0.0'
+    //toasty
+    implementation 'com.github.GrenderG:Toasty:1.3.1'
 }

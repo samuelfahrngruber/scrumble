@@ -3,6 +3,7 @@ package com.spogss.scrumble.fragment
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,11 +13,12 @@ import com.spogss.scrumble.activity.LoginActivity
 import com.spogss.scrumble.activity.MainActivity
 import com.spogss.scrumble.adapter.CustomOverviewHeaderAdapter
 import com.spogss.scrumble.controller.*
+import com.spogss.scrumble.data.Sprint
 import com.spogss.scrumble.enums.TaskState
 import kotlinx.android.synthetic.main.fragment_projects.*
 
 
-class ProjectsFragment: Fragment() {
+class ProjectsFragment : Fragment() {
     private lateinit var customOverviewHeaderAdapter: CustomOverviewHeaderAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -29,7 +31,7 @@ class ProjectsFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if(ScrumbleController.isCurrentProjectSpecified())
+        if (ScrumbleController.isCurrentProjectSpecified())
             setupTextViews()
         setupProjectsList()
         setupSpeedDial()
@@ -41,7 +43,7 @@ class ProjectsFragment: Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.menu_item_change_project -> PopupController.setupRecyclerViewPopup(context!!, {
                 SharedPreferencesController.saveCurrentProjectToSharedPreferences(it.id, context as MainActivity)
                 (context as MainActivity).finish()
@@ -66,31 +68,41 @@ class ProjectsFragment: Fragment() {
                 ScrumbleController.currentProject!!.productOwner = user
                 product_owner_text_view.setText(user.toString())
                 ScrumbleController.updateProject(ScrumbleController.currentProject!!.id, ScrumbleController.currentProject!!,
-                        {}, { message ->  MiscUIController.showError(context!!, message) })
+                        {}, { message -> MiscUIController.showError(context!!, message) })
 
             }, resources.getString(R.string.product_owner), ScrumbleController.users.filter { user ->
-                user.id != ScrumbleController.currentProject!!.productOwner.id }.toMutableList())
+                user.id != ScrumbleController.currentProject!!.productOwner.id
+            }.toMutableList())
         }
 
-        if(ScrumbleController.isCurrentSprintSpecified()) {
+        if (ScrumbleController.isCurrentSprintSpecified()) {
             sprint_text_view.setText(ScrumbleController.currentProject!!.currentSprint!!.toString())
             sprint_text_view2.setText(ScrumbleController.currentProject!!.currentSprint!!.timeSpan())
 
+            setOnClickListenerToSprintTextView(sprint_text_view)
+            setOnClickListenerToSprintTextView(sprint_text_view2)
+        }
+    }
 
-            val sprint = ScrumbleController.currentProject!!.currentSprint!!
-            sprint_text_view.setOnClickListener { PopupController.setupSprintPopup(context!!, { view -> UIToScrumbleController.updateSprint(sprint, view, customOverviewHeaderAdapter, context!!) {
-                sprint_text_view.setText(sprint.toString())
-                sprint_text_view2.setText(sprint.timeSpan())
-                customOverviewHeaderAdapter.notifyDataSetChanged()
+    private fun setOnClickListenerToSprintTextView(textView: TextView) {
+        textView.setOnClickListener {
+            if (ScrumbleController.isCurrentSprintSpecified()) {
+                val sprint = ScrumbleController.currentProject!!.currentSprint!!
+                PopupController.setupSprintPopup(context!!, { view ->
+                    UIToScrumbleController.updateSprint(sprint, view, customOverviewHeaderAdapter, context!!)
+                    { isCurrent ->
+                        if (isCurrent) {
+                            sprint_text_view.setText(sprint.toString())
+                            sprint_text_view2.setText(sprint.timeSpan())
+                        } else {
+                            sprint_text_view.setText("")
+                            sprint_text_view2.setText("")
+                            ScrumbleController.currentProject!!.currentSprint = null
+                        }
+                        customOverviewHeaderAdapter.notifyDataSetChanged()
+                    }
+                }, sprint)
             }
-            }, sprint) }
-
-            sprint_text_view2.setOnClickListener { PopupController.setupSprintPopup(context!!, { view -> UIToScrumbleController.updateSprint(sprint, view, customOverviewHeaderAdapter, context!!) {
-                sprint_text_view.setText(sprint.toString())
-                sprint_text_view2.setText(sprint.timeSpan())
-                customOverviewHeaderAdapter.notifyDataSetChanged()
-            }
-            }, sprint) }
         }
     }
 
@@ -125,7 +137,7 @@ class ProjectsFragment: Fragment() {
 
         speed_dial.setOnActionSelectedListener { actionItem ->
             var retVal = true
-            when(actionItem.id) {
+            when (actionItem.id) {
                 R.id.fab_add_project -> {
                     PopupController.setupProjectPopup(context!!) {
                         speed_dial.close()
@@ -136,16 +148,22 @@ class ProjectsFragment: Fragment() {
                     }
                 }
                 R.id.fab_add_sprint -> {
-                    if(ScrumbleController.isCurrentProjectSpecified())
+                    if (ScrumbleController.isCurrentProjectSpecified())
                         PopupController.setupSprintPopup(context!!, {
                             speed_dial.close()
-                            UIToScrumbleController.addSprint(it, view!!, customOverviewHeaderAdapter, context!!)
+                            UIToScrumbleController.addSprint(it, view!!, customOverviewHeaderAdapter, context!!) { sprint ->
+                                if (ScrumbleController.currentProject!!.currentSprint == sprint) {
+                                    sprint_text_view.setText(sprint.toString())
+                                    sprint_text_view2.setText(sprint.timeSpan())
+                                    customOverviewHeaderAdapter.notifyDataSetChanged()
+                                }
+                            }
                         })
                     else
                         MiscUIController.showError(context!!, resources.getString(R.string.error_current_project))
                 }
                 R.id.fab_add_team_member -> {
-                    if(ScrumbleController.isCurrentProjectSpecified())
+                    if (ScrumbleController.isCurrentProjectSpecified())
                         PopupController.setupTeamMemberPopup(context!!) {
                             speed_dial.close()
                             UIToScrumbleController.addTeamMember(it, customOverviewHeaderAdapter, context!!)

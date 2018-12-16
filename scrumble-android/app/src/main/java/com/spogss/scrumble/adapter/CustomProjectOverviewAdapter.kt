@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_projects.*
 
 class CustomProjectOverviewAdapter<T>(private val data: MutableList<T>, private val context: Context,
                                       private val customOverviewHeaderAdapter: CustomOverviewHeaderAdapter,
-                                      private val fragment: ProjectsFragment): RecyclerView.Adapter<CustomProjectOverviewAdapter.ViewHolder>() {
+                                      private val fragment: ProjectsFragment) : RecyclerView.Adapter<CustomProjectOverviewAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(context)
                 .inflate(R.layout.item_list_project_overview, parent, false))
@@ -32,7 +32,7 @@ class CustomProjectOverviewAdapter<T>(private val data: MutableList<T>, private 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = data[position]
-        when(item) {
+        when (item) {
             is User -> {
                 holder.textView1.text = item.toString()
                 holder.textView2.visibility = View.GONE
@@ -41,16 +41,32 @@ class CustomProjectOverviewAdapter<T>(private val data: MutableList<T>, private 
                 holder.textView1.text = item.toString()
                 holder.textView2.text = item.timeSpan()
                 holder.textView2.visibility = View.VISIBLE
-                holder.rlProjectOverview.setOnClickListener {
-                    PopupController.setupSprintPopup(context, { view -> UIToScrumbleController.updateSprint(item, view, customOverviewHeaderAdapter, context) {
-                        customOverviewHeaderAdapter.notifyDataSetChanged()
-                        notifyDataSetChanged()
 
-                        if(item == ScrumbleController.currentProject!!.currentSprint!!) {
-                            fragment.sprint_text_view.setText(item.toString())
-                            fragment.sprint_text_view2.setText(item.timeSpan())
+                holder.rlProjectOverview.setOnClickListener {
+                    PopupController.setupSprintPopup(context, { view ->
+                        UIToScrumbleController.updateSprint(item, view, customOverviewHeaderAdapter, context) { isCurrent ->
+                            if (item == ScrumbleController.currentProject!!.currentSprint) {
+                                if(isCurrent) {
+                                    fragment.sprint_text_view.setText(item.toString())
+                                    fragment.sprint_text_view2.setText(item.timeSpan())
+                                }
+                                else {
+                                    fragment.sprint_text_view.setText("")
+                                    fragment.sprint_text_view2.setText("")
+                                    ScrumbleController.currentProject!!.currentSprint = null
+                                }
+                            }
+                            else {
+                                if(isCurrent) {
+                                    fragment.sprint_text_view.setText(item.toString())
+                                    fragment.sprint_text_view2.setText(item.timeSpan())
+                                    ScrumbleController.currentProject!!.currentSprint = item
+                                }
+                            }
+
+                            customOverviewHeaderAdapter.notifyDataSetChanged()
+                            notifyDataSetChanged()
                         }
-                    }
                     }, item)
                 }
             }

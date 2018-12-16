@@ -8,10 +8,11 @@ import android.widget.RelativeLayout
 import android.widget.Toast
 import com.spogss.scrumble.R
 import com.spogss.scrumble.activity.MainActivity
+import es.dmoral.toasty.Toasty
 
 object MiscUIController {
     fun showError(context: Context, message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        Toasty.error(context, message, Toast.LENGTH_LONG, true).show()
     }
 
     fun startLoadingAnimation(view: View, context: Context) {

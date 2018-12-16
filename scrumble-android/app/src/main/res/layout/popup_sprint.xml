@@ -23,10 +23,10 @@
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
         android:layout_marginBottom="@dimen/twelve_dp"
+        android:focusable="false"
         android:hint="@string/start_date"
         app:met_floatingLabel="highlight"
-        app:met_primaryColor="@color/colorAccent"
-        android:focusable="false"/>
+        app:met_primaryColor="@color/colorAccent" />
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/popup_add_sprint_deadline"
@@ -35,10 +35,37 @@
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
         android:layout_marginBottom="@dimen/twelve_dp"
+        android:focusable="false"
         android:hint="@string/deadline"
         app:met_floatingLabel="highlight"
-        app:met_primaryColor="@color/colorAccent"
-        android:focusable="false"/>
+        app:met_primaryColor="@color/colorAccent" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/twelve_dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/current_sprint"
+            android:textSize="18sp"/>
+
+        <com.polyak.iconswitch.IconSwitch
+            android:id="@+id/popup_add_sprint_current_sprint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            app:isw_icon_left="@drawable/sc_uncheck"
+            app:isw_icon_right="@drawable/sc_check"
+            app:isw_inactive_tint_icon_left="@color/colorPrimary"
+            app:isw_inactive_tint_icon_right="@color/colorPrimary"
+            app:isw_thumb_color_left="@color/colorLightRed"
+            app:isw_thumb_color_right="@color/colorLightGreen" />
+
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/popup_add_sprint_tasks"
@@ -46,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:layout_marginBottom="6dp"/>
+        android:layout_marginBottom="6dp" />
 
     <View
         android:layout_width="match_parent"

@@ -26,10 +26,17 @@ class MyTasksFragment: Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_my_tasks, container, false)
 
-        if(ScrumbleController.isCurrentSprintSpecified())
-            setupDragListView()
+        val noCurrentTextView = mView.findViewById<TextView>(R.id.text_view_no_current_project)
+        if(ScrumbleController.isCurrentProjectSpecified()) {
+            if (ScrumbleController.isCurrentSprintSpecified())
+                setupDragListView()
+            else {
+                noCurrentTextView.visibility = View.VISIBLE
+                noCurrentTextView.text = resources.getString(R.string.error_no_current_sprint)
+            }
+        }
         else
-            mView.findViewById<TextView>(R.id.text_view_no_current_project).visibility = View.VISIBLE
+            noCurrentTextView.visibility = View.VISIBLE
 
         return mView
     }

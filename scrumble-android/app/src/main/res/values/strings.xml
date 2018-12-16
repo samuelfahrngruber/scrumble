@@ -54,8 +54,11 @@
     <string name="error_sprint_number_exists">A sprint with this number already exists</string>
     <string name="error_current_project_current_sprint">Please create a project first and specify a current sprint</string>
     <string name="error_current_project">Please create a project first</string>
-
-    <string name="no_current_project">No current project specified\nYou should select or create one</string>
+    <string name="error_whitespaces">No whitespaces please</string>
+    <string name="error_user_already_involved">User is already involved in this project</string>
+    <string name="error_username_does_not_exist">No user with the given name exists</string>
+    <string name="error_no_current_project">No current project specified\nYou should select or create one</string>
+    <string name="error_no_current_sprint">No current sprint specified\nYou should select or create one</string>
 
     <string name="missing">MISSING</string>
 

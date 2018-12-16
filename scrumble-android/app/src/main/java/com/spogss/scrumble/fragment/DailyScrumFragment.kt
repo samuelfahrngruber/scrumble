@@ -23,8 +23,14 @@ class DailyScrumFragment: Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if(ScrumbleController.isCurrentSprintSpecified())
-            setupTimeLine()
+        if(ScrumbleController.isCurrentProjectSpecified()) {
+            if (ScrumbleController.isCurrentSprintSpecified())
+                setupTimeLine()
+            else {
+                text_view_no_current_project.visibility = View.VISIBLE
+                text_view_no_current_project.text = resources.getString(R.string.error_no_current_sprint)
+            }
+        }
         else
             text_view_no_current_project.visibility = View.VISIBLE
 

@@ -28,10 +28,17 @@ class ScrumBoardFragment: Fragment() {
 
         mView = inflater.inflate(R.layout.fragment_scrum_board, container, false)
 
-        if(ScrumbleController.isCurrentSprintSpecified())
-            setupBoardView()
+        val noCurrentTextView = mView.findViewById<TextView>(R.id.text_view_no_current_project)
+        if(ScrumbleController.isCurrentProjectSpecified()) {
+            if (ScrumbleController.isCurrentSprintSpecified())
+                setupBoardView()
+            else {
+                noCurrentTextView.visibility = View.VISIBLE
+                noCurrentTextView.text = resources.getString(R.string.error_no_current_sprint)
+            }
+        }
         else
-            mView.findViewById<TextView>(R.id.text_view_no_current_project).visibility = View.VISIBLE
+            noCurrentTextView.visibility = View.VISIBLE
 
         val fab = mView.findViewById(R.id.fab_add_task) as FloatingActionButton
         fab.setOnClickListener {
