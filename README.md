@@ -48,3 +48,15 @@ Data model:
 [2018-11-19](https://docs.google.com/presentation/d/1kzr-h5O5xpNogsyj47YgWgA8JYvnC0Bpv7d6nnOBMVw/edit?usp=sharing) (1st Presentation)
 
 [2018-11-26](https://docs.google.com/document/d/1qR1PBXwFP2HERT1ka3KOz0xWmiL792UNgjBM4fuiUaA/edit?usp=sharing)
+
+### December
+
+[2018-12-10](https://docs.google.com/document/d/1L13iQZUVrhCoFOC-aNmRXTNk4kbYbE4iQ9FOjO7ZzzM/edit?usp=sharing)
+
+[2018-12-17](https://docs.google.com/document/d/17QLTjE0O-TSWLcGmsRZITDA9dGxLmltX684Q0WEQyNs/edit?usp=sharing)
+
+### January
+
+[2019-01-14](https://docs.google.com/document/d/14lX3F9qboeEDYnvsXdZS2aRgktnHrXvokwbPTSKsXPE/edit?usp=sharing)
+
+[2019-01-21](https://docs.google.com/document/d/19Ost8BFqOUYkDclQEYrmN7kI3_o0cazZV1LLMqD6s8M/edit?usp=sharing)
