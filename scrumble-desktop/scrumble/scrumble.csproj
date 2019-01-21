@@ -119,9 +119,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DeveloperConsole.cs" />
+    <Compile Include="ProjectSelectorModel.cs" />
     <Compile Include="Scrumboard\ScrumboardInterface.cs" />
     <Compile Include="Settings.cs" />
     <Page Include="DailyScrumTable\DailyScrumTable.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -133,7 +138,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DailyScrumTable\DailyScrumEntry.cs" />
+    <Compile Include="DailyScrumTable\MDailyScrumEntry.cs" />
     <Compile Include="DailyScrumTable\DailyScrumModel.cs" />
     <Compile Include="DailyScrumTable\DailyScrumRowHeader.cs" />
     <Compile Include="DailyScrumTable\DailyScrumTable.xaml.cs">
@@ -141,6 +146,9 @@
     </Compile>
     <Compile Include="DailyScrumTable\IDailyScrumCell.cs" />
     <Compile Include="DailyScrumTable\TableColumn.cs" />
+    <Compile Include="LoginWindow.xaml.cs">
+      <DependentUpon>LoginWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -197,7 +205,9 @@
     <Resource Include="res\add.png" />
     <Resource Include="res\remove.png" />
     <Resource Include="res\reload.png" />
-    <SplashScreen Include="res\scrumble.png" />
+    <None Include="res\scrumble.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Scrumboard\html\index.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

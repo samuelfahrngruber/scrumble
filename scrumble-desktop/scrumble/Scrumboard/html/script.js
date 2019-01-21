@@ -20,7 +20,7 @@ for(var key in state2column) {
 function refreshClasses() {
     $(".column").sortable({
         connectWith: ".column",
-        handle: ".portlet-header",
+        handle: ".portlet-text",
         cancel: ".portlet-toggle",
         placeholder: "portlet-placeholder",
         stop: (event, ui) => {
@@ -44,28 +44,25 @@ function refreshClasses() {
 function addTask(taskWrapper) {
     var column = $("#" + state2column[taskWrapper.state.toUpperCase()]);
 
-    var taskdiv = $('<div class="portlet" id="' + taskWrapper.id + '"></div>');
+    var taskdiv = $('<div class="portlet borderless" id="' + taskWrapper.id + '"></div>');
 
-    var header = $('<div class="portlet-header"></div>');
+    var text = $('<div class="portlet-text borderless">' + taskWrapper.name + '</div>');
 
-    var header_text = $('<div class="portlet-header-text">' + taskWrapper.name + '</div>');
-    var header_btn_del = $('<div class="portlet-button-delete" onclick="deleteTask(' + taskWrapper.id + ')"><i class="fas fa-times-circle"></i></div>');
-    var header_btn_info = $('<div class="portlet-button-info" onclick="showInfo(' + taskWrapper.id + ')"><i class="fas fa-info-circle"></i></div>');
-    header.append(header_text);
-    header.append(header_btn_info);
-    header.append(header_btn_del);
+    var header_btn_del = $('<div class="portlet-button-delete borderless" onclick="deleteTask(' + taskWrapper.id + ')"><i class="fas fa-times-circle"></i></div>');
+    var header_btn_info = $('<div class="portlet-button-info borderless" onclick="showInfo(' + taskWrapper.id + ')"><i class="fas fa-info-circle"></i></div>');
 
-    //<div class="portlet">
-    //   <div class="portlet-header">
-    //        <div class="portlet-header-text">documentation</div>
-    //        <div class="portlet-button-delete"><i class="fas fa-times-circle"></i></div>
-    //        <div class="portlet-button-info"><i class="fas fa-info-circle"></i></div>
-    //   </div>
-    //   <div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-    //</div>
-    var content = $('<div class="portlet-content">' + taskWrapper.info + '</div>');
-    taskdiv.append(header);
-    taskdiv.append(content);
+    text.css('background-color', taskWrapper.color);
+
+    taskdiv.append(text);
+    taskdiv.append(header_btn_info);
+    taskdiv.append(header_btn_del);
+
+    //    <div class="portlet borderless">
+    //        <div class="portlet-text borderless">documentation of something</div>
+    //        <div class="portlet-button-delete borderless"><i class="fas fa-times-circle"></i></div>
+    //        <div class="portlet-button-info borderless"><i class="fas fa-info-circle"></i></div>
+    //    </div>
+
     $("#" + taskWrapper.id).remove();
     column.append(taskdiv);
     refreshClasses();

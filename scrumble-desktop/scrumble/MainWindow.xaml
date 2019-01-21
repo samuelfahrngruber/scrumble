@@ -71,6 +71,7 @@
                 </Grid>
                 <TreeView x:Name="treeView_projectOverview" Margin="5" BorderThickness="0" FontSize="15" FontWeight="Light" SelectedItemChanged="treeView_projectOverview_SelectedItemChanged">
                     <TreeViewItem x:Name="treeViewItem_teamMembers" IsExpanded="True" Margin="5" HorizontalContentAlignment="Stretch">
+
                         <TreeViewItem.Header>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Team Members" FontWeight="Light" />
@@ -233,7 +234,7 @@
                     </TextBlock>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" Text="Color: "></TextBlock>
-                        <Button x:Name="button_chooseTaskColor" Background="#FFFFFF" Content="Choose..." Click="button_chooseTaskColor_Click"></Button>
+                        <Button x:Name="button_chooseTaskColor" Background="#FFFFFF" Content="Choose..." Click="button_chooseTaskColor_Click" Padding="5"></Button>
                     </StackPanel>
                 </StackPanel>
                 <Grid Grid.Column="0" Grid.Row="1" x:Name="inputBox_colorSelector" Visibility="Collapsed">
@@ -283,7 +284,7 @@
                         <TextBox x:Name="textBox_projectLog" Padding="5px" FontFamily="Consolas" BorderThickness="0" TextWrapping="Wrap" Margin="0" IsReadOnly="True" />
                     </TabItem>
                     <TabItem Padding="5" Header="Daily Scrum Table">
-                        <dailyscrumtable:DailyScrumTable></dailyscrumtable:DailyScrumTable>
+                        <dailyscrumtable:DailyScrumTable x:Name="dailyScrumTable_DSTable"></dailyscrumtable:DailyScrumTable>
                     </TabItem>
                     <TabItem x:Name="tabItem_devConsole" Padding="5" Header="Developer Console">
                         <ScrollViewer Grid.Row="0" x:Name="scrollViewer_devConsole">

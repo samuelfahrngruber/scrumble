@@ -44,7 +44,7 @@
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.Resources>
-                                    <DataTemplate DataType="{x:Type local:DailyScrumEntry}">
+                                    <DataTemplate DataType="{x:Type local:MDailyScrumEntry}">
                                         <Grid Width="250px" Height="40px" Margin="2">
                                             <Grid.Style>
                                                 <Style TargetType="Grid">

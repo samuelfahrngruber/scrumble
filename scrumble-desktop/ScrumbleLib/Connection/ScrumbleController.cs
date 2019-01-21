@@ -26,12 +26,12 @@ namespace ScrumbleLib.Connection
 
         public static void SetCurrentProject(int projectId)
         {
-            currentProject = GetProject(projectId);
+            currentProject = GetProject(projectId, true);
         }
 
-        public static Project GetProject(int id)
+        public static Project GetProject(int id, bool forceLoad = false)
         {
-            if (Projects.Contains(id))
+            if (Projects.Contains(id) && forceLoad == false)
             {
                 return Projects[id];
             }
@@ -48,6 +48,12 @@ namespace ScrumbleLib.Connection
         {
             ProjectWrapper pw = ProjectWrapper.GetInstance(currentProject.Id);
             ScrumbleConnection.GetProjectTasks(pw);
+        }
+
+        public static void GetMyProjects()
+        {
+            UserWrapper uw = UserWrapper.GetInstance(currentUser.Id);
+            ScrumbleConnection.GetUsersProjects(uw);
         }
 
         public static User GetUser(int id)
@@ -113,10 +119,18 @@ namespace ScrumbleLib.Connection
 
         public static bool Login(string username, string password)
         {
-            currentUser = GetUser(23);
+            int uid = ScrumbleConnection.Login(username, password);
+            if (uid <= 0)
+                return false;
+            currentUser = GetUser(uid);
             return true;
         }
 
+        public static void GetDailyScrumEntries()
+        {
+            ProjectWrapper pw = ProjectWrapper.GetInstance(currentProject.Id);
+            ScrumbleConnection.GetDailyScrumEntries(pw);
+        }
 
         private static bool isLoggedIn()
         {

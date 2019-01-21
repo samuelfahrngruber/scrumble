@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ScrumbleLib.Connection.Wrapper
 {
-    public class SprintWrapper : IDataWrapper<Sprint>
+    public class SprintWrapper : IIndexableDataWrapper<Sprint>
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -94,8 +94,8 @@ namespace ScrumbleLib.Connection.Wrapper
             if (jsonObject.ContainsKey("id")) WrappedValue.Id = (int)jsonObject["id"];
             if (jsonObject.ContainsKey("project")) WrappedValue.Project = ScrumbleController.GetProject((int)jsonObject["project"]);
             if (jsonObject.ContainsKey("number")) WrappedValue.Number = (int)jsonObject["number"];
-            if (jsonObject.ContainsKey("startdate")) WrappedValue.Start = DateTime.Parse((string)jsonObject["startdate"]);
-            if (jsonObject.ContainsKey("deadline")) WrappedValue.Deadline = DateTime.Parse((string)jsonObject["deadline"]);
+            if (jsonObject.ContainsKey("startdate")) WrappedValue.Start = (DateTime)jsonObject["startdate"];
+            if (jsonObject.ContainsKey("deadline")) WrappedValue.Deadline = (DateTime)jsonObject["deadline"];
             //ApplyFields(
             //    (int)jsonObject["id"],
             //    (int)jsonObject["project"],
@@ -121,15 +121,15 @@ namespace ScrumbleLib.Connection.Wrapper
             }
         }
 
-        public int Project
+        public int? Project
         {
             get
             {
-                return WrappedValue.Project == null ? -1 : WrappedValue.Project.Id;
+                return WrappedValue.Project == null ? null : (int?)WrappedValue.Project.Id;
             }
             set
             {
-                WrappedValue.Project = ScrumbleController.GetProject(value);
+                WrappedValue.Project = value == null ? null : ScrumbleController.GetProject((int)value);
                 OnPropertyChanged("Project");
                 ScrumbleConnection.Update(this);
             }

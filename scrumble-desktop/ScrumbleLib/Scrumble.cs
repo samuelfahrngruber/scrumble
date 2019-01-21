@@ -18,6 +18,10 @@ namespace ScrumbleLib
         internal static ObservableCollectionEx<TaskWrapper> MyTasks { get; private set; } = null;
         internal static ObservableCollectionEx<TaskWrapper> Scrumboard { get; private set; } = null;
         internal static ObservableCollectionEx<TaskWrapper> ProductBacklog { get; private set; } = null;
+        internal static ObservableCollectionEx<ProjectWrapper> MyProjects { get; private set; } = null;
+        internal static ObservableCollectionEx<DailyScrumEntryWrapper> DailyScrumEntries { get; private set; } = null;
+
+
 
         internal static ProjectWrapper currentProject { get; set; } = null;
 
@@ -42,6 +46,22 @@ namespace ScrumbleLib
             return Scrumboard;
         }
 
+        public static ObservableCollectionEx<ProjectWrapper> GetMyProjects(bool forceLoad = false)
+        {
+            if (MyProjects == null)
+            {
+                MyProjects = new ObservableCollectionEx<ProjectWrapper>();
+                MyProjects.CollectionChanged += projectPropertyChanged;
+            }
+
+            if (forceLoad == true || MyProjects == null)
+            {
+                MyProjects.Clear();
+                ScrumbleController.GetMyProjects();
+            }
+            return MyProjects;
+        }
+
         private static void taskPropertyChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if(e.Action == NotifyCollectionChangedAction.Reset)
@@ -50,9 +70,25 @@ namespace ScrumbleLib
             }
         }
 
+        private static void projectPropertyChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                RefreshObservableProjectCollections();
+            }
+        }
+
         private static void RefreshObservableTaskCollections()
         {
             foreach(Data.Task t in ScrumbleController.Tasks.Values)
+            {
+
+            }
+        }
+
+        private static void RefreshObservableProjectCollections()
+        {
+            foreach (Project p in ScrumbleController.Projects.Values)
             {
 
             }
@@ -66,6 +102,16 @@ namespace ScrumbleLib
                 ScrumbleController.GetProjectTasks();
             }
             return MyTasks;
+        }
+
+        public static ObservableCollectionEx<DailyScrumEntryWrapper> GetDailyScrumEntries(bool forceLoad = false)
+        {
+            if (forceLoad == true || MyTasks == null)
+            {
+                DailyScrumEntries = new ObservableCollectionEx<DailyScrumEntryWrapper>();
+                ScrumbleController.GetDailyScrumEntries();
+            }
+            return DailyScrumEntries;
         }
 
         public static ObservableCollectionEx<TaskWrapper> GetProductBacklog(bool forceLoad = false)
@@ -109,7 +155,12 @@ namespace ScrumbleLib
 
         internal static void OnProjectAdded(Project p)
         {
-            // todo implement
+            ProjectWrapper pw = ProjectWrapper.GetInstance(p.Id);
+            int index = GetMyProjects().IndexOf(pw);
+            if (index != -1)
+                GetMyProjects()[index] = pw;
+            else
+                GetMyProjects().Add(pw);
         }
 
         internal static void OnUserAdded(User user)
@@ -120,7 +171,7 @@ namespace ScrumbleLib
         internal static void OnTaskAdded(Data.Task task)
         {
             if (task.Sprint != null
-                && (task.ResponsibleUser.Id == ScrumbleController.currentUser.Id || task.VerifyingUser.Id == ScrumbleController.currentUser.Id)
+                && ((task.ResponsibleUser != null && task.ResponsibleUser.Id == ScrumbleController.currentUser.Id) || (task.VerifyingUser != null && task.VerifyingUser.Id == ScrumbleController.currentUser.Id))
                 && ScrumbleController.currentProject.CurrentSprint.Id == task.Sprint.Id)
             {
                 TaskWrapper tw = TaskWrapper.GetInstance(task.Id);
@@ -168,6 +219,11 @@ namespace ScrumbleLib
             // todo implement
         }
 
+        internal static void OnDailyScrumEntryAdded(DailyScrumEntryWrapper entry)
+        {
+            DailyScrumEntries.Add(entry);
+        }
+
         internal static void TasksFromJson(string json)
         {
             TasksFromJson(JArray.Parse(json));
@@ -181,6 +237,35 @@ namespace ScrumbleLib
                 TaskWrapper tw = TaskWrapper.GetInstance(t);
                 tw.ApplyJson(task);
                 OnTaskAdded(t);
+            }
+        }
+        internal static void DailyScrumEntriesFromJson(string json)
+        {
+            DailyScrumEntriesFromJson(JArray.Parse(json));
+        }
+
+        internal static void DailyScrumEntriesFromJson(JArray dailyScrumEntries)
+        {
+            foreach (JObject jdsentry in dailyScrumEntries)
+            {
+                DailyScrumEntry e = new DailyScrumEntry();
+                DailyScrumEntryWrapper ew = DailyScrumEntryWrapper.GetInstance(e);
+                ew.ApplyJson(jdsentry);
+                OnDailyScrumEntryAdded(ew);
+            }
+        }
+        internal static void ProjectsFromJson(string json)
+        {
+            ProjectsFromJson(JArray.Parse(json));
+        }
+        internal static void ProjectsFromJson(JArray projects)
+        {
+            foreach (JObject proj in projects)
+            {
+                Project p = new Project((int)proj["id"]);
+                ProjectWrapper pw = ProjectWrapper.GetInstance(p);
+                pw.ApplyJson(proj);
+                OnProjectAdded(p);
             }
         }
 

@@ -1,13 +1,16 @@
-﻿
+﻿.borderless{
+            box-sizing: border-box;
+        }
+
  .scrumboard {
    margin: 0 auto;
    width: 100%;
  }
 
  h1 {
-  font-family: 'Segoe UI';
-   margin-left: 1em;
+   font-family: 'Segoe UI';
    font-weight: lighter;
+   font-size:15px;
  }
 
  .column {
@@ -20,17 +23,17 @@
  }
 
  .portlet {
-  font-family: 'Segoe UI', 'helvetica', 'arial';
-  font-size: 15px;
-   margin: 1em;
+            font-family: 'Segoe UI', 'helvetica', 'arial';
+            font-size: 15px;
 
- }
+            display: grid;
+            grid-template-columns: auto 2em;
+            grid-template-rows: 2em 2em;
 
- .portlet-header {
-  display: grid;
-  grid-template-columns: auto 2em 2em;
-  grid-template-rows: 2em;
- }
+            margin: 1em;
+        }
+
+
 
  .portlet-toggle {
    position: absolute;
@@ -39,9 +42,6 @@
    margin-top: -8px;
  }
 
- .portlet-content {
-   padding: 0.5em;
- }
 
  .portlet-placeholder {
    border: 2px dotted black;
@@ -50,37 +50,62 @@
  }
 
 
- .portlet-button-delete {
-  grid-column-start: 3;
-  grid-row-start: 1;
-  background-color: lightcoral;
-  text-align: center;
-  vertical-align: center;
-  line-height: 2em;
-  cursor: pointer;
-  width: 2em;
- }
+.portlet-button-delete {
+            grid-column-start: 2;
+            grid-row-start: 1;
+
+            background-color: lightcoral;
+
+            text-align: center;
+
+            line-height: 2em;
+            width: 2em;
+            height: 2em;
+
+            cursor: pointer;
+
+            border:thin solid gray;
+
+            border-bottom:none;
+        }
 
  
- .portlet-button-info {
-  grid-column-start: 2;
-  grid-row-start: 1;
-  background-color: lightblue;
-  line-height: 2em;
-  text-align: center;
-  cursor: pointer;
-  width: 2em;
- }
+.portlet-button-info {
+            grid-column-start: 2;
+            grid-row-start: 2;
+
+            background-color: lightblue;
+
+            text-align: center;
+
+            line-height: 2em;
+            width: 2em;
+            height: 2em;
+
+            cursor: pointer;
+
+            border:thin solid gray;
+        }
 
  
- .portlet-header-text {
-  grid-column-start: 1;
-  grid-row-start: 1;
-  background-color: lightgray;
-  line-height: 2em;
-  padding-left: 0.5em;
-  cursor: move;
-  font-weight:bold;
-  overflow:hidden;
-  text-overflow:ellipsis;
- }
+        .portlet-text {
+            grid-column-start: 1;
+            grid-row-start: 1;
+            grid-row-end: 3;
+
+            padding: 0.2em;
+            
+            overflow: hidden;
+
+            display: flex;
+            justify-content:center;
+            align-content:center;
+            flex-direction:column;
+
+            text-align:center;
+
+            cursor: move;
+
+            border: thin solid gray;
+            border-right:none;
+        }

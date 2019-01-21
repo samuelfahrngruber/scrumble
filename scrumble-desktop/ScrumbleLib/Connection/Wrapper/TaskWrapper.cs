@@ -11,7 +11,7 @@ using System.Text;
 
 namespace ScrumbleLib.Connection.Wrapper
 {
-    public class TaskWrapper : IDataWrapper<Task>
+    public class TaskWrapper : IIndexableDataWrapper<Task>
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -34,6 +34,11 @@ namespace ScrumbleLib.Connection.Wrapper
                 instances.Add(instance);
             }
             return instance;
+        }
+
+        internal static TaskWrapper GetNonIndexedInstance(Task u)
+        {
+            return new TaskWrapper(u);
         }
 
         private TaskWrapper(Task wrappedValue)
@@ -88,8 +93,8 @@ namespace ScrumbleLib.Connection.Wrapper
             if (jsonObject.ContainsKey("name")) WrappedValue.Name = (string)jsonObject["name"]; // username
             if (jsonObject.ContainsKey("info")) WrappedValue.Info = (string)jsonObject["info"];
             if (jsonObject.ContainsKey("rejections")) WrappedValue.Rejections = (int)jsonObject["rejections"];
-            if (jsonObject.ContainsKey("responsible")) WrappedValue.ResponsibleUser = ScrumbleController.GetUser((int)jsonObject["responsible"]);
-            if (jsonObject.ContainsKey("verify")) WrappedValue.VerifyingUser = ScrumbleController.GetUser((int)jsonObject["verify"]);
+            if (jsonObject.ContainsKey("responsible")){ int? responsible = (int?)jsonObject["responsible"]; WrappedValue.ResponsibleUser = responsible == null ? null : ScrumbleController.GetUser((int)responsible); }
+            if (jsonObject.ContainsKey("verify")) { int? verify = (int?)jsonObject["verify"]; WrappedValue.VerifyingUser = verify == null ? null : ScrumbleController.GetUser((int)verify); }
             if (jsonObject.ContainsKey("sprint")) { int? sprint = (int?)jsonObject["sprint"]; WrappedValue.Sprint = sprint == null ? null : ScrumbleController.GetSprint((int)sprint); }
             if (jsonObject.ContainsKey("project")) WrappedValue.Project = ScrumbleController.GetProject((int)jsonObject["project"]);
             if (jsonObject.ContainsKey("state")) WrappedValue.State = TaskStateParser.Parse((string)jsonObject["state"]);
@@ -169,30 +174,30 @@ namespace ScrumbleLib.Connection.Wrapper
         }
 
         [JsonProperty("responsible")]
-        public int ResponsibleUser
+        public int? ResponsibleUser
         {
             get
             {
-                return WrappedValue.ResponsibleUser == null ? -1 : WrappedValue.ResponsibleUser.Id;
+                return WrappedValue.ResponsibleUser == null ? null : (int?)WrappedValue.ResponsibleUser.Id;
             }
             set
             {
-                WrappedValue.ResponsibleUser = ScrumbleController.GetUser(value);
+                WrappedValue.ResponsibleUser = value == null ? null : ScrumbleController.GetUser((int)value);
                 OnPropertyChanged("ResponsibleUser");
                 ScrumbleConnection.Update(this);
             }
         }
 
         [JsonProperty("verify")]
-        public int VerifyingUser
+        public int? VerifyingUser
         {
             get
             {
-                return WrappedValue.VerifyingUser == null ? -1 : WrappedValue.VerifyingUser.Id;
+                return WrappedValue.VerifyingUser == null ? null : (int?)WrappedValue.VerifyingUser.Id;
             }
             set
             {
-                WrappedValue.VerifyingUser = ScrumbleController.GetUser(value);
+                WrappedValue.VerifyingUser = value == null ? null : ScrumbleController.GetUser((int)value);
                 OnPropertyChanged("VerifyingUser");
                 ScrumbleConnection.Update(this);
             }
@@ -221,15 +226,15 @@ namespace ScrumbleLib.Connection.Wrapper
             }
         }
 
-        public int Project
+        public int? Project
         {
             get
             {
-                return WrappedValue.Project == null ? -1 : WrappedValue.Project.Id;
+                return WrappedValue.Project == null ? null : (int?)WrappedValue.Project.Id;
             }
             set
             {
-                WrappedValue.Project = ScrumbleController.GetProject(value);
+                WrappedValue.Project = value == null ? null : ScrumbleController.GetProject((int)value);
                 OnPropertyChanged("Project");
                 ScrumbleConnection.Update(this);
             }

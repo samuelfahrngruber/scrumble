@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ScrumbleLib.Connection.Wrapper
 {
-    public interface IDataWrapper<T> : IIndexable, INotifyPropertyChanged
+    public interface IDataWrapper<T> : INotifyPropertyChanged
     {
         [JsonIgnore]
         T WrappedValue { get; }

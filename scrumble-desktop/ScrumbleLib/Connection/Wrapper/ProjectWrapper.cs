@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ScrumbleLib.Connection.Wrapper
 {
-    public class ProjectWrapper : IDataWrapper<Project>
+    public class ProjectWrapper : IIndexableDataWrapper<Project>
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -101,21 +101,12 @@ namespace ScrumbleLib.Connection.Wrapper
             ApplyTeamJson(JArray.Parse(projectTeamJson));
         }
 
-        public void ApplyFields(int id, string name, int productOwner, int currentSprint)
-        {
-            WrappedValue.Id = id;
-            WrappedValue.Name = name;
-            WrappedValue.ProductOwner = ScrumbleController.GetUser(productOwner);
-            WrappedValue.CurrentSprint = ScrumbleController.GetSprint(currentSprint);
-        }
-
         public void ApplyJson(JObject jsonObject)
         {
-            ApplyFields(
-                (int)jsonObject["id"],
-                (string)jsonObject["name"],
-                (int)jsonObject["productowner"],
-                (int)jsonObject["currentSprint"]); // currentsprint
+            if (jsonObject.ContainsKey("id")) WrappedValue.Id = (int)jsonObject["id"];
+            if (jsonObject.ContainsKey("name")) WrappedValue.Name = (string)jsonObject["name"];
+            if (jsonObject.ContainsKey("productowner")) WrappedValue.ProductOwner = ScrumbleController.GetUser((int)jsonObject["productowner"]);
+            if (jsonObject.ContainsKey("currentSprint")) { int? csprint = (int?)jsonObject["currentSprint"]; WrappedValue.CurrentSprint = csprint == null ? null : ScrumbleController.GetSprint((int)csprint); }
         }
 
         public void ApplyJson(string json)
@@ -151,31 +142,41 @@ namespace ScrumbleLib.Connection.Wrapper
             }
         }
 
-        public int ProductOwner
+        public int? ProductOwner
         {
             get
             {
-                return WrappedValue.ProductOwner == null ? -1 : WrappedValue.ProductOwner.Id;
+                return WrappedValue.ProductOwner == null ? null : (int?)WrappedValue.ProductOwner.Id;
             }
             set
             {
-                WrappedValue.ProductOwner = ScrumbleController.GetUser(value);
+                WrappedValue.ProductOwner = value == null ? null : ScrumbleController.GetUser((int)value);
                 OnPropertyChanged("ProductOwner");
                 ScrumbleConnection.Update(this);
             }
         }
 
-        public int CurrentSprint
+        public int? CurrentSprint
         {
             get
             {
-                return WrappedValue.CurrentSprint == null ? -1 : WrappedValue.CurrentSprint.Id;
+                return WrappedValue.CurrentSprint == null ? null : (int?)WrappedValue.CurrentSprint.Id;
             }
             set
             {
-                WrappedValue.CurrentSprint = ScrumbleController.GetSprint(value);
+                WrappedValue.CurrentSprint = value == null ? null : ScrumbleController.GetSprint((int)value);
                 OnPropertyChanged("CurrentSprint");
                 ScrumbleConnection.Update(this);
+            }
+        }
+
+        // sprintdeadline required for wpf binding
+        [JsonIgnore]
+        public DateTime SprintDeadline
+        {
+            get
+            {
+                return WrappedValue.CurrentSprint == null ? default(DateTime) : WrappedValue.CurrentSprint.Deadline;
             }
         }
 

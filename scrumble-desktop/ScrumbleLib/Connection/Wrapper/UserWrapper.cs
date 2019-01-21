@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ScrumbleLib.Connection.Wrapper
 {
-    public class UserWrapper : IDataWrapper<User>
+    public class UserWrapper : IIndexableDataWrapper<User>
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -36,6 +36,11 @@ namespace ScrumbleLib.Connection.Wrapper
                 instances.Add(instance);
             }
             return instance;
+        }
+
+        internal static UserWrapper GetNonIndexedInstance(User u)
+        {
+            return new UserWrapper(u);
         }
 
         private UserWrapper(User wrappedValue)
@@ -104,6 +109,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
         }
 
+        [JsonProperty("name")]
         public string Username
         {
             get

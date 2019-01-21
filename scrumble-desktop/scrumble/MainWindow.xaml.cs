@@ -15,6 +15,9 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using ScrumbleLib.Data;
 using MahApps.Metro.Controls;
+using System.IO;
+using System.Reflection;
+using scrumble.DailyScrumTable;
 
 namespace scrumble
 {
@@ -47,9 +50,6 @@ namespace scrumble
 
             chromiumWebBrowser_scrumBoard.RegisterJsObject("scrumble_scrumboardInterface", scrumboardInterface);
 
-            Scrumble.Login("user", "pw");
-            setCurrentProject(22);
-
             Window_Loaded(null, null);
 
             initializeInformation();
@@ -59,6 +59,8 @@ namespace scrumble
 
             initializeMyTasks();
             initializeSelectedTask();
+
+            initCurrentProject();
         }
 
 
@@ -110,6 +112,15 @@ namespace scrumble
             textBox_projectLog.Text = projectLog;
             console = new DeveloperConsole(this);
             section_Information.Visibility = Visibility.Visible;
+
+            initializeDailyScrumTable();
+        }
+
+        private void initializeDailyScrumTable()
+        {
+            IEnumerable<DailyScrumEntryWrapper> dailyScrumEntries = Scrumble.GetDailyScrumEntries(true);
+            DailyScrumModel model = DailyScrumModel.CreateFromDSEntries(dailyScrumEntries);
+            dailyScrumTable_DSTable.Model = model;
         }
 
         private void initializeMyTasks()
@@ -158,12 +169,9 @@ namespace scrumble
             selectedTask.PropertyChanged += refreshSelectedTask;
         }
 
-        private void setCurrentProject(int id)
+        private void initCurrentProject()
         {
-            Scrumble.SetProject(id);
-            if (currentProject != null)
-                currentProject.PropertyChanged -= refreshCurrentProject;
-            currentProject = Scrumble.WrapperFactory.CreateProjectWrapper(id);
+            currentProject = Scrumble.GetCurrentProject();
             refreshCurrentProject(null, null);
             currentProject.PropertyChanged += refreshCurrentProject;
             //Scrumble.GetProductBacklog().CollectionChanged += refreshProductBacklog;
@@ -180,8 +188,8 @@ namespace scrumble
             {
                 textBlock_selectedTask_name.Text = selectedTask.Name;
                 textBlock_selectedTask_description.Text = selectedTask.Info;
-                textBlock_selectedTask_responsible.Text = selectedTask.WrappedValue.ResponsibleUser.Username.ToString();
-                textBlock_selectedTask_verify.Text = selectedTask.WrappedValue.VerifyingUser.Username.ToString();
+                textBlock_selectedTask_responsible.Text = selectedTask.WrappedValue.ResponsibleUser == null ? "-" : selectedTask.WrappedValue.ResponsibleUser.Username.ToString();
+                textBlock_selectedTask_verify.Text = selectedTask.WrappedValue.VerifyingUser == null ? "-" : selectedTask.WrappedValue.VerifyingUser.Username.ToString();
                 textBlock_selectedTask_rejections.Text = selectedTask.Rejections.ToString();
                 button_chooseTaskColor.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom(selectedTask.Color));
             }));

@@ -81,6 +81,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connection\Wrapper\DailyScrumEntryWrapper.cs" />
+    <Compile Include="Connection\Wrapper\IIndexableDataWrapper.cs" />
+    <Compile Include="Data\DailyScrumEntry.cs" />
     <Compile Include="Utils\IndexSet.cs" />
     <Compile Include="Connection\Json\LowercaseContractResolver.cs" />
     <Compile Include="Utils\ObservableCollectionEx.cs" />
