@@ -12,7 +12,7 @@ class UserSerializer: JsonSerializer<User> {
         val jsonObject = JsonObject()
 
         jsonObject.addProperty("id", user.id)
-        jsonObject.addProperty("username", user.name)
+        jsonObject.addProperty("name", user.name)
         jsonObject.addProperty("password", user.password)
 
         return jsonObject

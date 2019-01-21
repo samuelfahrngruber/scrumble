@@ -26,19 +26,20 @@ object ScrumbleController {
                     .serializeNulls().create()
 
             val response = ScrumbleConnection.post("/login", JSONObject(gson.toJson(user)))
-            if(response.statusCode in 200..299)
-                { uiThread { onSuccess(response.jsonObject.getInt("id")) } }
-            else
+            if (response.statusCode in 200..299) {
+                uiThread { onSuccess(response.jsonObject.getInt("id")) }
+            } else
                 uiThread { onError(response.jsonObject.getString("details")) }
         }
     }
+
     fun register(user: User, onSuccess: (id: Int) -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val gson = GsonBuilder().registerTypeAdapter(User::class.java, UserSerializer())
                     .serializeNulls().create()
             val response = ScrumbleConnection.post("/register", JSONObject(gson.toJson(user)))
 
-            if(response.statusCode in 200..299)
+            if (response.statusCode in 200..299)
                 uiThread { onSuccess(response.jsonObject.getInt("id")) }
             else
                 uiThread { onError(response.jsonObject.getString("details")) }
@@ -48,10 +49,10 @@ object ScrumbleController {
     fun loadTeam(projectId: Int, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val response = ScrumbleConnection.get("/project/$projectId/user")
-            if(response.statusCode in 200..299)  {
+            if (response.statusCode in 200..299) {
                 users.clear()
 
-                if(response.statusCode != 204) {
+                if (response.statusCode != 204) {
                     val gson = GsonBuilder().registerTypeAdapter(User::class.java, UserDeserializer())
                             .serializeNulls().create()
 
@@ -63,53 +64,55 @@ object ScrumbleController {
                 uiThread { onError(response.text) }
         }
     }
+
     fun getUserById(userId: Int, onSuccess: (user: User) -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val response = ScrumbleConnection.get("/user/$userId")
 
-            if(response.statusCode in 200..299) {
+            if (response.statusCode in 200..299) {
                 val gson = GsonBuilder().registerTypeAdapter(User::class.java, UserDeserializer())
                         .serializeNulls().create()
 
                 val user = gson.fromJson(response.jsonObject.toString(), User::class.java)
                 uiThread { onSuccess(user) }
-            }
-            else
+            } else
                 uiThread { onError(response.text) }
         }
     }
+
     fun getTeamMemberByName(name: String, onSuccess: (user: User) -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val response = ScrumbleConnection.get("/user?name=$name")
 
-            if(response.statusCode in 200..299) {
+            if (response.statusCode in 200..299) {
                 val gson = GsonBuilder().registerTypeAdapter(User::class.java, UserDeserializer())
                         .serializeNulls().create()
 
                 val user = gson.fromJson(response.jsonArray[0].toString(), User::class.java)
                 uiThread { onSuccess(user) }
-            }
-            else
+            } else
                 uiThread { onError(response.text) }
         }
     }
+
     fun addTeamMembers(projectId: Int, team: MutableList<User>, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val gson = GsonBuilder().registerTypeAdapter(Array<User>::class.java, UserSerializer())
                     .serializeNulls().create()
             val response = ScrumbleConnection.post("/project/$projectId/user", JSONArray(gson.toJson(team)))
 
-            if(response.statusCode in 200..299)
+            if (response.statusCode in 200..299)
                 uiThread { onSuccess() }
             else
                 uiThread { onError(response.text) }
         }
     }
+
     fun removeTeamMember(projectId: Int, userId: Int, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val response = ScrumbleConnection.delete("/project/$projectId/user/$userId")
 
-            if(response.statusCode in 200..299)
+            if (response.statusCode in 200..299)
                 uiThread { onSuccess() }
             else
                 uiThread { onError(response.text) }
@@ -119,10 +122,10 @@ object ScrumbleController {
     fun loadProjects(userId: Int, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val response = ScrumbleConnection.get("/user/$userId/project")
-            if(response.statusCode in 200..299) {
+            if (response.statusCode in 200..299) {
                 projects.clear()
 
-                if(response.statusCode != 204) {
+                if (response.statusCode != 204) {
                     val gson = GsonBuilder().registerTypeAdapter(Project::class.java, ProjectDeserializer())
                             .serializeNulls().create()
                     gson.fromJson(response.jsonArray.toString(), Array<Project>::class.java)
@@ -138,6 +141,7 @@ object ScrumbleController {
                 uiThread { onError(response.text) }
         }
     }
+
     fun loadCurrentProject(projectId: Int, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val response = ScrumbleConnection.get("/project/$projectId")
@@ -151,18 +155,20 @@ object ScrumbleController {
                 uiThread { onError(response.text) }
         }
     }
+
     fun addProject(project: Project, onSuccess: (id: Int) -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val gson = GsonBuilder().registerTypeAdapter(Project::class.java, ProjectSerializer())
                     .serializeNulls().create()
             val response = ScrumbleConnection.post("/project", JSONObject(gson.toJson(project)))
 
-            if(response.statusCode in 200..299)
+            if (response.statusCode in 200..299)
                 uiThread { onSuccess(response.jsonObject.getInt("id")) }
             else
                 uiThread { onError(response.text) }
         }
     }
+
     fun updateProject(projectId: Int, project: Project, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val gson = GsonBuilder().registerTypeAdapter(Project::class.java, ProjectSerializer())
@@ -180,10 +186,10 @@ object ScrumbleController {
         doAsync {
             val response = ScrumbleConnection.get("/project/$projectId/sprint")
 
-            if(response.statusCode in 200..299)  {
+            if (response.statusCode in 200..299) {
                 sprints.clear()
 
-                if(response.statusCode != 204) {
+                if (response.statusCode != 204) {
                     val gson = GsonBuilder().registerTypeAdapter(Sprint::class.java, SprintDeserializer())
                             .serializeNulls().create()
 
@@ -196,25 +202,27 @@ object ScrumbleController {
                 uiThread { onError(response.text) }
         }
     }
+
     fun addSprint(sprint: Sprint, onSuccess: (id: Int) -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val gson = GsonBuilder().registerTypeAdapter(Sprint::class.java, SprintSerializer())
                     .serializeNulls().create()
             val response = ScrumbleConnection.post("/sprint", JSONObject(gson.toJson(sprint)))
 
-            if(response.statusCode in 200..299)
+            if (response.statusCode in 200..299)
                 uiThread { onSuccess(response.jsonObject.getInt("id")) }
             else
                 uiThread { onError(response.text) }
         }
     }
+
     fun updateSprint(sprintId: Int, sprint: Sprint, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val gson = GsonBuilder().registerTypeAdapter(Sprint::class.java, SprintSerializer())
                     .serializeNulls().create()
             val response = ScrumbleConnection.put("/sprint/$sprintId", JSONObject(gson.toJson(sprint)))
 
-            if(response.statusCode in 200..299)
+            if (response.statusCode in 200..299)
                 uiThread { onSuccess() }
             else
                 uiThread { onError(response.text) }
@@ -225,10 +233,10 @@ object ScrumbleController {
         doAsync {
             val response = ScrumbleConnection.get("/project/$projectId/task")
 
-            if(response.statusCode in 200..299)  {
+            if (response.statusCode in 200..299) {
                 tasks.clear()
 
-                if(response.statusCode != 204) {
+                if (response.statusCode != 204) {
                     val gson = GsonBuilder().registerTypeAdapter(Task::class.java, TaskDeserializer())
                             .serializeNulls().create()
                     tasks = gson.fromJson(response.jsonArray.toString(), Array<Task>::class.java)
@@ -240,25 +248,59 @@ object ScrumbleController {
                 uiThread { onError(response.text) }
         }
     }
+
     fun addTask(task: Task, onSuccess: (id: Int) -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val gson = GsonBuilder().registerTypeAdapter(Task::class.java, TaskSerializer())
                     .serializeNulls().create()
             val response = ScrumbleConnection.post("/task", JSONObject(gson.toJson(task)))
 
-            if(response.statusCode in 200..299)
+            if (response.statusCode in 200..299)
                 uiThread { onSuccess(response.jsonObject.getInt("id")) }
             else
                 uiThread { onError(response.text) }
         }
     }
+
     fun updateTask(taskId: Int, task: Task, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val gson = GsonBuilder().registerTypeAdapter(Task::class.java, TaskSerializer())
                     .serializeNulls().create()
             val response = ScrumbleConnection.put("/task/$taskId", JSONObject(gson.toJson(task)))
 
-            if(response.statusCode in 200..299)
+            if (response.statusCode in 200..299)
+                uiThread { onSuccess() }
+            else
+                uiThread { onError(response.text) }
+        }
+    }
+
+    fun loadDailyScrum(projectId: Int, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val response = ScrumbleConnection.get("/project/$projectId/dailyscrum")
+            if (response.statusCode in 200..299) {
+                dailyScrumEntries.clear()
+
+                if (response.statusCode != 204) {
+                    val gson = GsonBuilder().registerTypeAdapter(DailyScrum::class.java, DailyScrumDeserializer())
+                            .serializeNulls().create()
+                    dailyScrumEntries = gson.fromJson(response.jsonArray.toString(), Array<DailyScrum>::class.java)
+                            .sortedByDescending { it.date }.toMutableList()
+                }
+
+                uiThread { onSuccess() }
+            } else
+                uiThread { onError(response.text) }
+        }
+    }
+
+    fun updateDailyScrum(dailyScrumId: String, dailyScrum: DailyScrum, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val gson = GsonBuilder().registerTypeAdapter(DailyScrum::class.java, DailyScrumSerializer())
+                    .serializeNulls().create()
+            val response = ScrumbleConnection.put("/dailyscrum/$dailyScrumId", JSONObject(gson.toJson(dailyScrum)))
+
+            if (response.statusCode in 200..299)
                 uiThread { onSuccess() }
             else
                 uiThread { onError(response.text) }
@@ -266,16 +308,18 @@ object ScrumbleController {
     }
 
     fun updatePositions(oldPosition: Int, newPosition: Int, newState: TaskState, oldState: TaskState, sprint: Sprint) {
-        tasks.filter { it.sprint != null && it.sprint!!.id == sprint.id
-                && (it.state == newState || it.state == oldState) }.forEach {
+        tasks.filter {
+            it.sprint != null && it.sprint!!.id == sprint.id
+                    && (it.state == newState || it.state == oldState)
+        }.forEach {
 
-            if(oldState == newState && oldPosition > newPosition && oldPosition > it.position && newPosition <= it.position && newState == it.state)
+            if (oldState == newState && oldPosition > newPosition && oldPosition > it.position && newPosition <= it.position && newState == it.state)
                 it.position++
-            else if(oldState == newState && oldPosition < newPosition && oldPosition < it.position && newPosition >= it.position && newState == it.state)
+            else if (oldState == newState && oldPosition < newPosition && oldPosition < it.position && newPosition >= it.position && newState == it.state)
                 it.position--
-            else if(oldState != newState && newPosition <= it.position && newState == it.state)
+            else if (oldState != newState && newPosition <= it.position && newState == it.state)
                 it.position++
-            else if(oldState != newState && oldPosition < it.position && oldState == it.state)
+            else if (oldState != newState && oldPosition < it.position && oldState == it.state)
                 it.position--
         }
     }
@@ -283,6 +327,7 @@ object ScrumbleController {
     fun isCurrentProjectSpecified(): Boolean {
         return currentProject != null
     }
+
     fun isCurrentSprintSpecified(): Boolean {
         return currentProject != null && currentProject!!.currentSprint != null
     }

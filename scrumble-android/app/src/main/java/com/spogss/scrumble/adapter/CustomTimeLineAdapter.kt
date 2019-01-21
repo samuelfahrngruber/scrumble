@@ -12,6 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.rengwuxian.materialedittext.MaterialEditText
 import com.spogss.scrumble.R
+import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.data.DailyScrum
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
@@ -32,21 +33,28 @@ class CustomTimeLineAdapter(private val layoutInflater: LayoutInflater, private 
 
         holder.description.setOnFocusChangeListener { _, b ->
             if(!b) {
-                Toast.makeText(layoutInflater.context, holder.description.text, Toast.LENGTH_SHORT).show()
-                dailyScrumEntry.description = holder.description.text.toString().trimStart().trimEnd()
+                dailyScrumEntry.description = holder.description.text.toString().trim()
                 setCardColor(dailyScrumEntry, holder)
+
+                ScrumbleController.updateDailyScrum(dailyScrumEntry.id, dailyScrumEntry, { }, {
+                    MiscUIController.showError(layoutInflater.context, it)
+                })
             }
         }
 
         val taskList = mutableListOf("")
         taskList.addAll(ScrumbleController.tasks.map { it.toString() })
         holder.task.setAdapter(ArrayAdapter(layoutInflater.context, android.R.layout.simple_spinner_dropdown_item, taskList))
+
         holder.task.setOnFocusChangeListener { _, b ->
             if(!b) {
-                Toast.makeText(layoutInflater.context, holder.task.text, Toast.LENGTH_SHORT).show()
-                val taskName = holder.task.text.toString().trimStart().trimEnd()
+                val taskName = holder.task.text.toString().trim()
                 dailyScrumEntry.task = if(taskName == "") null else ScrumbleController.tasks.find { it.toString() == taskName }
                 setCardColor(dailyScrumEntry, holder)
+
+                ScrumbleController.updateDailyScrum(dailyScrumEntry.id, dailyScrumEntry, { }, {
+                    MiscUIController.showError(layoutInflater.context, it)
+                })
             }
         }
 

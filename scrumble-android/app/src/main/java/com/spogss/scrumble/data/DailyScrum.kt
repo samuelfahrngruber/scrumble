@@ -3,7 +3,7 @@ package com.spogss.scrumble.data
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DailyScrum(val id: String, val user: User, val date: Date, var description: String, project: Project, var task: Task? = null) {
+class DailyScrum(var id: String, var user: User, var date: Date, var description: String,var project: Project, var task: Task? = null) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

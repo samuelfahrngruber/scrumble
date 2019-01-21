@@ -77,11 +77,14 @@ class MainActivity : AppCompatActivity() {
                 ScrumbleController.loadTeam(ScrumbleController.currentProject!!.id, {
                     image_progress.setProgress(5, 10)
                     ScrumbleController.loadProjects(ScrumbleController.currentUser.id, {
-                        image_progress.setProgress(10, 72)
+                        image_progress.setProgress(10, 65)
                         ScrumbleController.loadSprints(ScrumbleController.currentProject!!.id, {
-                            image_progress.setProgress(72, 77)
+                            image_progress.setProgress(65, 72)
                             ScrumbleController.loadTasks(ScrumbleController.currentProject!!.id, {
-                                image_progress.setProgress(77, 100); init(1300)
+                                image_progress.setProgress(72, 85)
+                                ScrumbleController.loadDailyScrum(ScrumbleController.currentProject!!.id, {
+                                    image_progress.setProgress(85, 100); init(1300)
+                                }, { MiscUIController.showError(this, it)})
                             }, { MiscUIController.showError(this, it) })
                         }, { MiscUIController.showError(this, it) })
                     }, { MiscUIController.showError(this, it) })
