@@ -60,3 +60,13 @@ Data model:
 [2019-01-14](https://docs.google.com/document/d/14lX3F9qboeEDYnvsXdZS2aRgktnHrXvokwbPTSKsXPE/edit?usp=sharing)
 
 [2019-01-21](https://docs.google.com/document/d/19Ost8BFqOUYkDclQEYrmN7kI3_o0cazZV1LLMqD6s8M/edit?usp=sharing)
+
+### February
+
+[2019-02-04](https://docs.google.com/document/d/1mFI-YC3yEVgksnxPvuHsAVT-N_WRWWfU9DNWvW3BsrE/edit?usp=sharing)
+
+[2019-02-18](https://docs.google.com/document/d/1dSP0WIuM7rcZzAgzqndF3fCG9HQnR0TgxLDwQA-kNAA/edit?usp=sharing)
+
+### March
+
+[2019-03-04](https://docs.google.com/document/d/1NHjalkLkt8INs5vs-uEll-0fNdZQ0fAi_-mFx_bfXkU/edit?usp=sharing)
