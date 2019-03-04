@@ -60,6 +60,7 @@ namespace ScrumbleLib.Connection.Wrapper
 
             WrappedValue.Id = (string)jsonObject["_id"];
             WrappedValue.ProjectId = (int)jsonObject["project"];
+            WrappedValue.SprintId = (int?)jsonObject["sprint"];
             WrappedValue.Task = tw == null ? null : tw.WrappedValue;
             WrappedValue.Description = (string)jsonObject["description"];
             WrappedValue.Date = (DateTime)jsonObject["date"];
@@ -146,6 +147,19 @@ namespace ScrumbleLib.Connection.Wrapper
                 WrappedValue.Description = value;
                 ScrumbleConnection.Update(this);
                 OnPropertyChanged("Text");
+            }
+        }
+
+        public int? Sprint
+        {
+            get
+            {
+                return WrappedValue.SprintId;
+            }
+            private set
+            {
+
+                WrappedValue.SprintId = value;
             }
         }
     }

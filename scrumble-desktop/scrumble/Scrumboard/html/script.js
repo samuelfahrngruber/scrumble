@@ -41,7 +41,7 @@ function refreshClasses() {
     });
 }
 
-function addTask(taskWrapper) {
+function setTask(taskWrapper) {
     var column = $("#" + state2column[taskWrapper.state.toUpperCase()]);
 
     var taskdiv = $('<div class="portlet borderless" id="' + taskWrapper.id + '"></div>');
@@ -65,6 +65,8 @@ function addTask(taskWrapper) {
 
     $("#" + taskWrapper.id).remove();
     column.append(taskdiv);
+
+    //alert();
     refreshClasses();
 }
 

@@ -100,7 +100,7 @@ namespace ScrumbleLib.Connection.Wrapper
             if (jsonObject.ContainsKey("state")) WrappedValue.State = TaskStateParser.Parse((string)jsonObject["state"]);
             if (jsonObject.ContainsKey("position")) WrappedValue.Position = (int)jsonObject["position"];
             if (jsonObject.ContainsKey("color")) WrappedValue.Color = (string)jsonObject["color"];
-
+            OnPropertyChanged("ALL");
         }
 
         public void ApplyFields(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int? sprint, int project, string state, int position, string color)

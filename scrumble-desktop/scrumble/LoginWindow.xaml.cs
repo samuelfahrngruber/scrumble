@@ -22,10 +22,18 @@ namespace scrumble.Views
     /// </summary>
     public partial class LoginWindow : Window
     {
-        List<ProjectSelectorModel> projects;
         public LoginWindow()
         {
             InitializeComponent();
+            string username = Properties.Settings.Default["LoginUsername"] as string;
+            string password = Properties.Settings.Default["LoginPassword"] as string;
+
+            if(username != null && password != null && username != "" && password != "")
+                attemptLogin(username, password);
+
+            int? projid = Properties.Settings.Default["CurrentProjectId"] as int?;
+            if(projid != null && projid >= 0)
+                attemptProjectSelection((int)projid);
         }
 
         private void button_close_Click(object sender, RoutedEventArgs e)
@@ -40,15 +48,28 @@ namespace scrumble.Views
 
         private void attemptLogin()
         {
-            setLoginEnabled(false);
 
             string username = textBox_username.Text;
             string password = passwordBox_password.Password;
+
+            attemptLogin(username, password);
+        }
+
+        private void attemptLogin(string username, string password)
+        {
+            bool saveCredentials = checkBox_autoLogin.IsChecked == true;
+            setLoginEnabled(false);
 
             bool success = Scrumble.Login(username, password);
 
             if (success)
             {
+                if (saveCredentials)
+                {
+                    Properties.Settings.Default["LoginUsername"] = username;
+                    Properties.Settings.Default["LoginPassword"] = password;
+                    Properties.Settings.Default.Save();
+                }
                 setMyProjects();
                 ShowProjectSelector();
             }
@@ -68,12 +89,23 @@ namespace scrumble.Views
         {
             ProjectWrapper m = listBox_projects.SelectedItem as ProjectWrapper;
             if (m != null)
+                attemptProjectSelection(m.Id);
+        }
+
+        private void attemptProjectSelection(int projectId)
+        {
+            bool saveProj = checkBox_autoSelectProject.IsChecked == true;
+
+            if (saveProj)
             {
-                Scrumble.SetProject(m.Id);
-                MainWindow mainwin = new MainWindow();
-                mainwin.Show();
-                Close();
+                Properties.Settings.Default["CurrentProjectId"] = projectId;
+                Properties.Settings.Default.Save();
             }
+
+            Scrumble.SetProject(projectId);
+            MainWindow mainwin = new MainWindow();
+            mainwin.Show();
+            Close();
         }
 
         public void ShowProjectSelector(bool visible = true)
@@ -112,6 +144,7 @@ namespace scrumble.Views
 
         private void setLoginEnabled(bool e)
         {
+            checkBox_autoLogin.IsEnabled = e;
             button_login.IsEnabled = e;
             passwordBox_password.IsEnabled = e;
             textBox_username.IsEnabled = e;
@@ -123,6 +156,12 @@ namespace scrumble.Views
             {
                 attemptLogin();
             }
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
         }
     }
 }

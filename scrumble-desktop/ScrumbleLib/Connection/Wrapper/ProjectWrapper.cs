@@ -94,6 +94,7 @@ namespace ScrumbleLib.Connection.Wrapper
                 uw.ApplyJson(user);
                 WrappedValue.Team.Add(u);
             }
+            OnPropertyChanged("Team");
         }
 
         public void ApplyTeamJson(string projectTeamJson)
@@ -106,7 +107,8 @@ namespace ScrumbleLib.Connection.Wrapper
             if (jsonObject.ContainsKey("id")) WrappedValue.Id = (int)jsonObject["id"];
             if (jsonObject.ContainsKey("name")) WrappedValue.Name = (string)jsonObject["name"];
             if (jsonObject.ContainsKey("productowner")) WrappedValue.ProductOwner = ScrumbleController.GetUser((int)jsonObject["productowner"]);
-            if (jsonObject.ContainsKey("currentSprint")) { int? csprint = (int?)jsonObject["currentSprint"]; WrappedValue.CurrentSprint = csprint == null ? null : ScrumbleController.GetSprint((int)csprint); }
+            if (jsonObject.ContainsKey("currentsprint")) { int? csprint = (int?)jsonObject["currentsprint"]; WrappedValue.CurrentSprint = csprint == null ? null : ScrumbleController.GetSprint((int)csprint); }
+            OnPropertyChanged("ALL");
         }
 
         public void ApplyJson(string json)
@@ -190,7 +192,7 @@ namespace ScrumbleLib.Connection.Wrapper
             set
             {
                 WrappedValue.Team = value;
-                ScrumbleConnection.Update(this);
+                //ScrumbleConnection.UpdateTeam(this);
             }
         }
     }

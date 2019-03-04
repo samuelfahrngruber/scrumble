@@ -9,110 +9,115 @@
         WindowStyle="None"
         AllowsTransparency="True"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize">
-    <Grid>
-        <Grid x:Name="grid_loginForm" Visibility="Visible" FocusManager.FocusedElement="{Binding ElementName=textBox_username}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"></ColumnDefinition>
-                <ColumnDefinition Width="3*"></ColumnDefinition>
-                <ColumnDefinition Width="3*"></ColumnDefinition>
-                <ColumnDefinition Width="2*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
+        ResizeMode="NoResize" MouseDown="Window_MouseDown">
+    <Border BorderBrush="Gray" BorderThickness="1">
+        <Grid>
+            <Grid x:Name="grid_loginForm" Visibility="Visible" FocusManager.FocusedElement="{Binding ElementName=textBox_username}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                    <ColumnDefinition Width="3*"></ColumnDefinition>
+                    <ColumnDefinition Width="3*"></ColumnDefinition>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Image Source="Scrumble.ico" Grid.ColumnSpan="2" Grid.Column="1" Margin="30"></Image>
+                <Label FontWeight="Light" FontSize="15" Content="Username: " Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"></Label>
+                <Label FontWeight="Light" FontSize="15" Content="Password: " Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"></Label>
+                <TextBox x:Name="textBox_username" FontFamily="Consolas" FontSize="14" Padding="1" Grid.Row="1" Grid.Column="2" Margin="5" VerticalAlignment="Center" VerticalContentAlignment="Center" KeyDown="login_keyDown"></TextBox>
+                <PasswordBox x:Name="passwordBox_password" FontFamily="Consolas" FontSize="14" Padding="1" Grid.Row="2" Grid.Column="2" Margin="5" VerticalAlignment="Center" VerticalContentAlignment="Center" KeyDown="login_keyDown"></PasswordBox>
+                <CheckBox x:Name="checkBox_autoLogin" Content="Automatically log in next time?" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3" Margin="5" HorizontalAlignment="Center" FontSize="11"/>
 
-            </Grid.RowDefinitions>
-            <Image Source="Scrumble.ico" Grid.ColumnSpan="2" Grid.Column="1" Margin="30"></Image>
-            <Label FontWeight="Light" FontSize="15" Content="Username: " Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"></Label>
-            <Label FontWeight="Light" FontSize="15" Content="Password: " Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"></Label>
-            <TextBox x:Name="textBox_username" FontFamily="Consolas" FontSize="14" Padding="1" Grid.Row="1" Grid.Column="2" Margin="5" VerticalAlignment="Center" VerticalContentAlignment="Center" KeyDown="login_keyDown"></TextBox>
-            <PasswordBox x:Name="passwordBox_password" FontFamily="Consolas" FontSize="14" Padding="1" Grid.Row="2" Grid.Column="2" Margin="5" VerticalAlignment="Center" VerticalContentAlignment="Center" KeyDown="login_keyDown"></PasswordBox>
-            <TextBlock FontSize="11" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="5">                                
+                <TextBlock FontSize="11" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="5">                                
                 <Hyperlink x:Name="hyperlink_register" Click="hyperlink_register_Click">No account? Create one here!</Hyperlink>
-            </TextBlock>
-            <Button x:Name="button_login" FontWeight="Light" FontSize="15" Padding="2" Margin="5,5,5,30" Width="100" Content="Login" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Click="button_login_Click"></Button>
-            <Button x:Name="button_close" Grid.Row="0" Grid.Column="3" Width="30" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Background="White" BorderThickness="0" Click="button_close_Click">
-                <Image Source="res/remove.png" Height="25px" />
-            </Button>
+                </TextBlock>
+                <Button x:Name="button_login" FontWeight="Light" FontSize="15" Padding="2" Margin="5,5,5,30" Width="100" Content="Login" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Click="button_login_Click"></Button>
+                <Button x:Name="button_close" Grid.Row="0" Grid.Column="3" Width="30" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Background="White" BorderThickness="0" Click="button_close_Click">
+                    <Image Source="res/remove.png" Height="25px" />
+                </Button>
 
-            <Grid Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" Grid.ColumnSpan="4" x:Name="grid_registerBox" Visibility="Collapsed">
-                <Grid Background="Black" Opacity="0.5"/>
-                <Border
+                <Grid Grid.Column="0" Grid.Row="0" Grid.RowSpan="6" Grid.ColumnSpan="4" x:Name="grid_registerBox" Visibility="Collapsed">
+                    <Grid Background="Black" Opacity="0.5"/>
+                    <Border
                 MinWidth="300"
                 Background="White" 
                 CornerRadius="10" 
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Center">
-                    <StackPanel>
-                        <TextBlock Text="Register" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
-                        <Separator Margin="20,10"></Separator>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition Width="1*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Username:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Password:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Confirm Password:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
-                            <TextBox FontFamily="Consolas" x:Name="textBox_register_username" Grid.Row="0" Grid.Column="1" FontSize="14" Padding="1" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalContentAlignment="Center"/>
-                            <PasswordBox x:Name="passwordBox_register_password" FontFamily="Consolas" FontSize="14" Padding="1" Grid.Row="1" Grid.Column="1" Margin="20,5" VerticalAlignment="Center" VerticalContentAlignment="Center"></PasswordBox>
-                            <PasswordBox x:Name="passwordBox_register_confirmPW" FontFamily="Consolas" FontSize="14" Padding="1" Grid.Row="2" Grid.Column="1" Margin="20,5" VerticalAlignment="Center" VerticalContentAlignment="Center"></PasswordBox>
-                        </Grid>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <Button x:Name="button_closeRegister" Padding="2" Margin="20" Width="100" FontSize="15" FontWeight="Light" Content="Close" Click="button_closeRegister_Click" ></Button>
-                            <Button x:Name="button_confirmRegistration" Padding="2" Margin="20" Width="100" FontSize="15" FontWeight="Light" Content="Register" Click="button_confirmRegistration_Click"></Button>
+                        <StackPanel>
+                            <TextBlock Text="Register" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                            <Separator Margin="20,10"></Separator>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Username:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Password:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Confirm Password:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
+                                <TextBox FontFamily="Consolas" x:Name="textBox_register_username" Grid.Row="0" Grid.Column="1" FontSize="14" Padding="1" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalContentAlignment="Center"/>
+                                <PasswordBox x:Name="passwordBox_register_password" FontFamily="Consolas" FontSize="14" Padding="1" Grid.Row="1" Grid.Column="1" Margin="20,5" VerticalAlignment="Center" VerticalContentAlignment="Center"></PasswordBox>
+                                <PasswordBox x:Name="passwordBox_register_confirmPW" FontFamily="Consolas" FontSize="14" Padding="1" Grid.Row="2" Grid.Column="1" Margin="20,5" VerticalAlignment="Center" VerticalContentAlignment="Center"></PasswordBox>
+                            </Grid>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button x:Name="button_closeRegister" Padding="2" Margin="20" Width="100" FontSize="15" FontWeight="Light" Content="Close" Click="button_closeRegister_Click" ></Button>
+                                <Button x:Name="button_confirmRegistration" Padding="2" Margin="20" Width="100" FontSize="15" FontWeight="Light" Content="Register" Click="button_confirmRegistration_Click"></Button>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-                </Border>
+                    </Border>
+                </Grid>
+            </Grid>
+            <Grid x:Name="grid_projectChooser" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="1*"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Select Project" Margin="10" FontSize="20" FontWeight="Light" Grid.Row="0" Grid.Column="0"></TextBlock>
+                <Button x:Name="button_close2" Grid.Row="0" Grid.Column="0" Width="30" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Background="White" BorderThickness="0" Click="button_close_Click">
+                    <Image Source="res/remove.png" Height="25px" />
+                </Button>
+                <ListBox Name="listBox_projects" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0,1,0,1" ScrollViewer.CanContentScroll="False">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <!-- Items Data Template -->
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <!--<Rectangle Fill="{Binding}" Stroke="Black" Margin="3" StrokeThickness="1" Height="25" Width="25"/>-->
+                            <Grid Margin="2" Width="80" Height="80">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1*"></RowDefinition>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="{Binding Path=Name}" FontSize="13" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWithOverflow" TextTrimming="CharacterEllipsis"></TextBlock>
+                                <TextBlock Text="SDL:" FontSize="10" FontWeight="Light" Grid.Row="3" Grid.Column="0"></TextBlock>
+                                <TextBlock Text="{Binding Path=SprintDeadline, StringFormat=d, TargetNullValue=-}" FontSize="10" Grid.Row="3" Grid.Column="1"></TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <CheckBox x:Name="checkBox_autoSelectProject" Content="Remember my choice" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="11"/>
+                <Button x:Name="button_selectProject" FontWeight="Light" FontSize="15" Padding="2" Margin="10" HorizontalAlignment="Right" Width="150" Content="Select Project" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Click="button_selectProject_Click"></Button>
             </Grid>
         </Grid>
-        <Grid x:Name="grid_projectChooser" Visibility="Collapsed">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-            </Grid.RowDefinitions>
-            <TextBlock Text="Select Project" Margin="10" FontSize="20" FontWeight="Light" Grid.Row="0" Grid.Column="0"></TextBlock>
-            <Button x:Name="button_close2" Grid.Row="0" Grid.Column="0" Width="30" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Background="White" BorderThickness="0" Click="button_close_Click">
-                <Image Source="res/remove.png" Height="25px" />
-            </Button>
-            <ListBox Name="listBox_projects" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0,1,0,1" ScrollViewer.CanContentScroll="False">
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel />
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-                <!-- Items Data Template -->
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <!--<Rectangle Fill="{Binding}" Stroke="Black" Margin="3" StrokeThickness="1" Height="25" Width="25"/>-->
-                        <Grid Margin="2" Width="80" Height="80">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*"></ColumnDefinition>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="1*"></RowDefinition>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="{Binding Path=Name}" FontSize="13" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWithOverflow" TextTrimming="CharacterEllipsis"></TextBlock>
-                            <TextBlock Text="SDL:" FontSize="10" FontWeight="Light" Grid.Row="3" Grid.Column="0"></TextBlock>
-                            <TextBlock Text="{Binding Path=SprintDeadline, StringFormat=d, TargetNullValue=-}" FontSize="10" Grid.Row="3" Grid.Column="1"></TextBlock>
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-            <Button x:Name="button_selectProject" FontWeight="Light" FontSize="15" Padding="2" Margin="10" HorizontalAlignment="Right" Width="150" Content="Select Project" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Click="button_selectProject_Click"></Button>
-        </Grid>
-    </Grid>
+    </Border>
 </Window>

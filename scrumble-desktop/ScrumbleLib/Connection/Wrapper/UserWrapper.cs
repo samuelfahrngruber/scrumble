@@ -89,6 +89,7 @@ namespace ScrumbleLib.Connection.Wrapper
         {
             if (jsonObject.ContainsKey("id")) WrappedValue.Id = (int)jsonObject["id"];
             if (jsonObject.ContainsKey("name")) WrappedValue.Username = (string)jsonObject["name"]; // username
+            OnPropertyChanged("ALL");
         }
 
         public void ApplyJson(string json)

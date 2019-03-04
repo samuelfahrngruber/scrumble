@@ -18,6 +18,7 @@ using MahApps.Metro.Controls;
 using System.IO;
 using System.Reflection;
 using scrumble.DailyScrumTable;
+using scrumble.Views;
 
 namespace scrumble
 {
@@ -61,8 +62,17 @@ namespace scrumble
             initializeSelectedTask();
 
             initCurrentProject();
+
+            System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 2);
+            dispatcherTimer.Start();
         }
 
+        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        {
+            Scrumble.GetChanges();
+        }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -105,11 +115,7 @@ namespace scrumble
         {
             Scrumble.Logger = this;
             //initDevConsole();
-            string projectLog = "" +
-                "[2018-10-04 19:06] Added Project Log in Gui\n" +
-                "[2018-10-04 19:10] Successfully Tested\n" +
-                "[2018-10-04 19:30] Added Daily Scrum Table in Gui";
-            textBox_projectLog.Text = projectLog;
+
             console = new DeveloperConsole(this);
             section_Information.Visibility = Visibility.Visible;
 
@@ -186,10 +192,17 @@ namespace scrumble
         {
             await Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action) (() =>
             {
-                textBlock_selectedTask_name.Text = selectedTask.Name;
-                textBlock_selectedTask_description.Text = selectedTask.Info;
-                textBlock_selectedTask_responsible.Text = selectedTask.WrappedValue.ResponsibleUser == null ? "-" : selectedTask.WrappedValue.ResponsibleUser.Username.ToString();
-                textBlock_selectedTask_verify.Text = selectedTask.WrappedValue.VerifyingUser == null ? "-" : selectedTask.WrappedValue.VerifyingUser.Username.ToString();
+                textBox_selectedTask_name.Text = selectedTask.Name;
+                textBox_selectedTask_description.Text = selectedTask.Info;
+
+                //textBlock_selectedTask_responsible.Text = selectedTask.WrappedValue.ResponsibleUser == null ? "-" : selectedTask.WrappedValue.ResponsibleUser.Username.ToString();
+                comboBox_selectedTask_responsible.ItemsSource = currentProject.Team;
+                comboBox_selectedTask_responsible.SelectedItem = selectedTask.WrappedValue.ResponsibleUser;
+
+                //textBlock_selectedTask_verify.Text = selectedTask.WrappedValue.VerifyingUser == null ? "-" : selectedTask.WrappedValue.VerifyingUser.Username.ToString();
+                comboBox_selectedTask_verify.ItemsSource = currentProject.Team;
+                comboBox_selectedTask_verify.SelectedItem = selectedTask.WrappedValue.VerifyingUser;
+
                 textBlock_selectedTask_rejections.Text = selectedTask.Rejections.ToString();
                 button_chooseTaskColor.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom(selectedTask.Color));
             }));
@@ -205,12 +218,12 @@ namespace scrumble
                 textBlock_projectOverview_currentSprint.Text = "#" + currentProject.WrappedValue.CurrentSprint.Number;
                 textBlock_projectOverview_currentSprintDeadline.Text = currentProject.WrappedValue.CurrentSprint.Deadline.ToString("dddd, dd.MM.yyyy");
 
-                treeViewItem_teamMembers.ItemsSource = currentProject.WrappedValue.Team;
+                listBox_teamMembers.ItemsSource = currentProject.WrappedValue.Team;
 
                 comboBox_addTask_responsible.ItemsSource = currentProject.WrappedValue.Team;
                 comboBox_addTask_verify.ItemsSource = currentProject.WrappedValue.Team;
 
-                treeViewItem_productBacklog.ItemsSource = Scrumble.GetProductBacklog();
+                listBox_productBacklog.ItemsSource = Scrumble.GetProductBacklog();
             }));
         }
 
@@ -228,7 +241,7 @@ namespace scrumble
         {
             if (chromiumWebBrowser_scrumBoard.CanExecuteJavascriptInMainFrame)
             {
-                JavascriptResponse response = await chromiumWebBrowser_scrumBoard.EvaluateScriptAsync("addTask(" + wrapper.ToJson() + ");");
+                JavascriptResponse response = await chromiumWebBrowser_scrumBoard.EvaluateScriptAsync("setTask(" + wrapper.ToJson() + ");");
             }
         }
 
@@ -312,7 +325,7 @@ namespace scrumble
             {
                 //your code
             }
-            //setScrumboardContent();
+            setScrumboardContent();
         }
 
         private void MyTasksChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -371,6 +384,11 @@ namespace scrumble
             setScrumboardContent(true);
         }
 
+        private void toolBarButton_refreshBoard2_Click(object sender, RoutedEventArgs e)
+        {
+            Scrumble.GetChanges();
+        }
+
         private void toolBarButton_addTask_Click(object sender, RoutedEventArgs e)
         {
             InputBox.Visibility = System.Windows.Visibility.Visible;
@@ -419,10 +437,19 @@ namespace scrumble
             }
         }
 
-        private void treeView_projectOverview_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void listBox_productBacklog_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            TaskWrapper tw = treeView_projectOverview.SelectedItem as TaskWrapper;
-            if(tw != null)
+            TaskWrapper tw = listBox_productBacklog.SelectedItem as TaskWrapper;
+            if (tw != null)
+            {
+                setSelectedTask(tw);
+            }
+        }
+
+        private void contextMenuItem_removeTeamMember_Click(object sender, RoutedEventArgs e)
+        {
+            TaskWrapper tw = listBox_productBacklog.SelectedItem as TaskWrapper;
+            if (tw != null)
             {
                 setSelectedTask(tw);
             }
@@ -472,5 +499,69 @@ namespace scrumble
             selectedTask.Color = col;
             inputBox_colorSelector.Visibility = Visibility.Collapsed;
         }
+
+        private void menuItem_project_switch_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default["CurrentProjectId"] = -1;
+            Properties.Settings.Default.Save();
+            LoginWindow w = new LoginWindow();
+            w.Show();
+            Close();
+        }
+
+        private void menuItem_settings_logout_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default["LoginUsername"] = null;
+            Properties.Settings.Default["LoginPassword"] = null;
+            Properties.Settings.Default["CurrentProjectId"] = -1;
+            Properties.Settings.Default.Save();
+            LoginWindow w = new LoginWindow();
+            w.Show();
+            Close();
+        }
+
+        private void button_plusRejection_Click(object sender, RoutedEventArgs e)
+        {
+            selectedTask.Rejections = selectedTask.Rejections + 1;
+        }
+
+        private void button_minusRejection_Click(object sender, RoutedEventArgs e)
+        {
+            if(selectedTask.Rejections > 0)
+                selectedTask.Rejections = selectedTask.Rejections - 1;
+        }
+
+        private void textBox_selectedTask_description_LostFocus(object sender, RoutedEventArgs e)
+        {
+            selectedTask.Info = textBox_selectedTask_description.Text;
+        }
+
+        private void textBox_selectedTask_name_LostFocus(object sender, RoutedEventArgs e)
+        {
+            selectedTask.Name = textBox_selectedTask_name.Text;
+        }
+
+        private void comboBox_selectedTask_verify_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            User u = (comboBox_selectedTask_verify.SelectedItem as User);
+            selectedTask.VerifyingUser = u == null ? (int?)null : u.Id;
+        }
+
+        private void comboBox_selectedTask_responsible_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            User u = (comboBox_selectedTask_responsible.SelectedItem as User);
+            selectedTask.ResponsibleUser = u == null ? (int?)null : u.Id;
+        }
+
+        private void button_selectedTask_removeVerify_Click(object sender, RoutedEventArgs e)
+        {
+            comboBox_selectedTask_verify.SelectedValue = null;
+        }
+
+        private void button_selectedTask_removeResponsible_Click(object sender, RoutedEventArgs e)
+        {
+            comboBox_selectedTask_responsible.SelectedValue = null;
+        }
+
     }
 }

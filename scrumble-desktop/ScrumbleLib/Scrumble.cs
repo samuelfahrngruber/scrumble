@@ -10,6 +10,7 @@ using ScrumbleLib.Data;
 using Newtonsoft.Json.Linq;
 using ScrumbleLib.Utils;
 using System.Collections.Specialized;
+using ScrumbleLib.Connection.Change;
 
 namespace ScrumbleLib
 {
@@ -21,13 +22,13 @@ namespace ScrumbleLib
         internal static ObservableCollectionEx<ProjectWrapper> MyProjects { get; private set; } = null;
         internal static ObservableCollectionEx<DailyScrumEntryWrapper> DailyScrumEntries { get; private set; } = null;
 
-
-
         internal static ProjectWrapper currentProject { get; set; } = null;
 
         public static IDevLogger Logger { get; set; }
 
         public static WrapperFactory WrapperFactory { get; } = new WrapperFactory();
+
+        public static DateTime LastChangeRefresh { get; private set; } = DateTime.Now;
 
         public static ObservableCollectionEx<TaskWrapper> GetScrumboard(bool forceLoad = false)
         {
@@ -285,6 +286,42 @@ namespace ScrumbleLib
         public static void DeleteTask(int taskId)
         {
             ScrumbleController.DeleteTask(taskId);
+        }
+
+        public static void RemoveMember(int userid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void OnMemberRemoved(User wrappedValue)
+        {
+            
+        }
+
+        public static void OnMemberRemoved(int userid)
+        {
+
+        }
+
+
+        public static void GetChanges()
+        {
+            ScrumbleController.GetChanges(LastChangeRefresh);
+            LastChangeRefresh = DateTime.Now;
+        }
+
+        internal static void ChangesFromJson(string jsonchanges)
+        {
+            ChangesFromJson(JArray.Parse(jsonchanges));
+        }
+
+        internal static void ChangesFromJson(JArray changes)
+        {
+            foreach (JObject change in changes)
+            {
+                ScrumbleChange c = ScrumbleChange.FromJson(change);
+                c.Apply();
+            }
         }
     }
 }

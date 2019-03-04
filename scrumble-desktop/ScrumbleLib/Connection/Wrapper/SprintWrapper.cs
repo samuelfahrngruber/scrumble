@@ -102,6 +102,7 @@ namespace ScrumbleLib.Connection.Wrapper
             //    (int)jsonObject["number"],
             //    DateTime.Parse((string)jsonObject["startdate"]),
             //    DateTime.Parse((string)jsonObject["deadline"]));
+            OnPropertyChanged("ALL");
         }
 
         public void ApplyJson(string json)

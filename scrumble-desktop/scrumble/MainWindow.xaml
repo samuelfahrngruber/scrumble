@@ -19,12 +19,12 @@
         </Grid.ColumnDefinitions>
         <Menu x:Name="menu_menuBar" FontSize="15" FontWeight="Light" Padding="2">
             <MenuItem Header="Project">
-                <MenuItem Header="New" />
-                <MenuItem Header="Switch to">
-                    <MenuItem Header="scrumble" />
-                    <MenuItem Header="Sportify" />
-                    <MenuItem Header="BLOBExplorer" />
-                </MenuItem>
+                <MenuItem x:Name="menuItem_project_new" Header="New" />
+                <MenuItem x:Name="menuItem_project_switch" Header="Switch project..." Click="menuItem_project_switch_Click"/>
+            </MenuItem>
+            <MenuItem Header="Settings">
+                <MenuItem x:Name="menuItem_settings_logout" Header="Log out" Click="menuItem_settings_logout_Click" />
+                <MenuItem x:Name="menuItem_settings_preferences" Header="Preferences..."/>
             </MenuItem>
         </Menu>
         <Grid Grid.Row="1" Grid.Column="0">
@@ -43,13 +43,12 @@
             <GridSplitter Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="1" ShowsPreview="True" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
 
             <!-- Project Overview -->
-            <StackPanel x:Name="section_ProjectOverview" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Orientation="Vertical" >
+            <ScrollViewer Margin="0,0,5,0" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3">
+            <StackPanel x:Name="section_ProjectOverview" Margin="0,0,5,0"  Orientation="Vertical" >
                 <TextBlock Text="Project Overview" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
                 <Separator Margin="20, 0"></Separator>
                 <Grid Margin="5">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1*"></RowDefinition>
-                        <RowDefinition Height="1*"></RowDefinition>
                         <RowDefinition Height="1*"></RowDefinition>
                         <RowDefinition Height="1*"></RowDefinition>
                     </Grid.RowDefinitions>
@@ -63,30 +62,48 @@
                     <TextBlock Grid.Column="0" Grid.Row="1" Text="Product Owner: " FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalAlignment="Center"></TextBlock>
                     <TextBlock x:Name="textBlock_projectOverview_productOwner" Grid.Row="1" Grid.Column="1" FontWeight="Medium" Text="BestProductOwner" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="15"></TextBlock>
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Current Sprint: " FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalAlignment="Center"></TextBlock>
-                    <TextBlock x:Name="textBlock_projectOverview_currentSprint" Grid.Row="2" Grid.Column="1" FontWeight="Medium" Text="#1" TextWrapping="Wrap"  VerticalAlignment="Center" FontSize="15"></TextBlock>
 
-                    <TextBlock Grid.Row="3" Grid.Column="0" FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" Text="Sprint Deadline:" VerticalAlignment="Center"></TextBlock>
-                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="textBlock_projectOverview_currentSprintDeadline" FontWeight="Medium" Text="Mi., 31.10.2018" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="15"></TextBlock>
                 </Grid>
-                <TreeView x:Name="treeView_projectOverview" Margin="5" BorderThickness="0" FontSize="15" FontWeight="Light" SelectedItemChanged="treeView_projectOverview_SelectedItemChanged">
-                    <TreeViewItem x:Name="treeViewItem_teamMembers" IsExpanded="True" Margin="5" HorizontalContentAlignment="Stretch">
 
-                        <TreeViewItem.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Team Members" FontWeight="Light" />
-                            </StackPanel>
-                        </TreeViewItem.Header>
-                    </TreeViewItem>
-                    <TreeViewItem x:Name="treeViewItem_productBacklog" IsExpanded="True" Margin="5" HorizontalContentAlignment="Stretch">
-                        <TreeViewItem.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Product Backlog" FontWeight="Light" />
-                            </StackPanel>
-                        </TreeViewItem.Header>
-                    </TreeViewItem>
-                </TreeView>
+                <Separator Margin="20,0"></Separator>
+                <TextBlock Text="Team Members" FontSize="17" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                <ListBox x:Name="listBox_teamMembers" Margin="20" FontSize="15" FontWeight="Light" BorderThickness="0">
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem x:Name="contextMenuItem_removeTeamMember" Header="Remove" Click="contextMenuItem_removeTeamMember_Click"/>
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
+                </ListBox>
+
+                <Separator Margin="20,0"></Separator>
+                <TextBlock Text="Product Backlog" FontSize="17" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                <ListBox x:Name="listBox_productBacklog" Margin="20" FontSize="15" FontWeight="Light" BorderThickness="0" SelectionChanged="listBox_productBacklog_SelectionChanged"></ListBox>
+
+                <Separator Margin="20,0"></Separator>
+                <TextBlock Text="Sprint" FontSize="17" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"></RowDefinition>
+                        <RowDefinition Height="1*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Current Sprint: " FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalAlignment="Center"></TextBlock>
+                    <TextBlock x:Name="textBlock_projectOverview_currentSprint" Grid.Row="0" Grid.Column="1" FontWeight="Medium" Text="#1" TextWrapping="Wrap"  VerticalAlignment="Center" FontSize="15"></TextBlock>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" Text="Sprint Deadline:" VerticalAlignment="Center"></TextBlock>
+                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="textBlock_projectOverview_currentSprintDeadline" FontWeight="Medium" Text="Mi., 31.10.2018" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="15"></TextBlock>
+
+                </Grid>
+
+                <TextBlock Text="All Sprints" FontSize="17" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+
+                <ListBox x:Name="listBox_sprints" Margin="20" FontSize="15" FontWeight="Light" BorderThickness="0" SelectionChanged="listBox_productBacklog_SelectionChanged"></ListBox>
+
             </StackPanel>
+            </ScrollViewer>
 
             <!-- Scrum Board -->
             <ToolBarTray Grid.Column="1" IsLocked="True">
@@ -98,6 +115,10 @@
                         <Image Source="res/remove.png" Height="25px" />
                     </Button>-->
                     <Button x:Name="toolBarButton_refreshBoard" ToolTip="Refresh Scrumboard" Click="toolBarButton_refreshBoard_Click">
+                        <Image Source="res/reload.png" Height="25px" />
+                    </Button>
+
+                    <Button x:Name="toolBarButton_refreshBoard2" ToolTip="Refresh Scrumboard" Click="toolBarButton_refreshBoard2_Click">
                         <Image Source="res/reload.png" Height="25px" />
                     </Button>
                 </ToolBar>
@@ -215,28 +236,67 @@
                         </TreeViewItem>
                     </TreeView>
                 </StackPanel>
-                <StackPanel x:Name="section_SelectedTask" Grid.Row="1" Grid.Column="0" Orientation="Vertical">
-                    <TextBlock Text="Selected Task" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
-                    <Separator Margin="20, 0"></Separator>
-                    <TextBlock x:Name="textBlock_selectedTask_name" Text="hello" FontSize="18" Margin="20, 10" HorizontalAlignment="Stretch" FontWeight="Medium"/>
-                    <TextBlock x:Name="textBlock_selectedTask_description" Text="this user story only says hello. it does absolutely nothing else" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
-                    <TextBlock FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap">
-                        <Run Text="Responsible: "></Run>
-                        <Run x:Name="textBlock_selectedTask_responsible" FontWeight="Medium" Text="Sam"></Run>
-                    </TextBlock>
-                    <TextBlock FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap">
-                        <Run Text="Verify: "></Run>
-                        <Run x:Name="textBlock_selectedTask_verify" FontWeight="Medium" Text="Paul"></Run>
-                    </TextBlock>
-                    <TextBlock FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap">
-                        <Run Text="Rejections: "></Run>
-                        <Run x:Name="textBlock_selectedTask_rejections" FontWeight="Medium" Text="3"></Run>
-                    </TextBlock>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" Text="Color: "></TextBlock>
-                        <Button x:Name="button_chooseTaskColor" Background="#FFFFFF" Content="Choose..." Click="button_chooseTaskColor_Click" Padding="5"></Button>
+                <Grid x:Name="section_SelectedTask" Grid.Row="1" Grid.Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="1*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Selected Task" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                    <Separator Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="20, 0"></Separator>
+                    <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="textBox_selectedTask_name" Text="hello" FontSize="18" Margin="20, 20, 20, 5" Padding="5" HorizontalAlignment="Stretch" FontWeight="Medium" LostFocus="textBox_selectedTask_name_LostFocus"/>
+                    <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Padding="5" AcceptsReturn="True" x:Name="textBox_selectedTask_description" Text="this user story only says hello. it does absolutely nothing else" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" LostFocus="textBox_selectedTask_description_LostFocus"/>
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Responsible: "  FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"></TextBlock>
+                    <!--<TextBlock x:Name="textBlock_selectedTask_responsible" FontWeight="Medium" Text="Sam" Grid.Row="4" Grid.Column="1" FontSize="15" Margin="5" HorizontalAlignment="Stretch" TextWrapping="Wrap"/>-->
+                    <Grid  Margin="5,5,20,5" Grid.Row="4" Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <ComboBox Grid.Column="0" x:Name="comboBox_selectedTask_responsible" FontWeight="Medium" Text="Sam" FontSize="15" HorizontalAlignment="Stretch" SelectionChanged="comboBox_selectedTask_responsible_SelectionChanged"/>
+                        <Button x:Name="button_selectedTask_removeResponsible" Grid.Row="0" Grid.Column="1" Width="30" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Background="White" BorderThickness="0" Click="button_selectedTask_removeResponsible_Click"  >
+                            <Image Source="res/remove.png" Height="25px" />
+                        </Button>
+                    </Grid>
+                    <TextBlock Grid.Row="5" Text="Verify: " Grid.Column="0" FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"></TextBlock>
+                    <!--<TextBlock Grid.Row="5" Grid.Column="1" x:Name="textBlock_selectedTask_verify" FontWeight="Medium" Text="Paul" FontSize="15" Margin="5" HorizontalAlignment="Stretch" TextWrapping="Wrap"></TextBlock>-->
+
+                    <Grid  Margin="5,5,20,5"  Grid.Row="5" Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <ComboBox x:Name="comboBox_selectedTask_verify" FontWeight="Medium" Text="Sam" FontSize="15" HorizontalAlignment="Stretch" SelectionChanged="comboBox_selectedTask_verify_SelectionChanged"/>
+                        <Button x:Name="button_selectedTask_removeVerify" Grid.Column="1" Width="30" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Background="White" BorderThickness="0" Click="button_selectedTask_removeVerify_Click">
+                            <Image Source="res/remove.png" Height="25px" />
+                        </Button>
+                    </Grid>
+
+
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Rejections: " FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"></TextBlock>
+                    <StackPanel  Grid.Row="6" Grid.Column="1" Orientation="Horizontal">
+                        <TextBlock  x:Name="textBlock_selectedTask_rejections" FontWeight="Medium" Text="3" Grid.Row="6" Grid.Column="0" FontSize="15" Margin="5" HorizontalAlignment="Stretch" TextWrapping="Wrap"></TextBlock>
+                        <Button x:Name="button_plusRejection" Grid.Row="0" Grid.Column="3" Width="30" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Background="White" BorderThickness="0" Click="button_plusRejection_Click" >
+                            <Image Source="res/add.png" Height="25px" />
+                        </Button>
+                        <Button x:Name="button_minusRejection" Grid.Row="0" Grid.Column="3" Width="30" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Background="White" BorderThickness="0" Click="button_minusRejection_Click" >
+                            <Image Source="res/minus.png" Height="25px" />
+                        </Button>
                     </StackPanel>
-                </StackPanel>
+
+                    <TextBlock Grid.Row="7" Grid.Column="0" FontSize="15" Margin="20,5" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" Text="Color: "></TextBlock>
+                    <Button Grid.Row="7" Grid.Column="1" Margin="5, 5, 20, 5" x:Name="button_chooseTaskColor" Background="#FFFFFF" Content="Choose..." Click="button_chooseTaskColor_Click" Padding="5"></Button>
+                </Grid>
                 <Grid Grid.Column="0" Grid.Row="1" x:Name="inputBox_colorSelector" Visibility="Collapsed">
                     <Grid Background="Black" Opacity="0.5"/>
                     <Border
@@ -280,9 +340,6 @@
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="Information" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
                 <TabControl Margin="5" FontWeight="Light" FontSize="15" Grid.Column="0" Grid.Row="1" VerticalAlignment="Stretch" TabStripPlacement="Top">
-                    <TabItem Padding="5" Header="Project Log">
-                        <TextBox x:Name="textBox_projectLog" Padding="5px" FontFamily="Consolas" BorderThickness="0" TextWrapping="Wrap" Margin="0" IsReadOnly="True" />
-                    </TabItem>
                     <TabItem Padding="5" Header="Daily Scrum Table">
                         <dailyscrumtable:DailyScrumTable x:Name="dailyScrumTable_DSTable"></dailyscrumtable:DailyScrumTable>
                     </TabItem>

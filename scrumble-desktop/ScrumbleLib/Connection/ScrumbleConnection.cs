@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using ScrumbleLib.Connection.Change;
 using ScrumbleLib.Connection.Wrapper;
 using ScrumbleLib.Data;
 using System;
@@ -95,6 +96,8 @@ namespace ScrumbleLib.Connection
             return wrapper;
         }
 
+
+
         public static DailyScrumEntryWrapper Update(DailyScrumEntryWrapper wrapper)
         {
             string url = getUrlForType(typeof(DailyScrumEntry)) + wrapper.Id;
@@ -162,7 +165,7 @@ namespace ScrumbleLib.Connection
         {
             List<DailyScrumEntry> scrumboard = new List<DailyScrumEntry>();
 
-            string url = getUrlForWrapper(pw) + "/dailyscrum";
+            string url = getUrlForWrapper(pw) + "/dailyscrum?sprint=" + pw.CurrentSprint;
             string json = "";
             HttpResponseMessage response = client.GetAsync(url).Result;
             if (response.IsSuccessStatusCode)
@@ -173,6 +176,27 @@ namespace ScrumbleLib.Connection
             Scrumble.Log(json, "#00FF00");
 
             Scrumble.DailyScrumEntriesFromJson(json);
+
+            return pw;
+        }
+
+        internal static ProjectWrapper GetChanges(ProjectWrapper pw, DateTime timestamp)
+        {
+            List<ScrumbleChange> scrumboard = new List<ScrumbleChange>();
+
+            string url = getUrlForWrapper(pw) + "/changes?timestamp=" + timestamp.ToUniversalTime().ToString("O") ;
+            string json = "";
+            HttpResponseMessage response = client.GetAsync(url).Result;
+            if (response.IsSuccessStatusCode)
+                json = response.Content.ReadAsStringAsync().Result;
+            else
+                throw new Exception("invalid get at " + url + "for id " + pw.Id);
+            Scrumble.Log("GET - Changes:", "#00FF00");
+            Scrumble.Log(json, "#00FF00");
+
+
+            if(json != null && json != "")
+                Scrumble.ChangesFromJson(json);
 
             return pw;
         }
@@ -255,5 +279,6 @@ namespace ScrumbleLib.Connection
 
             return user;
         }
+
     }
 }

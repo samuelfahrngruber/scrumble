@@ -208,6 +208,7 @@
     <None Include="res\scrumble.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Resource Include="res\minus.png" />
     <Content Include="Scrumboard\html\index.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

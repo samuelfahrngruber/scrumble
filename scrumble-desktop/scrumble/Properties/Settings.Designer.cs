@@ -34,5 +34,41 @@ namespace scrumble.Properties {
                 this["EnableDeveloperTools"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LoginUsername {
+            get {
+                return ((string)(this["LoginUsername"]));
+            }
+            set {
+                this["LoginUsername"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LoginPassword {
+            get {
+                return ((string)(this["LoginPassword"]));
+            }
+            set {
+                this["LoginPassword"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int CurrentProjectId {
+            get {
+                return ((int)(this["CurrentProjectId"]));
+            }
+            set {
+                this["CurrentProjectId"] = value;
+            }
+        }
     }
 }

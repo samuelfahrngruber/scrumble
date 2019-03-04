@@ -150,5 +150,11 @@ namespace ScrumbleLib.Connection
             if (!isProjectSet())
                 throw new Exception("project not set");
         }
+
+        public static void GetChanges(DateTime timestamp)
+        {
+            ProjectWrapper pw = ProjectWrapper.GetInstance(currentProject.Id);
+            ScrumbleConnection.GetChanges(pw, timestamp);
+        }
     }
 }
