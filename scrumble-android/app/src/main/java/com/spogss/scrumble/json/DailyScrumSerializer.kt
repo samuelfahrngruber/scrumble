@@ -16,20 +16,27 @@ class DailyScrumSerializer: JsonSerializer<DailyScrum> {
                 .serializeNulls().create()
 
         val jsonObject = JsonObject()
-        val formatter = SimpleDateFormat("YYYY-MM-dd", Locale.ENGLISH)
+        val formatter = SimpleDateFormat("YYYY-MM-dd", Locale.getDefault())
 
+        jsonObject.addProperty("_id", dailyScrum.id)
         jsonObject.addProperty("date", formatter.format(dailyScrum.date))
         jsonObject.addProperty("description", dailyScrum.description)
         jsonObject.addProperty("project", dailyScrum.project.id)
 
         val userJsonObject = JSONObject(gson.toJson(dailyScrum.user))
         userJsonObject.remove("password")
-        jsonObject.addProperty("user", userJsonObject.toString())
+        jsonObject.add("user", gson.fromJson(userJsonObject.toString(), JsonElement::class.java))
 
         if(dailyScrum.task == null)
             jsonObject.add("task", JsonNull.INSTANCE)
+        else {
+            jsonObject.add("task", gson.toJsonTree(dailyScrum.task))
+        }
+
+        if(dailyScrum.sprint == null)
+            jsonObject.add("sprint", JsonNull.INSTANCE)
         else
-            jsonObject.addProperty("task", gson.toJson(dailyScrum.task))
+            jsonObject.addProperty("sprint", dailyScrum.sprint!!.id)
 
         return jsonObject
     }

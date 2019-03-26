@@ -46,7 +46,7 @@ object PopupController {
     val startCal = Calendar.getInstance()!!
     val endCal = Calendar.getInstance()!!
 
-    fun setupTaskPopup(context: Context, callback: (view: View) -> Unit, task: Task? = null) {
+    fun setupTaskPopup(context: Context, callback: (view: View) -> Unit, negativeCallback: () -> Unit, task: Task? = null) {
         val dialogBuilder = MaterialDialog.Builder(context)
         dialogBuilder.setTitle(R.string.task)
         dialogBuilder.setTitleColor(ContextCompat.getColor(context, R.color.colorAccent))
@@ -54,6 +54,8 @@ object PopupController {
         dialogBuilder.setNegativeButton(R.string.cancel, null)
         dialogBuilder.setButtonTextColor(ContextCompat.getColor(context, R.color.colorAccent))
         dialogBuilder.setCanceledOnTouchOutside(false)
+
+        if(task != null) dialogBuilder.setNeutralButton(R.string.delete, null)
 
         val customView = View.inflate(context, R.layout.popup_task, null)
 
@@ -70,7 +72,7 @@ object PopupController {
             rejectionsContainer.visibility = View.GONE
             toggleSwitch.setCheckedPosition(0)
 
-            if (ScrumbleController.currentProject!!.currentSprint == null)
+            if (!ScrumbleController.isCurrentSprintSpecified())
                 toggleSwitch.isEnabled = false
 
             (colorTextView.background as GradientDrawable).setColor(ContextCompat.getColor(context, R.color.colorPrimary))
@@ -115,6 +117,12 @@ object PopupController {
             dial.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener {
                 if (taskDialogButtonClick(customView, context)) {
                     callback(customView)
+                    dial.dismiss()
+                }
+            }
+            if(task != null) {
+                dial.getButton(MaterialDialog.BUTTON_NEUTRAL).setOnClickListener {
+                    negativeCallback()
                     dial.dismiss()
                 }
             }
@@ -172,7 +180,7 @@ object PopupController {
         setupSpeedDialPopups(context.resources.getString(R.string.sprint), context, {
             setupAddSprintCustomView(context, sprint)
         }, {
-            addSprintButtonClick(it, context, sprint != null)
+            addSprintButtonClick(it, context, sprint)
         }, callback)
     }
     private fun setupSpeedDialPopups(title: String, context: Context, customization: () -> View,
@@ -327,6 +335,11 @@ object PopupController {
                     UIToScrumbleController.updateTask(item.task, it, context) {
                         adapter.notifyAdapterItemChanged(position)
                     }
+                }, {
+                    UIToScrumbleController.removeTask(item.task, context) {
+                        adapter.adapterItems.removeAt(position)
+                        adapter.notifyAdapterDataSetChanged()
+                    }
                 }, item.task)
             true
         }
@@ -395,8 +408,10 @@ object PopupController {
                 endPicker.show((context as MainActivity).supportFragmentManager, context.resources.getString(R.string.deadline))
         }
     }
-    private fun addSprintButtonClick(customView: View, context: Context, sprintSpecified: Boolean): Boolean {
+    private fun addSprintButtonClick(customView: View, context: Context, sprint: Sprint? = null): Boolean {
         val sprintNumberEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_number)
+        val startDateEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_start_date)
+        val deadlineEditText = customView.findViewById<MaterialEditText>(R.id.popup_add_sprint_deadline)
 
         var closePopup = true
         if (sprintNumberEditText.text.trim().isEmpty()) {
@@ -406,8 +421,13 @@ object PopupController {
             sprintNumberEditText.error = context.resources.getString(R.string.error_sprint_number_integer)
             closePopup = false
         } else if(ScrumbleController.sprints.find { it.number == sprintNumberEditText.text.toString().toInt() } != null
-            && !sprintSpecified) {
+            && sprint == null) {
             sprintNumberEditText.error = context.resources.getString(R.string.error_sprint_number_exists)
+            closePopup = false
+        }
+        else if(ScrumbleController.sprints.any { it != sprint && (startCal.time in it.startDate..it.deadline || endCal.time in it.startDate..it.deadline) } ) {
+            startDateEditText.error = context.resources.getString(R.string.error_sprint_collision)
+            deadlineEditText.error = context.resources.getString(R.string.error_sprint_collision)
             closePopup = false
         }
 

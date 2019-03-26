@@ -12,7 +12,7 @@ import java.util.*
 class SprintDeserializer: JsonDeserializer<Sprint> {
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Sprint {
         val jsonObject = json.asJsonObject
-        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
         val id = jsonObject.get("id").asInt
         val number = jsonObject.get("number").asInt

@@ -37,13 +37,23 @@
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/sprint_text_view2"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.65"
-            app:met_floatingLabel="none"
-            android:textAlignment="viewEnd"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:hint=""
+            app:met_floatingLabel="highlight"
             app:met_primaryColor="@color/colorAccent"
             android:textSize="18sp"
             android:focusable="false" />
+
+        <ImageButton
+            android:id="@+id/sprint_info_image"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.15"
+            android:src="@drawable/sc_info"
+            android:background="@android:color/transparent"
+            android:tint="@color/colorAccent"
+            android:scaleType="fitCenter" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

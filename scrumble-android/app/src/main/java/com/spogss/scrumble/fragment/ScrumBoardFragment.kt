@@ -17,6 +17,7 @@ import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.viewItem.CustomDragItem
 import com.woxthebox.draglistview.BoardView
+import kotlinx.android.synthetic.main.fragment_my_tasks.*
 
 
 class ScrumBoardFragment: Fragment() {
@@ -30,25 +31,26 @@ class ScrumBoardFragment: Fragment() {
 
         val noCurrentTextView = mView.findViewById<TextView>(R.id.text_view_no_current_project)
         if(ScrumbleController.isCurrentProjectSpecified()) {
-            if (ScrumbleController.isCurrentSprintSpecified())
+            if (ScrumbleController.isCurrentSprintSpecified()) {
+                noCurrentTextView.visibility = View.GONE
                 setupBoardView()
+            }
             else {
                 noCurrentTextView.visibility = View.VISIBLE
                 noCurrentTextView.text = resources.getString(R.string.error_no_current_sprint)
             }
         }
-        else
-            noCurrentTextView.visibility = View.VISIBLE
+        else noCurrentTextView.visibility = View.VISIBLE
 
         val fab = mView.findViewById(R.id.fab_add_task) as FloatingActionButton
         fab.setOnClickListener {
-            if(ScrumbleController.isCurrentSprintSpecified()) {
+            if(ScrumbleController.isCurrentProjectSpecified()) {
                 PopupController.setupTaskPopup(context!!, { view ->
                     UIToScrumbleController.addTask(view, mView, context!!) { setupBoardView() }
-                })
+                }, {})
             }
             else
-                MiscUIController.showError(context!!, resources.getString(R.string.error_current_project_current_sprint))
+                MiscUIController.showError(context!!, resources.getString(R.string.error_current_project))
         }
 
         return mView
@@ -56,6 +58,17 @@ class ScrumBoardFragment: Fragment() {
 
     fun setupBoardView() {
         val boardView = mView.findViewById(R.id.board_view) as BoardView
+        val noCurrentTextView = mView.findViewById<TextView>(R.id.text_view_no_current_project)
+
+        if (ScrumbleController.isCurrentSprintSpecified())
+            noCurrentTextView.visibility = View.GONE
+        else {
+            boardView.visibility = View.GONE
+            noCurrentTextView.visibility = View.VISIBLE
+            noCurrentTextView.text = resources.getString(R.string.error_no_current_sprint)
+            return
+        }
+
         boardView.setSnapToColumnsWhenScrolling(true)
         boardView.setSnapToColumnWhenDragging(true)
         boardView.setSnapDragItemToTouch(true)

@@ -4,11 +4,19 @@
     android:paddingTop="12dp">
 
     <TextView
+        android:id="@+id/select_list_item_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@color/colorAccent"
+        android:layout_marginEnd="5dp"/>
+
+    <TextView
         android:id="@+id/select_list_item_task"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:layout_toEndOf="@id/select_list_item_state"/>
 
     <CheckBox
         android:id="@+id/select_list_item_checkbox"

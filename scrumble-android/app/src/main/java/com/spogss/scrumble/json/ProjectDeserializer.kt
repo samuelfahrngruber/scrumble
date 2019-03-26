@@ -27,9 +27,9 @@ class ProjectDeserializer: JsonDeserializer<Project> {
         var currentSprint: Sprint? = null
 
         val project = Project(id, name, productOwner!!, currentSprint)
-        val sprintJson = jsonObject.get("currentSprint")
+        val sprintJson = jsonObject.get("currentsprint")
         if(!sprintJson.isJsonNull) {
-            currentSprint = Sprint(sprintJson.asInt, 0, Date(), Date(), project)
+            currentSprint = ScrumbleController.sprints.find { it.id == sprintJson.asInt } ?: Sprint(sprintJson.asInt, 0, Date(), Date(), project)
             project.currentSprint = currentSprint
         }
 

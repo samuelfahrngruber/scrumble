@@ -82,6 +82,13 @@ class CustomDragItemAdapter
                     else if(fragment is MyTasksFragment)
                         (fragment as MyTasksFragment).setupDragListView()
                 }
+                }, {
+                    UIToScrumbleController.removeTask(task, context) {
+                        if(fragment is ScrumBoardFragment)
+                            (fragment as ScrumBoardFragment).setupBoardView()
+                        else if(fragment is MyTasksFragment)
+                            (fragment as MyTasksFragment).setupDragListView()
+                    }
                 }, task)
         }
 

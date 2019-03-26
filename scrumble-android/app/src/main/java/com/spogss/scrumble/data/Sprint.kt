@@ -20,11 +20,15 @@ class Sprint(var id: Int, var number: Int, var startDate: Date, var deadline: Da
     }
 
     override fun toString(): String {
-        return "#$number"
+        return "${toNumberString()}    ${timeSpan()}"
     }
 
     fun timeSpan(): String {
-        val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale("EN"))
+        val dateFormatter = SimpleDateFormat("dd.MM.yy", Locale("EN"))
         return "${dateFormatter.format(startDate)} - ${dateFormatter.format(deadline)}"
+    }
+
+    fun toNumberString(): String {
+        return "#$number"
     }
 }

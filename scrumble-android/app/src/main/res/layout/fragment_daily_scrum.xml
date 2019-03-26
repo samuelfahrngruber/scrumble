@@ -4,15 +4,34 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <xyz.sangcomz.stickytimelineview.TimeLineRecyclerView
-        android:id="@+id/time_line"
+    <LinearLayout
+        android:id="@+id/daily_scrum_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:sectionTitleTextColor="@color/colorAccent"
-        app:sectionSubTitleTextColor="@color/colorAccent"
-        app:timeLineColor="@color/colorAccent"
-        app:timeLineCircleColor="@color/colorAccent"
-        app:isSticky="true" />
+        android:orientation="vertical">
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/which_daily_scrums_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textSize="18sp"
+            android:hint="@string/show_daily_scrum_of"
+            android:text="@string/whole_project"
+            app:met_floatingLabel="highlight"
+            app:met_primaryColor="@color/colorAccent"
+            android:focusable="false" />
+
+        <xyz.sangcomz.stickytimelineview.TimeLineRecyclerView
+            android:id="@+id/time_line"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:sectionTitleTextColor="@color/colorAccent"
+            app:sectionSubTitleTextColor="@color/colorAccent"
+            app:timeLineColor="@color/colorAccent"
+            app:timeLineCircleColor="@color/colorAccent"
+            app:isSticky="true" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/text_view_no_current_project"

@@ -17,6 +17,7 @@ import com.spogss.scrumble.data.User
 import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.viewItem.CustomDragItem
 import com.woxthebox.draglistview.DragListView
+import kotlinx.android.synthetic.main.fragment_my_tasks.*
 
 
 class MyTasksFragment: Fragment() {
@@ -28,8 +29,10 @@ class MyTasksFragment: Fragment() {
 
         val noCurrentTextView = mView.findViewById<TextView>(R.id.text_view_no_current_project)
         if(ScrumbleController.isCurrentProjectSpecified()) {
-            if (ScrumbleController.isCurrentSprintSpecified())
+            if (ScrumbleController.isCurrentSprintSpecified()) {
+                noCurrentTextView.visibility = View.GONE
                 setupDragListView()
+            }
             else {
                 noCurrentTextView.visibility = View.VISIBLE
                 noCurrentTextView.text = resources.getString(R.string.error_no_current_sprint)
@@ -43,6 +46,17 @@ class MyTasksFragment: Fragment() {
 
     fun setupDragListView() {
         val dragListView = mView.findViewById<DragListView>(R.id.drag_list_view)
+        val noCurrentTextView = mView.findViewById<TextView>(R.id.text_view_no_current_project)
+
+        if (ScrumbleController.isCurrentSprintSpecified())
+            noCurrentTextView.visibility = View.GONE
+        else {
+            dragListView.visibility = View.GONE
+            noCurrentTextView.visibility = View.VISIBLE
+            noCurrentTextView.text = resources.getString(R.string.error_no_current_sprint)
+            return
+        }
+
         dragListView.recyclerView.isVerticalScrollBarEnabled = true
         dragListView.isDragEnabled = true
         dragListView.setLayoutManager(LinearLayoutManager(context))

@@ -27,9 +27,13 @@ import com.woxthebox.draglistview.swipe.ListSwipeHelper
 import com.woxthebox.draglistview.swipe.ListSwipeItem
 
 
-class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, private val team: MutableList<User>, private val sprints: MutableList<Sprint>,
-                                  val backlog: MutableList<Task>, private val fragment: ProjectsFragment, private val context: Context): RecyclerView.Adapter<CustomOverviewHeaderAdapter.ViewHolder>() {
+class CustomOverviewHeaderAdapter(val headers: MutableList<String>, private val team: MutableList<User>, private val sprints: MutableList<Sprint>,
+                                  var backlog: MutableList<Task>, private val fragment: ProjectsFragment, private val context: Context): RecyclerView.Adapter<CustomOverviewHeaderAdapter.ViewHolder>() {
     private val expandState = SparseBooleanArray()
+
+    private lateinit var teamAdapter: CustomSwipeItemAdapter
+    private lateinit var sprintAdapter: CustomProjectOverviewAdapter<Sprint>
+    private lateinit var backlogAdapter: CustomProjectOverviewAdapter<Task>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(context)
@@ -74,7 +78,7 @@ class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, priv
                     holder.listProjectOverviewSwipe.visibility = View.VISIBLE
 
                     val userItems = team.map { Pair(it.id, it) }.toMutableList()
-                    val teamAdapter = CustomSwipeItemAdapter(userItems, R.layout.item_list_swipeable, R.id.item_layout, false, context!!)
+                    teamAdapter = CustomSwipeItemAdapter(userItems, R.layout.item_list_swipeable, R.id.item_layout, false, context!!)
                     holder.listProjectOverviewSwipe.setAdapter(teamAdapter, true)
 
                     holder.listProjectOverviewSwipe.setSwipeListener(object : ListSwipeHelper.OnSwipeListener {
@@ -111,11 +115,11 @@ class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, priv
                 }
             }
             context.resources.getString(R.string.sprints) -> {
-                val sprintAdapter = CustomProjectOverviewAdapter(sprints, context, this, fragment)
+                sprintAdapter = CustomProjectOverviewAdapter(sprints, context, this, fragment)
                 holder.listProjectOverview.adapter = sprintAdapter
             }
             context.resources.getString(R.string.product_backlog) -> {
-                val backlogAdapter = CustomProjectOverviewAdapter(backlog, context, this, fragment)
+                backlogAdapter = CustomProjectOverviewAdapter(backlog, context, this, fragment)
                 holder.listProjectOverview.adapter = backlogAdapter
             }
         }
@@ -125,6 +129,18 @@ class CustomOverviewHeaderAdapter(private val headers: MutableList<String>, priv
         return headers.size
     }
 
+    fun updateDataSets() {
+        if(::teamAdapter.isInitialized && ::sprintAdapter.isInitialized && ::backlogAdapter.isInitialized) {
+            team.sortBy { it.name }
+            teamAdapter.notifyDataSetChanged()
+
+            sprints.sortBy { it.number }
+            sprintAdapter.notifyDataSetChanged()
+
+            backlog.sortBy { it.id }
+            backlogAdapter.notifyDataSetChanged()
+        }
+    }
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         var textView = v.findViewById<View>(R.id.text_view_header) as TextView

@@ -1,6 +1,9 @@
 package com.spogss.scrumble.controller
 
+import android.content.Context
+import android.util.Log
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
 import com.spogss.scrumble.connection.ScrumbleConnection
 import com.spogss.scrumble.data.*
 import com.spogss.scrumble.enums.TaskState
@@ -9,6 +12,8 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.json.JSONArray
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 
 object ScrumbleController {
     var users = mutableListOf<User>()
@@ -20,6 +25,8 @@ object ScrumbleController {
     var currentProject: Project? = null
     lateinit var currentUser: User
 
+    var lastUpdate = Date()
+
     fun login(user: User, onSuccess: (id: Int) -> Unit, onError: (message: String) -> Unit) {
         doAsync {
             val gson = GsonBuilder().registerTypeAdapter(User::class.java, UserSerializer())
@@ -29,7 +36,7 @@ object ScrumbleController {
             if (response.statusCode in 200..299) {
                 uiThread { onSuccess(response.jsonObject.getInt("id")) }
             } else
-                uiThread { onError(response.jsonObject.getString("details")) }
+                uiThread { onError(response.text) }
         }
     }
 
@@ -124,6 +131,8 @@ object ScrumbleController {
             val response = ScrumbleConnection.get("/user/$userId/project")
             if (response.statusCode in 200..299) {
                 projects.clear()
+                if(isCurrentProjectSpecified())
+                    projects.add(currentProject!!)
 
                 if (response.statusCode != 204) {
                     val gson = GsonBuilder().registerTypeAdapter(Project::class.java, ProjectDeserializer())
@@ -275,17 +284,33 @@ object ScrumbleController {
         }
     }
 
+    fun removeTask(taskId: Int, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val response = ScrumbleConnection.delete("/task/$taskId")
+
+            if (response.statusCode in 200..299)
+                uiThread { onSuccess() }
+            else
+                uiThread { onError(response.text) }
+        }
+    }
+
     fun loadDailyScrum(projectId: Int, onSuccess: () -> Unit, onError: (message: String) -> Unit) {
         doAsync {
-            val response = ScrumbleConnection.get("/project/$projectId/dailyscrum")
+            var url = "/project/$projectId/dailyscrum"
+
+            if(isCurrentSprintSpecified())
+                url += "?sprint=${currentProject!!.currentSprint!!.id}"
+
+            val response = ScrumbleConnection.get(url)
             if (response.statusCode in 200..299) {
                 dailyScrumEntries.clear()
 
                 if (response.statusCode != 204) {
                     val gson = GsonBuilder().registerTypeAdapter(DailyScrum::class.java, DailyScrumDeserializer())
                             .serializeNulls().create()
-                    dailyScrumEntries = gson.fromJson(response.jsonArray.toString(), Array<DailyScrum>::class.java)
-                            .sortedByDescending { it.date }.toMutableList()
+                    dailyScrumEntries = gson.fromJson(response.jsonArray.toString(), Array<DailyScrum>::class.java).toMutableList()
+                    dailyScrumEntries.sortWith(compareByDescending<DailyScrum> { it.date }.thenBy { it.user.name })
                 }
 
                 uiThread { onSuccess() }
@@ -307,6 +332,24 @@ object ScrumbleController {
         }
     }
 
+    fun loadChanges(projectId: Int, context: Context, onSuccess: (json: JSONArray, context: Context) -> Unit, onError: (message: String) -> Unit) {
+        doAsync {
+            val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.000'Z'", Locale.getDefault())
+            formatter.timeZone = TimeZone.getTimeZone("UTC")
+
+            val response = ScrumbleConnection.get("/project/$projectId/changes?timestamp=${formatter.format(lastUpdate)}")
+
+            if(response.statusCode in 200..299 && response.statusCode != 204) {
+                uiThread {
+                    ScrumbleController.lastUpdate = Date()
+                    onSuccess(response.jsonArray, context)
+                }
+            }
+            else if(response.statusCode != 204)
+                uiThread { onError(response.text) }
+        }
+    }
+
     fun updatePositions(oldPosition: Int, newPosition: Int, newState: TaskState, oldState: TaskState, sprint: Sprint) {
         tasks.filter {
             it.sprint != null && it.sprint!!.id == sprint.id
@@ -321,6 +364,15 @@ object ScrumbleController {
                 it.position++
             else if (oldState != newState && oldPosition < it.position && oldState == it.state)
                 it.position--
+        }
+    }
+
+    fun updatePositions(oldPosition: Int, state: TaskState, sprint: Sprint) {
+        tasks.filter {
+            it.sprint != null && it.sprint!!.id == sprint.id
+                    && it.state == state && it.position > oldPosition
+        }.forEach {
+            it.position--
         }
     }
 

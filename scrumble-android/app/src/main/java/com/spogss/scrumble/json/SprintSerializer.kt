@@ -12,7 +12,7 @@ import java.util.*
 class SprintSerializer: JsonSerializer<Sprint> {
     override fun serialize(sprint: Sprint, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         val jsonObject = JsonObject()
-        val formatter = SimpleDateFormat("YYYY-MM-dd", Locale.ENGLISH)
+        val formatter = SimpleDateFormat("YYYY-MM-dd", Locale.getDefault())
 
         println(sprint.number)
         jsonObject.addProperty("id", sprint.id)

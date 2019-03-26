@@ -16,9 +16,9 @@
 
     <string name="project">Project</string>
     <string name="sprint">Sprint</string>
+    <string name="sprints">Sprints</string>
     <string name="task">Task</string>
     <string name="team">Team</string>
-    <string name="sprints">Sprints</string>
 
     <string name="name">Name</string>
     <string name="info">Info</string>
@@ -31,6 +31,7 @@
     <string name="select_color">Select color</string>
 
     <string name="current_sprint">Current Sprint</string>
+    <string name="set_current_sprint">Set Current Sprint</string>
     <string name="product_backlog">Product Backlog</string>
 
     <string name="change_project">Change project</string>
@@ -59,11 +60,16 @@
     <string name="error_username_does_not_exist">No user with the given name exists</string>
     <string name="error_no_current_project">No current project specified\nYou should select or create one</string>
     <string name="error_no_current_sprint">No current sprint specified\nYou should select or create one</string>
+    <string name="error_sprint_collision">Sprints cannot overlap</string>
 
     <string name="missing">MISSING</string>
 
     <string name="add">Add</string>
     <string name="remove">Remove</string>
-
     <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+
+    <string name="show_daily_scrum_of">Show dailyscrum of</string>
+    <string name="whole_project">Whole project</string>
+    <string name="no_sprint">No sprint</string>
 </resources>

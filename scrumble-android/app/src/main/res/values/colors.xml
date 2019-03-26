@@ -5,9 +5,9 @@
     <color name="colorAccent">@android:color/holo_blue_dark</color>
     <color name="colorAccentLight">@android:color/holo_blue_light</color>
 
-    <color name="colorLightRed">#ff8983</color>
-    <color name="colorLightOrange">#ffd754</color>
-    <color name="colorLightGreen">#5eba73</color>
+    <color name="colorLightRed">#ffb8b5</color>
+    <color name="colorLightOrange">#ffeeb5</color>
+    <color name="colorLightGreen">#e4fcc9</color>
 
     <color name="datepicker_primary">@android:color/holo_blue_dark</color>
     <color name="datepicker_primary_dark">@android:color/holo_blue_light</color>
@@ -15,16 +15,16 @@
 
     <array name="palette">
         <item>#ffffff</item>
-        <item>#fdd7ff</item>
-        <item>#ff8eec</item>
-        <item>#8A79FF</item>
-        <item>#4fa5ff</item>
-        <item>#73ffe8</item>
-        <item>#39FFB0</item>
-        <item>#b5ff8d</item>
-        <item>#fff082</item>
-        <item>#ffb481</item>
-        <item>#ff8080</item>
-        <item>#ff9ea6</item>
+        <item>#fdddff</item>
+        <item>#ffc1f5</item>
+        <item>#c7beff</item>
+        <item>#a5d1ff</item>
+        <item>#c2fff5</item>
+        <item>#bfffe6</item>
+        <item>#c7ffa9</item>
+        <item>#fff5ab</item>
+        <item>#ffcdab</item>
+        <item>#ffa0a0</item>
+        <item>#ffd5d9</item>
     </array>
 </resources>

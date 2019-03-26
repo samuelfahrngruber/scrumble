@@ -1,8 +1,13 @@
 package com.spogss.scrumble.viewItem
 
+import android.content.Context
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.AbstractItem
@@ -29,11 +34,16 @@ class CustomSelectableItem(val task: Task?): AbstractItem<CustomSelectableItem, 
         super.bindView(viewHolder, payloads)
 
         viewHolder.checkBox.isChecked = isSelected
-        viewHolder.taskName.text = task?.toString() ?: ""
+
+        if(task != null) {
+            viewHolder.taskState.text = task.state.getShortForm()
+            viewHolder.taskName.text = task.toString()
+        }
     }
 
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val taskName = view.findViewById<View>(R.id.select_list_item_task) as TextView
+        val taskState = view.findViewById<View>(R.id.select_list_item_state) as TextView
         val checkBox = view.findViewById<View>(R.id.select_list_item_checkbox) as CheckBox
     }
 

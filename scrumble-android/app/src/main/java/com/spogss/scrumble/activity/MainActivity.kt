@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.spogss.scrumble.R
 import com.spogss.scrumble.controller.MiscUIController
+import com.spogss.scrumble.controller.ScheduleController
 import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.controller.SharedPreferencesController
 import com.spogss.scrumble.fragment.DailyScrumFragment
@@ -24,9 +25,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
     private val fragments = mutableListOf<Fragment>()
 
+    lateinit var selectedFragment: Fragment
+
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         var res = true
-        var selectedFragment = fragments[0]
+        selectedFragment = fragments[0]
         when (item.itemId) {
             R.id.navigation_my_tasks -> {
                 setupTitle("${ScrumbleController.currentUser.name.capitalize()}'${if(!ScrumbleController.currentUser.name.endsWith("s")) "s" else ""} Tasks")
@@ -112,6 +115,8 @@ class MainActivity : AppCompatActivity() {
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         navigation.selectedItemId = R.id.navigation_my_tasks
+
+        ScheduleController.run(this)
     }
 
     private fun setupFragments() {

@@ -13,13 +13,14 @@ import com.spogss.scrumble.activity.LoginActivity
 import com.spogss.scrumble.activity.MainActivity
 import com.spogss.scrumble.adapter.CustomOverviewHeaderAdapter
 import com.spogss.scrumble.controller.*
+import com.spogss.scrumble.data.Project
 import com.spogss.scrumble.data.Sprint
 import com.spogss.scrumble.enums.TaskState
 import kotlinx.android.synthetic.main.fragment_projects.*
 
 
 class ProjectsFragment : Fragment() {
-    private lateinit var customOverviewHeaderAdapter: CustomOverviewHeaderAdapter
+    lateinit var customOverviewHeaderAdapter: CustomOverviewHeaderAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -33,6 +34,7 @@ class ProjectsFragment : Fragment() {
 
         if (ScrumbleController.isCurrentProjectSpecified())
             setupTextViews()
+
         setupProjectsList()
         setupSpeedDial()
     }
@@ -48,7 +50,7 @@ class ProjectsFragment : Fragment() {
                 SharedPreferencesController.saveCurrentProjectToSharedPreferences(it.id, context as MainActivity)
                 (context as MainActivity).finish()
                 (context as MainActivity).startActivity((context as MainActivity).intent)
-            }, resources.getString(R.string.project), ScrumbleController.projects)
+            }, resources.getString(R.string.project), ScrumbleController.projects.filter { it != ScrumbleController.currentProject } as MutableList<Project>)
             R.id.menu_item_logout -> {
                 val intent = Intent(context, LoginActivity::class.java)
                 intent.putExtra("logout", true)
@@ -59,11 +61,14 @@ class ProjectsFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun setupTextViews() {
+     fun setupTextViews() {
+        if(product_owner_text_view == null) return
+
+        val sprint = ScrumbleController.currentProject!!.currentSprint
+
         product_owner_text_view.setText(ScrumbleController.currentProject!!.productOwner.toString())
 
         product_owner_text_view.setOnClickListener {
-
             PopupController.setupRecyclerViewPopup(context!!, { user ->
                 ScrumbleController.currentProject!!.productOwner = user
                 product_owner_text_view.setText(user.toString())
@@ -76,32 +81,62 @@ class ProjectsFragment : Fragment() {
         }
 
         if (ScrumbleController.isCurrentSprintSpecified()) {
-            sprint_text_view.setText(ScrumbleController.currentProject!!.currentSprint!!.toString())
-            sprint_text_view2.setText(ScrumbleController.currentProject!!.currentSprint!!.timeSpan())
-
-            setOnClickListenerToSprintTextView(sprint_text_view)
-            setOnClickListenerToSprintTextView(sprint_text_view2)
+            sprint_text_view.setText(sprint!!.toNumberString())
+            sprint_text_view2.setText(sprint.timeSpan())
         }
-    }
+        else {
+            sprint_text_view.setText("")
+            sprint_text_view2.setText("")
+        }
 
-    private fun setOnClickListenerToSprintTextView(textView: TextView) {
-        textView.setOnClickListener {
-            if (ScrumbleController.isCurrentSprintSpecified()) {
-                val sprint = ScrumbleController.currentProject!!.currentSprint!!
+        setOnClickListenerToSprintTextView(sprint_text_view)
+        setOnClickListenerToSprintTextView(sprint_text_view2)
+
+        sprint_info_image.setOnClickListener {
+            if(ScrumbleController.isCurrentSprintSpecified()) {
                 PopupController.setupSprintPopup(context!!, { view ->
-                    UIToScrumbleController.updateSprint(sprint, view, customOverviewHeaderAdapter, context!!)
+                    UIToScrumbleController.updateSprint(sprint!!, view, customOverviewHeaderAdapter, context!!)
                     { isCurrent ->
                         if (isCurrent) {
-                            sprint_text_view.setText(sprint.toString())
+                            sprint_text_view.setText(sprint.toNumberString())
                             sprint_text_view2.setText(sprint.timeSpan())
+                            ScrumbleController.currentProject!!.currentSprint = sprint
                         } else {
                             sprint_text_view.setText("")
                             sprint_text_view2.setText("")
                             ScrumbleController.currentProject!!.currentSprint = null
                         }
                         customOverviewHeaderAdapter.notifyDataSetChanged()
+
+                        ScrumbleController.updateProject(ScrumbleController.currentProject!!.id, ScrumbleController.currentProject!!, {}, { message ->
+                            MiscUIController.showError(context!!, message)
+                        })
                     }
                 }, sprint)
+            }
+        }
+    }
+
+    private fun setOnClickListenerToSprintTextView(textView: TextView) {
+        textView.setOnClickListener {
+            if (ScrumbleController.isCurrentProjectSpecified()) {
+                val list = mutableListOf<Any>("no current sprint")
+                list.addAll(ScrumbleController.sprints.filter { s -> s != ScrumbleController.currentProject!!.currentSprint })
+
+                PopupController.setupRecyclerViewPopup(context!!, { any ->
+                    if (any is Sprint) {
+                        ScrumbleController.currentProject!!.currentSprint = any
+                        sprint_text_view.setText(any.toNumberString())
+                        sprint_text_view2.setText(any.timeSpan())
+                    } else {
+                        ScrumbleController.currentProject!!.currentSprint = null
+                        sprint_text_view.setText("")
+                        sprint_text_view2.setText("")
+                    }
+                    ScrumbleController.updateProject(ScrumbleController.currentProject!!.id, ScrumbleController.currentProject!!, {}, { message ->
+                        MiscUIController.showError(context!!, message)
+                    })
+                }, resources.getString(R.string.set_current_sprint), list)
             }
         }
     }

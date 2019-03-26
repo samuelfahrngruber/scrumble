@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.spogss.scrumble.R
 import com.spogss.scrumble.activity.MainActivity
+import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.PopupController
 import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.controller.UIToScrumbleController
@@ -38,7 +39,7 @@ class CustomProjectOverviewAdapter<T>(private val data: MutableList<T>, private 
                 holder.textView2.visibility = View.GONE
             }
             is Sprint -> {
-                holder.textView1.text = item.toString()
+                holder.textView1.text = item.toNumberString()
                 holder.textView2.text = item.timeSpan()
                 holder.textView2.visibility = View.VISIBLE
 
@@ -46,19 +47,17 @@ class CustomProjectOverviewAdapter<T>(private val data: MutableList<T>, private 
                     PopupController.setupSprintPopup(context, { view ->
                         UIToScrumbleController.updateSprint(item, view, customOverviewHeaderAdapter, context) { isCurrent ->
                             if (item == ScrumbleController.currentProject!!.currentSprint) {
-                                if(isCurrent) {
-                                    fragment.sprint_text_view.setText(item.toString())
+                                if (isCurrent) {
+                                    fragment.sprint_text_view.setText(item.toNumberString())
                                     fragment.sprint_text_view2.setText(item.timeSpan())
-                                }
-                                else {
+                                } else {
                                     fragment.sprint_text_view.setText("")
                                     fragment.sprint_text_view2.setText("")
                                     ScrumbleController.currentProject!!.currentSprint = null
                                 }
-                            }
-                            else {
-                                if(isCurrent) {
-                                    fragment.sprint_text_view.setText(item.toString())
+                            } else {
+                                if (isCurrent) {
+                                    fragment.sprint_text_view.setText(item.toNumberString())
                                     fragment.sprint_text_view2.setText(item.timeSpan())
                                     ScrumbleController.currentProject!!.currentSprint = item
                                 }
@@ -66,6 +65,10 @@ class CustomProjectOverviewAdapter<T>(private val data: MutableList<T>, private 
 
                             customOverviewHeaderAdapter.notifyDataSetChanged()
                             notifyDataSetChanged()
+
+                            ScrumbleController.updateProject(ScrumbleController.currentProject!!.id, ScrumbleController.currentProject!!, {}, { message ->
+                                MiscUIController.showError(context, message)
+                            })
                         }
                     }, item)
                 }
@@ -74,7 +77,12 @@ class CustomProjectOverviewAdapter<T>(private val data: MutableList<T>, private 
                 holder.textView1.text = item.toString()
                 holder.textView2.visibility = View.GONE
                 holder.rlProjectOverview.setOnClickListener {
-                    PopupController.setupTaskPopup(context, { view -> UIToScrumbleController.updateTask(item, view, context) { notifyDataSetChanged() } }, item)
+                    PopupController.setupTaskPopup(context, { view ->
+                        UIToScrumbleController.updateTask(item, view, context) { notifyDataSetChanged() }
+                    }, {
+                        data.remove(item)
+                        UIToScrumbleController.removeTask(item, context) { notifyDataSetChanged() }
+                    }, item)
                 }
             }
         }
