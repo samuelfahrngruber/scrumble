@@ -464,4 +464,23 @@ object PopupController {
                 }
                 .build().show((context as MainActivity).supportFragmentManager, context.resources.getString(R.string.select_color))
     }
+
+    fun setupConfirmPopup(context: Context, title: String, message: String, callback: () -> Unit) {
+        val dialogBuilder = MaterialDialog.Builder(context)
+        dialogBuilder.setTitle(title)
+        dialogBuilder.setTitleColor(ContextCompat.getColor(context, R.color.colorAccent))
+        dialogBuilder.setMessage(message)
+        dialogBuilder.setPositiveButton(android.R.string.ok, null)
+        dialogBuilder.setNegativeButton(R.string.cancel, null)
+        dialogBuilder.setButtonTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+
+        val dial = dialogBuilder.create()
+        dial.setOnShowListener {
+            dial.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener {
+                callback()
+            }
+        }
+
+        dial.show()
+    }
 }

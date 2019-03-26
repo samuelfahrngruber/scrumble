@@ -9,13 +9,41 @@
     android:gravity="center"
     tools:context=".activity.MainActivity">
 
-    <com.appersiano.progressimage.ProgressImage
-        android:id="@+id/image_progress"
+    <RelativeLayout
+        android:id="@+id/relative_layout_loading"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:imageShadowColor="@color/colorAccentLight"
-        app:percentageTextColor="@color/colorAccent"
-        app:srcImage="@drawable/sc_logo"/>
+        android:layout_height="wrap_content">
+
+        <com.appersiano.progressimage.ProgressImage
+            android:id="@+id/image_progress"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:imageShadowColor="@color/colorAccentLight"
+            app:percentageTextColor="@color/colorAccent"
+            app:srcImage="@drawable/sc_logo" />
+
+        <TextView
+            android:id="@+id/textView_did_you_know_that"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/image_progress"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:text="@string/did_you_know_that"
+            android:textSize="16sp"/>
+
+        <com.tomer.fadingtextview.FadingTextView
+            android:id="@+id/fadingTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView_did_you_know_that"
+            android:gravity="center"
+            android:textColor="@color/colorAccent"
+            app:timeout="3000"
+            android:textSize="16sp"/>
+
+    </RelativeLayout>
+
 
     <FrameLayout
         android:id="@+id/frame_layout"

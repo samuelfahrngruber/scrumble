@@ -35,7 +35,10 @@
     <string name="product_backlog">Product Backlog</string>
 
     <string name="change_project">Change project</string>
+    <string name="refresh">Refresh</string>
+    <string name="confirm_refresh">You are about to refresh the whole project\nThis may take a few seconds...</string>
     <string name="logout">Logout</string>
+    <string name="confirm_logout">Do you really want to log out?</string>
 
     <string name="responsible">Responsible</string>
     <string name="verify">Verify</string>
@@ -71,5 +74,14 @@
 
     <string name="show_daily_scrum_of">Show dailyscrum of</string>
     <string name="whole_project">Whole project</string>
-    <string name="no_sprint">No sprint</string>
+
+    <string name="did_you_know_that">Did you know that...</string>
+    <string-array name="tipps">
+        <item>the productowner can also work on the project?</item>
+        <item>dailyscrums are generated daily?</item>
+        <item>110% of the scrumble customers are happy customers?</item>
+        <item>dailyscrums are generated daily?</item>
+        <item>the dailyscrums of "MISSING" members are marked red?</item>
+        <item>a user can work on various projects?</item>
+    </string-array>
 </resources>

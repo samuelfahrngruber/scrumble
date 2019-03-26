@@ -5,7 +5,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 object ScrumbleConnection {
-    var baseUrl = "https://scrumble-api.herokuapp.com/scrumble" //http://192.168.191.170:8080/scrumble //https://scrumble-api.herokuapp.com/scrumble
+    var baseUrl = "https://scrumble-api.herokuapp.com/scrumble" //http://192.168.193.102:8080/scrumble //https://scrumble-api.herokuapp.com/scrumble
 
     fun get(url: String): Response {
         return khttp.get(baseUrl + url)

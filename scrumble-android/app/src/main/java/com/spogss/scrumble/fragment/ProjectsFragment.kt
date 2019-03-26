@@ -51,11 +51,20 @@ class ProjectsFragment : Fragment() {
                 (context as MainActivity).finish()
                 (context as MainActivity).startActivity((context as MainActivity).intent)
             }, resources.getString(R.string.project), ScrumbleController.projects.filter { it != ScrumbleController.currentProject } as MutableList<Project>)
+            R.id.menu_item_refresh -> {
+                PopupController.setupConfirmPopup(context!!, context!!.resources.getString(R.string.refresh), context!!.resources.getString(R.string.confirm_refresh)) {
+                    val intent = Intent(context, MainActivity::class.java)
+                    (context as MainActivity).finish()
+                    startActivity(intent)
+                }
+            }
             R.id.menu_item_logout -> {
-                val intent = Intent(context, LoginActivity::class.java)
-                intent.putExtra("logout", true)
-                (context as MainActivity).finish()
-                startActivity(intent)
+                PopupController.setupConfirmPopup(context!!, context!!.resources.getString(R.string.logout), context!!.resources.getString(R.string.confirm_logout)) {
+                    val intent = Intent(context, LoginActivity::class.java)
+                    intent.putExtra("logout", true)
+                    (context as MainActivity).finish()
+                    startActivity(intent)
+                }
             }
         }
         return super.onOptionsItemSelected(item)
