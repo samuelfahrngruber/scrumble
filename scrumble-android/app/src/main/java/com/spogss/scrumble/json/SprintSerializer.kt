@@ -14,9 +14,8 @@ class SprintSerializer: JsonSerializer<Sprint> {
         val jsonObject = JsonObject()
         val formatter = SimpleDateFormat("YYYY-MM-dd", Locale.getDefault())
 
-        println(sprint.number)
         jsonObject.addProperty("id", sprint.id)
-        jsonObject.addProperty("sprintnumber", sprint.number)
+        jsonObject.addProperty("number", sprint.number)
         jsonObject.addProperty("startdate", formatter.format(sprint.startDate))
         jsonObject.addProperty("deadline", formatter.format(sprint.deadline))
         jsonObject.addProperty("project", sprint.project.id)

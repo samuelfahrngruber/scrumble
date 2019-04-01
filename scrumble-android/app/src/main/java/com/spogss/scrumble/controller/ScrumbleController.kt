@@ -36,7 +36,7 @@ object ScrumbleController {
             if (response.statusCode in 200..299) {
                 uiThread { onSuccess(response.jsonObject.getInt("id")) }
             } else
-                uiThread { onError(response.text) }
+                uiThread { onError(response.jsonObject.getString("details")) }
         }
     }
 

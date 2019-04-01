@@ -6,10 +6,7 @@ import android.graphics.drawable.GradientDrawable
 import android.text.InputType
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.ArrayAdapter
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,6 +39,7 @@ import java.util.*
 
 object PopupController {
     private var dialog: MaterialDialog? = null
+    private var dialogTask: MaterialDialog? = null
 
     val startCal = Calendar.getInstance()!!
     val endCal = Calendar.getInstance()!!
@@ -55,7 +53,7 @@ object PopupController {
         dialogBuilder.setButtonTextColor(ContextCompat.getColor(context, R.color.colorAccent))
         dialogBuilder.setCanceledOnTouchOutside(false)
 
-        if(task != null) dialogBuilder.setNeutralButton(R.string.delete, null)
+        if(task != null) dialogBuilder.setNeutralButton(R.string.remove, null)
 
         val customView = View.inflate(context, R.layout.popup_task, null)
 
@@ -112,23 +110,22 @@ object PopupController {
         dialogBuilder.setScrollableArea(ScrollableArea.Area.CONTENT)
         dialogBuilder.setView(customView)
 
-        val dial = dialogBuilder.create()
-        dial.setOnShowListener {
-            dial.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener {
+        dialogTask = dialogBuilder.create()
+        dialogTask!!.setOnShowListener {
+            dialogTask!!.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener {
                 if (taskDialogButtonClick(customView, context)) {
                     callback(customView)
-                    dial.dismiss()
+                    dialogTask!!.dismiss()
                 }
             }
             if(task != null) {
-                dial.getButton(MaterialDialog.BUTTON_NEUTRAL).setOnClickListener {
+                dialogTask!!.getButton(MaterialDialog.BUTTON_NEUTRAL).setOnClickListener {
                     negativeCallback()
-                    dial.dismiss()
                 }
             }
         }
 
-        dial.show()
+        dialogTask!!.show()
     }
     private fun setupTaskSpinner(customView: View, context: Context, task: Task? = null) {
         val users = mutableListOf(User(-1, "", ""))
@@ -336,10 +333,21 @@ object PopupController {
                         adapter.notifyAdapterItemChanged(position)
                     }
                 }, {
-                    UIToScrumbleController.removeTask(item.task, context) {
-                        adapter.adapterItems.removeAt(position)
-                        adapter.notifyAdapterDataSetChanged()
-                    }
+                    PopupController.setupDeleteTaskPopup(context, { delete ->
+                        if(delete) {
+                            UIToScrumbleController.removeTask(item.task, context) {
+                                adapter.adapterItems.removeAt(position)
+                                adapter.notifyAdapterDataSetChanged()
+                            }
+                        }
+                        else {
+                            item.task.state = TaskState.PRODUCT_BACKLOG
+                            item.task.sprint = null
+                            ScrumbleController.updateTask(item.task.id, item.task, {}, { MiscUIController.showError(context, it) } )
+                            (adapter.getExtension(SelectExtension::class.java as Class<SelectExtension<CustomSelectableItem>>) as SelectExtension<CustomSelectableItem>).toggleSelection(position)
+                            adapter.notifyDataSetChanged()
+                        }
+                    }, item.task.state != TaskState.PRODUCT_BACKLOG)
                 }, item.task)
             true
         }
@@ -478,6 +486,37 @@ object PopupController {
         dial.setOnShowListener {
             dial.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener {
                 callback()
+            }
+        }
+
+        dial.show()
+    }
+
+    fun setupDeleteTaskPopup(context: Context, callback: (delete: Boolean) -> Unit, isInSprint: Boolean = true) {
+        val dialogBuilder = MaterialDialog.Builder(context)
+        dialogBuilder.setTitle("Remove Task")
+        dialogBuilder.setTitleColor(ContextCompat.getColor(context, R.color.colorAccent))
+        dialogBuilder.setPositiveButton(android.R.string.ok, null)
+        dialogBuilder.setNegativeButton(R.string.cancel, null)
+        dialogBuilder.setButtonTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+
+        val customView = View.inflate(context, R.layout.popup_delete, null)
+        val toggleSwitch = customView.findViewById<ToggleSwitch>(R.id.popup_delete_task_toggle_button)
+
+        if(isInSprint) toggleSwitch.setCheckedPosition(0)
+        else {
+            toggleSwitch.setCheckedPosition(1)
+            toggleSwitch.isEnabled = false
+        }
+
+        dialogBuilder.setView(customView)
+
+        val dial = dialogBuilder.create()
+        dial.setOnShowListener {
+            dial.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener {
+                callback(toggleSwitch.checkedPosition == 1)
+                dial.dismiss()
+                dialogTask!!.dismiss()
             }
         }
 

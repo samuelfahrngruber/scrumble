@@ -197,7 +197,7 @@ class ProjectsFragment : Fragment() {
                             speed_dial.close()
                             UIToScrumbleController.addSprint(it, view!!, customOverviewHeaderAdapter, context!!) { sprint ->
                                 if (ScrumbleController.currentProject!!.currentSprint == sprint) {
-                                    sprint_text_view.setText(sprint.toString())
+                                    sprint_text_view.setText(sprint.toNumberString())
                                     sprint_text_view2.setText(sprint.timeSpan())
                                     customOverviewHeaderAdapter.notifyDataSetChanged()
                                 }

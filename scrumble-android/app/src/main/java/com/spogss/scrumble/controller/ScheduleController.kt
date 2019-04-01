@@ -142,8 +142,8 @@ object ScheduleController {
     private fun updateUI(context: Context) {
         val selectedFragment = (context as MainActivity).selectedFragment
         when(selectedFragment) {
-            is MyTasksFragment -> selectedFragment.setupDragListView()
-            is ScrumBoardFragment -> selectedFragment.setupBoardView()
+            is MyTasksFragment -> selectedFragment.refresh()
+            is ScrumBoardFragment -> selectedFragment.refresh()
             is DailyScrumFragment -> selectedFragment.setItems()
             is ProjectsFragment -> {
                 selectedFragment.setupTextViews()

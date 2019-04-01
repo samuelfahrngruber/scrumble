@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         supportActionBar!!.hide()
 
-        showTipps()
+        showTips()
 
         ScrumbleController.currentProject = null
         ScrumbleController.users.clear()
@@ -75,11 +75,11 @@ class MainActivity : AppCompatActivity() {
         loadData(SharedPreferencesController.loadCurrentProjectFromSharedPreferences(this))
     }
 
-    private fun showTipps() {
-        val tipps = resources.getStringArray(R.array.tipps).toMutableList()
-        tipps.shuffle()
+    private fun showTips() {
+        val tips = resources.getStringArray(R.array.tips).toMutableList()
+        tips.shuffle()
 
-        fadingTextView.setTexts(tipps.toTypedArray())
+        fadingTextView.setTexts(tips.toTypedArray())
     }
 
     private fun loadData(projectId: Int) {

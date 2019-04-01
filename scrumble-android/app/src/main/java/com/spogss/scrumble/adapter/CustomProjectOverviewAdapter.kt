@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.spogss.scrumble.R
 import com.spogss.scrumble.activity.MainActivity
@@ -16,7 +17,10 @@ import com.spogss.scrumble.controller.UIToScrumbleController
 import com.spogss.scrumble.data.Sprint
 import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.data.User
+import com.spogss.scrumble.enums.TaskState
+import com.spogss.scrumble.fragment.MyTasksFragment
 import com.spogss.scrumble.fragment.ProjectsFragment
+import com.spogss.scrumble.fragment.ScrumBoardFragment
 import kotlinx.android.synthetic.main.fragment_projects.*
 
 class CustomProjectOverviewAdapter<T>(private val data: MutableList<T>, private val context: Context,
@@ -80,8 +84,10 @@ class CustomProjectOverviewAdapter<T>(private val data: MutableList<T>, private 
                     PopupController.setupTaskPopup(context, { view ->
                         UIToScrumbleController.updateTask(item, view, context) { notifyDataSetChanged() }
                     }, {
-                        data.remove(item)
-                        UIToScrumbleController.removeTask(item, context) { notifyDataSetChanged() }
+                        PopupController.setupDeleteTaskPopup(context, {
+                            data.remove(item)
+                            UIToScrumbleController.removeTask(item, context) { notifyDataSetChanged() }
+                        }, false)
                     }, item)
                 }
             }

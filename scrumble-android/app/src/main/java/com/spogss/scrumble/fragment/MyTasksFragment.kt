@@ -44,7 +44,7 @@ class MyTasksFragment: Fragment() {
         return mView
     }
 
-    fun setupDragListView() {
+    private fun setupDragListView() {
         val dragListView = mView.findViewById<DragListView>(R.id.drag_list_view)
         val noCurrentTextView = mView.findViewById<TextView>(R.id.text_view_no_current_project)
 
@@ -92,15 +92,7 @@ class MyTasksFragment: Fragment() {
 
         })
 
-        items.clear()
-        val myTasks = ScrumbleController.tasks.filter { it.sprint != null && it.sprint!!.id == ScrumbleController.currentProject!!.currentSprint!!.id }
-                .filter { it.responsible == ScrumbleController.currentUser || it.verify == ScrumbleController.currentUser }
-        TaskState.values().forEachIndexed { index, taskState ->
-            if(taskState != TaskState.PRODUCT_BACKLOG) {
-                val tasks = myTasks.filter { it.state == taskState }.toMutableList()
-                items.addAll(getDragItems(taskState, (index + 1) * -1, tasks))
-            }
-        }
+        loadItems()
 
         val adapter = CustomDragItemAdapter(items, R.layout.board_view_column_item, R.id.item_layout, true, context!!, this)
         dragListView.setAdapter(adapter, false)
@@ -116,5 +108,26 @@ class MyTasksFragment: Fragment() {
         tasks.sortedBy { it.position }.forEach { tempItems.add(Pair(it.id, it)) }
 
         return tempItems
+    }
+
+    fun refresh() {
+        val dragListView = mView.findViewById<DragListView>(R.id.drag_list_view)
+
+        loadItems()
+
+        dragListView.adapter.itemList = items.toList()
+        dragListView.adapter.notifyDataSetChanged()
+    }
+
+    private fun loadItems() {
+        items.clear()
+        val myTasks = ScrumbleController.tasks.filter { it.sprint != null && it.sprint!!.id == ScrumbleController.currentProject!!.currentSprint!!.id }
+                .filter { it.responsible == ScrumbleController.currentUser || it.verify == ScrumbleController.currentUser }
+        TaskState.values().forEachIndexed { index, taskState ->
+            if(taskState != TaskState.PRODUCT_BACKLOG) {
+                val tasks = myTasks.filter { it.state == taskState }.toMutableList()
+                items.addAll(getDragItems(taskState, (index + 1) * -1, tasks))
+            }
+        }
     }
 }

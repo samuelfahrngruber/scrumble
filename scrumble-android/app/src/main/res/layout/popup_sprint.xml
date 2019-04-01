@@ -14,7 +14,8 @@
         android:layout_marginBottom="@dimen/twelve_dp"
         android:hint="@string/sprint_number"
         app:met_floatingLabel="highlight"
-        app:met_primaryColor="@color/colorAccent" />
+        app:met_primaryColor="@color/colorAccent"
+        android:inputType="text"/>
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/popup_add_sprint_start_date"

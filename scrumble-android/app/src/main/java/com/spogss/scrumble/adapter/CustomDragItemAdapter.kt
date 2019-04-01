@@ -11,16 +11,18 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.spogss.scrumble.R
+import com.spogss.scrumble.controller.MiscUIController
 import com.spogss.scrumble.controller.PopupController
+import com.spogss.scrumble.controller.ScrumbleController
 import com.spogss.scrumble.controller.UIToScrumbleController
 import com.spogss.scrumble.data.Task
+import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.fragment.MyTasksFragment
 import com.spogss.scrumble.fragment.ScrumBoardFragment
 import com.woxthebox.draglistview.DragItemAdapter
 
 
-class CustomDragItemAdapter
-    : DragItemAdapter<Pair<Int, Task>, CustomDragItemAdapter.ViewHolder> {
+class CustomDragItemAdapter: DragItemAdapter<Pair<Int, Task>, CustomDragItemAdapter.ViewHolder> {
     private var res = 0
     private var mGrabHandleId = 0
     private var mDragOnLongPress = false
@@ -78,17 +80,31 @@ class CustomDragItemAdapter
             if(task.id >= 0)
                 PopupController.setupTaskPopup(context, { UIToScrumbleController.updateTask(task, it, context) {
                     if(fragment is ScrumBoardFragment)
-                        (fragment as ScrumBoardFragment).setupBoardView()
+                        (fragment as ScrumBoardFragment).refresh()
                     else if(fragment is MyTasksFragment)
-                        (fragment as MyTasksFragment).setupDragListView()
+                        (fragment as MyTasksFragment).refresh()
                 }
                 }, {
-                    UIToScrumbleController.removeTask(task, context) {
-                        if(fragment is ScrumBoardFragment)
-                            (fragment as ScrumBoardFragment).setupBoardView()
-                        else if(fragment is MyTasksFragment)
-                            (fragment as MyTasksFragment).setupDragListView()
-                    }
+                    PopupController.setupDeleteTaskPopup(context, { delete ->
+                        if(delete) {
+                            UIToScrumbleController.removeTask(task, context) {
+                                if (fragment is ScrumBoardFragment)
+                                    (fragment as ScrumBoardFragment).refresh()
+                                else if (fragment is MyTasksFragment)
+                                    (fragment as MyTasksFragment).refresh()
+                            }
+                        }
+                        else {
+                            task.state = TaskState.PRODUCT_BACKLOG
+                            task.sprint = null
+                            ScrumbleController.updateTask(task.id, task, {}, { MiscUIController.showError(context, it) } )
+
+                            if(fragment is ScrumBoardFragment)
+                                (fragment as ScrumBoardFragment).refresh()
+                            else if(fragment is MyTasksFragment)
+                                (fragment as MyTasksFragment).refresh()
+                        }
+                    })
                 }, task)
         }
 

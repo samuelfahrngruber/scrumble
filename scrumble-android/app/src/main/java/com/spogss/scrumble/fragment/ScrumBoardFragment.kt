@@ -18,6 +18,7 @@ import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.viewItem.CustomDragItem
 import com.woxthebox.draglistview.BoardView
 import kotlinx.android.synthetic.main.fragment_my_tasks.*
+import kotlinx.android.synthetic.main.fragment_scrum_board.*
 
 
 class ScrumBoardFragment: Fragment() {
@@ -56,7 +57,7 @@ class ScrumBoardFragment: Fragment() {
         return mView
     }
 
-    fun setupBoardView() {
+    private fun setupBoardView() {
         val boardView = mView.findViewById(R.id.board_view) as BoardView
         val noCurrentTextView = mView.findViewById<TextView>(R.id.text_view_no_current_project)
 
@@ -96,6 +97,21 @@ class ScrumBoardFragment: Fragment() {
         val header = View.inflate(context, R.layout.board_view_column_header, null)
         (header.findViewById(R.id.column_header_text_view) as TextView).text = taskState.toString().replace('_', ' ')
         boardView.addColumn(adapter, header, null, false)
+    }
+
+    fun refresh() {
+        val boardView = mView.findViewById(R.id.board_view) as BoardView
+
+        items.clear()
+        for(idx in 0 until boardView.columnCount) {
+            val tempItems = mutableListOf<Pair<Int, Task>>()
+            ScrumbleController.tasks.filter { it.sprint != null && it.sprint!!.id == ScrumbleController.currentProject!!.currentSprint!!.id && it.state == TaskState.values()[idx + 1] }
+                    .sortedBy { it.position }.forEach { tempItems.add(Pair(it.id, it)) }
+            items.add(tempItems)
+
+            boardView.getAdapter(idx).itemList = tempItems.toList()
+            boardView.getAdapter(idx).notifyDataSetChanged()
+        }
     }
 
     inner class ColumnChangeListener: BoardView.BoardListener {

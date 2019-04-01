@@ -107,10 +107,11 @@ object UIToScrumbleController {
         val tasksToAdd = (selectListTask.adapter as FastItemAdapter<CustomSelectableItem>).adapterItems
                 .filter { it.isSelected }.map { it.task!!.position = ++maxPos; it.task!! }
 
+        ScrumbleController.sprints.add(sprint)
+
         MiscUIController.startLoadingAnimation(mainView, context)
         ScrumbleController.addSprint(sprint, {id ->
             sprint.id = id
-            ScrumbleController.sprints.add(sprint)
             customOverviewHeaderAdapter.notifyDataSetChanged()
 
             tasksToAdd.forEach { task ->

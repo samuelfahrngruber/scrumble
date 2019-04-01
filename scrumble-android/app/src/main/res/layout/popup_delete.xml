@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.llollox.androidtoggleswitch.widgets.ToggleSwitch
+        android:id="@+id/popup_delete_task_toggle_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        app:checkedBackgroundColor="@color/colorAccent"
+        app:textToggleLeft="@string/move_to_product_backlog"
+        app:textToggleRight="@string/delete" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+</LinearLayout>
