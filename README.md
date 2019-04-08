@@ -27,6 +27,9 @@ Data model:
 * [Relational Concept](https://drive.google.com/file/d/1IUcQMx_k_iGSqM7_8woLZzctV2SF7k3R/view?usp=sharing)
 * [MongoDB Concept](https://drive.google.com/file/d/1No-tgxvGDaXy5VZoPew_oyJBf0xctDWK/view?usp=sharing)
 
+### Scrumble Manual:
+An accurate description of the Desktop and Android Application can be found [here](https://docs.google.com/document/d/1ObMENcIo9eM0OyYiRUMXxLutwI-M4s2oLs2kAPcDdPE/edit?usp=sharing)
+
 ## Reports
 
 ### October
