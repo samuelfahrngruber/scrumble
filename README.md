@@ -29,6 +29,7 @@ Data model:
 
 ### Scrumble Manual:
 An accurate description of the Desktop and Android Application can be found [here](https://docs.google.com/document/d/1ObMENcIo9eM0OyYiRUMXxLutwI-M4s2oLs2kAPcDdPE/edit?usp=sharing)
+If you want to provide feedback and help to improve our application, you can fill out a questionnair [here](https://www.umfrageonline.com/s/1c390c6)
 
 ## Reports
 
