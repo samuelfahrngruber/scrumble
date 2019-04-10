@@ -22,12 +22,17 @@ import xyz.sangcomz.stickytimelineview.model.SectionInfo
 
 
 class DailyScrumFragment : Fragment() {
+    private var whichDailyScums: Any = ""
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_daily_scrum, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if(whichDailyScums == "")
+            whichDailyScums = resources.getString(R.string.whole_project)
+
         if (ScrumbleController.isCurrentProjectSpecified())
             setupTimeLine()
         else {
@@ -42,12 +47,6 @@ class DailyScrumFragment : Fragment() {
     }
 
     private fun setupTimeLine() {
-        val whichDailyScums = if(which_daily_scrums_text_view.tag == null) {
-            which_daily_scrums_text_view.tag = resources.getString(R.string.whole_project)
-            which_daily_scrums_text_view.tag
-        }
-        else which_daily_scrums_text_view.tag
-
         time_line.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
 
         time_line.addItemDecoration(getSectionCallback(getValidDailyScrums(whichDailyScums)))
@@ -61,10 +60,10 @@ class DailyScrumFragment : Fragment() {
 
         which_daily_scrums_text_view.setOnClickListener {
             PopupController.setupRecyclerViewPopup(context!!, { item ->
-                which_daily_scrums_text_view.setText(item.toString())
-                which_daily_scrums_text_view.tag = item
-                setItems()
-            }, "Show dailyscrum of", list)
+                whichDailyScums = item
+                which_daily_scrums_text_view.setText(whichDailyScums.toString())
+                refresh()
+            }, resources.getString(R.string.show_daily_scrum_of), list)
         }
     }
 
@@ -76,10 +75,9 @@ class DailyScrumFragment : Fragment() {
         }
         else {
             ScrumbleController.dailyScrumEntries.filter {
-                it.sprint == null || it.date in it.sprint!!.startDate..it.sprint!!.deadline
+                it.sprint != null && it.date in it.sprint!!.startDate..it.sprint!!.deadline
             }
         }
-
         return dailyScums
     }
 
@@ -96,8 +94,10 @@ class DailyScrumFragment : Fragment() {
         }
     }
 
-    fun setItems() {
-        val item = which_daily_scrums_text_view.tag
+    fun refresh() {
+        if(!ScrumbleController.isCurrentProjectSpecified()) return
+
+        val item = whichDailyScums
 
         for(idx in 0 until time_line.itemDecorationCount)
             time_line.removeItemDecoration(time_line.getItemDecorationAt(idx))

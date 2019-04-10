@@ -64,7 +64,7 @@
             app:isw_inactive_tint_icon_left="@color/colorPrimary"
             app:isw_inactive_tint_icon_right="@color/colorPrimary"
             app:isw_thumb_color_left="@color/colorLightRed"
-            app:isw_thumb_color_right="@color/colorLightGreen" />
+            app:isw_thumb_color_right="@color/colorGreen" />
 
     </RelativeLayout>
 

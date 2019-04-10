@@ -49,7 +49,7 @@ class CustomTimeLineAdapter(private val layoutInflater: LayoutInflater, private 
         val taskList = mutableListOf("")
         taskList.addAll(ScrumbleController.tasks.map { it.toString() })
         holder.task.setAdapter(ArrayAdapter(layoutInflater.context, android.R.layout.simple_spinner_item, taskList))
-        holder.task.setOnItemClickListener { parent, view, position, id ->
+        holder.task.setOnItemClickListener { _, _, position, _ ->
             val taskName = taskList[position]
             if (dailyScrumEntry.task?.name != taskName) {
                 dailyScrumEntry.task = if (taskName == "") null else ScrumbleController.tasks.find { it.toString() == taskName }
@@ -68,25 +68,25 @@ class CustomTimeLineAdapter(private val layoutInflater: LayoutInflater, private 
 
     override fun getItemCount(): Int = data.size
 
-    fun setItems(items: List<DailyScrum>) {
+    /*fun setItems(items: List<DailyScrum>) {
         data = items as MutableList<DailyScrum>
         data.sortWith(compareByDescending<DailyScrum> { it.date }.thenBy { it.user.name })
         notifyDataSetChanged()
-    }
+    }*/
 
     private fun setCardColor(dailyScrumEntry: DailyScrum, holder: ViewHolder) {
         when {
-            dailyScrumEntry.description.trim() == layoutInflater.context.resources.getString(R.string.missing) -> holder.cardView.setCardBackgroundColor(ContextCompat.getColor(layoutInflater.context, R.color.colorLightRed))
+            dailyScrumEntry.description.trim().toUpperCase() == layoutInflater.context.resources.getString(R.string.missing) -> holder.cardView.setCardBackgroundColor(ContextCompat.getColor(layoutInflater.context, R.color.colorLightRed))
             dailyScrumEntry.description.trim() == "" -> holder.cardView.setCardBackgroundColor(ContextCompat.getColor(layoutInflater.context, R.color.colorLightOrange))
             else -> holder.cardView.setCardBackgroundColor(ContextCompat.getColor(layoutInflater.context, R.color.colorLightGreen))
         }
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val cardView = view.findViewById<View>(R.id.card_view) as CardView
-        val name = view.findViewById<View>(R.id.time_line_name) as TextView
-        val task = view.findViewById<View>(R.id.time_line_task) as MaterialBetterSpinner
-        val description = view.findViewById<View>(R.id.time_line_description) as MaterialEditText
-        val finish = view.findViewById<ImageButton>(R.id.time_line_finish) as ImageButton
+        val cardView = view.findViewById(R.id.card_view) as CardView
+        val name = view.findViewById(R.id.time_line_name) as TextView
+        val task = view.findViewById(R.id.time_line_task) as MaterialBetterSpinner
+        val description = view.findViewById(R.id.time_line_description) as MaterialEditText
+        val finish = view.findViewById(R.id.time_line_finish) as ImageButton
     }
 }

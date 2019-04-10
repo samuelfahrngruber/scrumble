@@ -2,6 +2,7 @@ package com.spogss.scrumble.controller
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.text.InputType
 import android.view.View
@@ -33,6 +34,7 @@ import com.woxthebox.draglistview.swipe.ListSwipeHelper
 import com.woxthebox.draglistview.swipe.ListSwipeItem
 import de.mrapp.android.dialog.MaterialDialog
 import de.mrapp.android.dialog.ScrollableArea
+import de.mrapp.android.dialog.animation.DialogAnimation
 import org.jetbrains.anko.find
 import java.text.SimpleDateFormat
 import java.util.*
@@ -40,18 +42,20 @@ import java.util.*
 object PopupController {
     private var dialog: MaterialDialog? = null
     private var dialogTask: MaterialDialog? = null
+    private var dialogRemove: MaterialDialog? = null
 
     val startCal = Calendar.getInstance()!!
     val endCal = Calendar.getInstance()!!
 
     fun setupTaskPopup(context: Context, callback: (view: View) -> Unit, negativeCallback: () -> Unit, task: Task? = null) {
+        if(dialogTask != null) return
+
         val dialogBuilder = MaterialDialog.Builder(context)
         dialogBuilder.setTitle(R.string.task)
         dialogBuilder.setTitleColor(ContextCompat.getColor(context, R.color.colorAccent))
         dialogBuilder.setPositiveButton(android.R.string.ok, null)
         dialogBuilder.setNegativeButton(R.string.cancel, null)
         dialogBuilder.setButtonTextColor(ContextCompat.getColor(context, R.color.colorAccent))
-        dialogBuilder.setCanceledOnTouchOutside(false)
 
         if(task != null) dialogBuilder.setNeutralButton(R.string.remove, null)
 
@@ -111,21 +115,23 @@ object PopupController {
         dialogBuilder.setView(customView)
 
         dialogTask = dialogBuilder.create()
-        dialogTask!!.setOnShowListener {
-            dialogTask!!.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener {
+        dialogTask?.setOnShowListener {
+            dialogTask?.getButton(MaterialDialog.BUTTON_POSITIVE)?.setOnClickListener {
                 if (taskDialogButtonClick(customView, context)) {
                     callback(customView)
-                    dialogTask!!.dismiss()
+                    dialogTask?.dismiss()
                 }
             }
             if(task != null) {
-                dialogTask!!.getButton(MaterialDialog.BUTTON_NEUTRAL).setOnClickListener {
+                dialogTask?.getButton(MaterialDialog.BUTTON_NEUTRAL)?.setOnClickListener {
                     negativeCallback()
                 }
             }
         }
 
-        dialogTask!!.show()
+        dialogTask?.setOnDismissListener { dialogTask = null }
+
+        dialogTask?.show()
     }
     private fun setupTaskSpinner(customView: View, context: Context, task: Task? = null) {
         val users = mutableListOf(User(-1, "", ""))
@@ -182,28 +188,33 @@ object PopupController {
     }
     private fun setupSpeedDialPopups(title: String, context: Context, customization: () -> View,
                                      buttonCallBack: (view: View) -> Boolean, callback: (view: View) -> Unit) {
+
+        if(dialog != null) return
+
         val dialogBuilder = MaterialDialog.Builder(context)
         dialogBuilder.setTitle(title)
         dialogBuilder.setTitleColor(ContextCompat.getColor(context, R.color.colorAccent))
         dialogBuilder.setPositiveButton(android.R.string.ok, null)
         dialogBuilder.setNegativeButton(R.string.cancel, null)
         dialogBuilder.setButtonTextColor(ContextCompat.getColor(context, R.color.colorAccent))
-        dialogBuilder.setCanceledOnTouchOutside(false)
 
         val customView = customization()
         dialogBuilder.setScrollableArea(ScrollableArea.Area.CONTENT)
         dialogBuilder.setView(customView)
 
         dialog = dialogBuilder.create()
-        dialog!!.setOnShowListener {
-            dialog!!.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener {
+        dialog?.setOnShowListener {
+            dialog?.getButton(MaterialDialog.BUTTON_POSITIVE)?.setOnClickListener {
                 if (buttonCallBack(customView)) {
-                    dialog!!.dismiss()
+                    dialog?.dismiss()
                     callback(customView)
                 }
             }
         }
-        dialog!!.show()
+
+        dialog?.setOnDismissListener { dialog = null }
+
+        dialog?.show()
     }
     private fun setupAddProjectAddTeamMemberCustomView(res: Int, context: Context, isProject: Boolean): View {
         val customView = View.inflate(context, res, null)
@@ -238,13 +249,13 @@ object PopupController {
             var ret = false
             if (event == null) {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    val name = teamMemberEditText.text.toString().trimEnd()
+                    val name = teamMemberEditText.text.toString().trim()
                     if (name != "") {
                         if(name.contains(" "))
                             MiscUIController.showError(context, context.resources.getString(R.string.error_whitespaces))
                         else {
                             MiscUIController.startLoadingAnimation(customView, context)
-                            dialog!!.getButton(MaterialDialog.BUTTON_POSITIVE).isEnabled = false
+                            dialog?.getButton(MaterialDialog.BUTTON_POSITIVE)?.isEnabled = false
 
                             ScrumbleController.getTeamMemberByName(name, { user ->
                                 try {
@@ -259,7 +270,7 @@ object PopupController {
                                     }
 
                                     MiscUIController.stopLoadingAnimation(customView, context)
-                                    dialog!!.getButton(MaterialDialog.BUTTON_POSITIVE).isEnabled = true
+                                    dialog?.getButton(MaterialDialog.BUTTON_POSITIVE)?.isEnabled = true
                                 } catch (ex: Exception) {
                                     ex.printStackTrace()
                                 }
@@ -268,7 +279,7 @@ object PopupController {
                                 try {
                                     MiscUIController.showError(context, context.resources.getString(R.string.error_username_does_not_exist))
                                     MiscUIController.stopLoadingAnimation(customView, context)
-                                    dialog!!.getButton(MaterialDialog.BUTTON_POSITIVE).isEnabled = true
+                                    dialog?.getButton(MaterialDialog.BUTTON_POSITIVE)?.isEnabled = true
                                 } catch (ex: Exception) {
                                     ex.printStackTrace()
                                 }
@@ -443,6 +454,8 @@ object PopupController {
     }
 
     fun <T> setupRecyclerViewPopup(context: Context, callback: (item: T) -> Unit, title: String, data: MutableList<T>) {
+        if(dialog != null) return
+
         val dialogBuilder = MaterialDialog.Builder(context)
         dialogBuilder.setTitle(title)
         dialogBuilder.setTitleColor(ContextCompat.getColor(context, R.color.colorAccent))
@@ -455,8 +468,11 @@ object PopupController {
         dialogBuilder.setView(customView)
 
         dialog = dialogBuilder.create()
-        recyclerView.adapter = CustomSimpleAdapter(data, context) { callback(it); dialog!!.dismiss() }
-        dialog!!.show()
+        recyclerView.adapter = CustomSimpleAdapter(data, context) { callback(it); dialog?.dismiss() }
+
+        dialog?.setOnDismissListener { dialog = null }
+
+        dialog?.show()
     }
 
     private fun setupColorPicker(context: Context, colorsRes: Int, selectedColor: Int, onColorSelected: (color: Int) -> Unit) {
@@ -474,6 +490,8 @@ object PopupController {
     }
 
     fun setupConfirmPopup(context: Context, title: String, message: String, callback: () -> Unit) {
+        if(dialog != null) return
+
         val dialogBuilder = MaterialDialog.Builder(context)
         dialogBuilder.setTitle(title)
         dialogBuilder.setTitleColor(ContextCompat.getColor(context, R.color.colorAccent))
@@ -482,19 +500,24 @@ object PopupController {
         dialogBuilder.setNegativeButton(R.string.cancel, null)
         dialogBuilder.setButtonTextColor(ContextCompat.getColor(context, R.color.colorAccent))
 
-        val dial = dialogBuilder.create()
-        dial.setOnShowListener {
-            dial.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener {
+        dialog = dialogBuilder.create()
+        dialog?.setOnShowListener {
+            dialog?.getButton(MaterialDialog.BUTTON_POSITIVE)?.setOnClickListener {
                 callback()
+                dialog?.dismiss()
             }
         }
 
-        dial.show()
+        dialog?.setOnDismissListener { dialog = null }
+
+        dialog?.show()
     }
 
     fun setupDeleteTaskPopup(context: Context, callback: (delete: Boolean) -> Unit, isInSprint: Boolean = true) {
+        if(dialogRemove != null) return
+
         val dialogBuilder = MaterialDialog.Builder(context)
-        dialogBuilder.setTitle("Remove Task")
+        dialogBuilder.setTitle(context.resources.getString(R.string.remove_task))
         dialogBuilder.setTitleColor(ContextCompat.getColor(context, R.color.colorAccent))
         dialogBuilder.setPositiveButton(android.R.string.ok, null)
         dialogBuilder.setNegativeButton(R.string.cancel, null)
@@ -511,15 +534,17 @@ object PopupController {
 
         dialogBuilder.setView(customView)
 
-        val dial = dialogBuilder.create()
-        dial.setOnShowListener {
-            dial.getButton(MaterialDialog.BUTTON_POSITIVE).setOnClickListener {
+        dialogRemove = dialogBuilder.create()
+        dialogRemove?.setOnShowListener {
+            dialogRemove?.getButton(MaterialDialog.BUTTON_POSITIVE)?.setOnClickListener {
                 callback(toggleSwitch.checkedPosition == 1)
-                dial.dismiss()
-                dialogTask!!.dismiss()
+                dialogRemove?.dismiss()
+                dialogTask?.dismiss()
             }
         }
 
-        dial.show()
+        dialogRemove?.setOnDismissListener { dialogRemove = null }
+
+        dialogRemove?.show()
     }
 }

@@ -17,26 +17,18 @@ import com.spogss.scrumble.data.User
 import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.viewItem.CustomDragItem
 import com.woxthebox.draglistview.DragListView
-import kotlinx.android.synthetic.main.fragment_my_tasks.*
 
 
 class MyTasksFragment: Fragment() {
-    private lateinit var mView: View
+    private var mView: View? = null
     private val items = mutableListOf<Pair<Int, Task>>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_my_tasks, container, false)
 
-        val noCurrentTextView = mView.findViewById<TextView>(R.id.text_view_no_current_project)
+        val noCurrentTextView = mView!!.findViewById<TextView>(R.id.text_view_no_current_project)
         if(ScrumbleController.isCurrentProjectSpecified()) {
-            if (ScrumbleController.isCurrentSprintSpecified()) {
-                noCurrentTextView.visibility = View.GONE
-                setupDragListView()
-            }
-            else {
-                noCurrentTextView.visibility = View.VISIBLE
-                noCurrentTextView.text = resources.getString(R.string.error_no_current_sprint)
-            }
+            setupDragListView()
         }
         else
             noCurrentTextView.visibility = View.VISIBLE
@@ -45,17 +37,7 @@ class MyTasksFragment: Fragment() {
     }
 
     private fun setupDragListView() {
-        val dragListView = mView.findViewById<DragListView>(R.id.drag_list_view)
-        val noCurrentTextView = mView.findViewById<TextView>(R.id.text_view_no_current_project)
-
-        if (ScrumbleController.isCurrentSprintSpecified())
-            noCurrentTextView.visibility = View.GONE
-        else {
-            dragListView.visibility = View.GONE
-            noCurrentTextView.visibility = View.VISIBLE
-            noCurrentTextView.text = resources.getString(R.string.error_no_current_sprint)
-            return
-        }
+        val dragListView = mView!!.findViewById<DragListView>(R.id.drag_list_view)
 
         dragListView.recyclerView.isVerticalScrollBarEnabled = true
         dragListView.isDragEnabled = true
@@ -71,12 +53,13 @@ class MyTasksFragment: Fragment() {
                 return dropPosition > 0
             }
         })
+
         dragListView.setDragListListener(object : DragListView.DragListListener {
             override fun onItemDragEnded(fromPosition: Int, toPosition: Int) {
                 if(fromPosition != toPosition) {
                     val task = items[toPosition].second
                     val newState = items[toPosition - 1].second.state
-                    val newPosition = items.filter { it.second.state == task.state }.indexOf(items[toPosition]) - 1
+                    val newPosition = items[toPosition - 1].second.position + 1
 
                     if(task.state != newState || task.position != toPosition)
                         ScrumbleController.updatePositions(task.position, newPosition, task.state, newState, task.sprint!!)
@@ -84,7 +67,10 @@ class MyTasksFragment: Fragment() {
                     task.state = newState
                     task.position = newPosition
 
-                    ScrumbleController.updateTask(task.id, task, { }, { MiscUIController.showError(context!!, it) })                }
+                    ScrumbleController.updateTask(task.id, task, { }, { MiscUIController.showError(context!!, it) })
+
+                    items.sortWith(compareBy({ it.second.state }, { it.second.position }))
+                }
             }
 
             override fun onItemDragging(itemPosition: Int, x: Float, y: Float) {}
@@ -96,6 +82,21 @@ class MyTasksFragment: Fragment() {
 
         val adapter = CustomDragItemAdapter(items, R.layout.board_view_column_item, R.id.item_layout, true, context!!, this)
         dragListView.setAdapter(adapter, false)
+
+        toggleShowDragListView()
+    }
+
+    fun refresh() {
+        if(mView == null || !ScrumbleController.isCurrentProjectSpecified()) return
+
+        val dragListView = mView!!.findViewById<DragListView>(R.id.drag_list_view)
+
+        loadItems()
+
+        (dragListView.adapter as CustomDragItemAdapter).setItems(items)
+        dragListView.adapter.notifyDataSetChanged()
+
+        toggleShowDragListView()
     }
 
     private fun getDragItems(state: TaskState, headerId: Int, tasks: MutableList<Task>): MutableList<Pair<Int, Task>> {
@@ -110,24 +111,31 @@ class MyTasksFragment: Fragment() {
         return tempItems
     }
 
-    fun refresh() {
-        val dragListView = mView.findViewById<DragListView>(R.id.drag_list_view)
-
-        loadItems()
-
-        dragListView.adapter.itemList = items.toList()
-        dragListView.adapter.notifyDataSetChanged()
-    }
-
     private fun loadItems() {
         items.clear()
-        val myTasks = ScrumbleController.tasks.filter { it.sprint != null && it.sprint!!.id == ScrumbleController.currentProject!!.currentSprint!!.id }
+        val myTasks = ScrumbleController.tasks.filter { it.sprint == ScrumbleController.currentProject!!.currentSprint }
                 .filter { it.responsible == ScrumbleController.currentUser || it.verify == ScrumbleController.currentUser }
+
         TaskState.values().forEachIndexed { index, taskState ->
             if(taskState != TaskState.PRODUCT_BACKLOG) {
                 val tasks = myTasks.filter { it.state == taskState }.toMutableList()
                 items.addAll(getDragItems(taskState, (index + 1) * -1, tasks))
             }
+        }
+    }
+
+    private fun toggleShowDragListView() {
+        val dragListView = mView!!.findViewById<DragListView>(R.id.drag_list_view)
+        val noCurrentTextView = mView!!.findViewById<TextView>(R.id.text_view_no_current_project)
+
+        if (ScrumbleController.isCurrentSprintSpecified()) {
+            noCurrentTextView.visibility = View.GONE
+            dragListView.visibility = View.VISIBLE
+        }
+        else {
+            dragListView.visibility = View.GONE
+            noCurrentTextView.visibility = View.VISIBLE
+            noCurrentTextView.text = resources.getString(R.string.error_no_current_sprint)
         }
     }
 }

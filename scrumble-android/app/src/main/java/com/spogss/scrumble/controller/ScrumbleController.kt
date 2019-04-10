@@ -2,6 +2,7 @@ package com.spogss.scrumble.controller
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.spogss.scrumble.connection.ScrumbleConnection
@@ -13,6 +14,7 @@ import org.jetbrains.anko.uiThread
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.*
 
 object ScrumbleController {
@@ -25,7 +27,7 @@ object ScrumbleController {
     var currentProject: Project? = null
     lateinit var currentUser: User
 
-    var lastUpdate = Date()
+    private var lastUpdate = Date()
 
     fun login(user: User, onSuccess: (id: Int) -> Unit, onError: (message: String) -> Unit) {
         doAsync {
@@ -339,10 +341,13 @@ object ScrumbleController {
 
             val response = ScrumbleConnection.get("/project/$projectId/changes?timestamp=${formatter.format(lastUpdate)}")
 
-            if(response.statusCode in 200..299 && response.statusCode != 204) {
-                uiThread {
-                    ScrumbleController.lastUpdate = Date()
-                    onSuccess(response.jsonArray, context)
+            if(response.statusCode in 200..299) {
+
+                if(response.statusCode != 204) {
+                    uiThread {
+                        lastUpdate = Date()
+                        onSuccess(response.jsonArray, context)
+                    }
                 }
             }
             else if(response.statusCode != 204)
@@ -350,27 +355,24 @@ object ScrumbleController {
         }
     }
 
-    fun updatePositions(oldPosition: Int, newPosition: Int, newState: TaskState, oldState: TaskState, sprint: Sprint) {
+    fun updatePositions(oldPosition: Int, newPosition: Int, oldState: TaskState, newState: TaskState, sprint: Sprint) {
         tasks.filter {
-            it.sprint != null && it.sprint!!.id == sprint.id
-                    && (it.state == newState || it.state == oldState)
+            it.sprint == sprint && (it.state == newState || it.state == oldState)
         }.forEach {
-
             if (oldState == newState && oldPosition > newPosition && oldPosition > it.position && newPosition <= it.position && newState == it.state)
                 it.position++
             else if (oldState == newState && oldPosition < newPosition && oldPosition < it.position && newPosition >= it.position && newState == it.state)
                 it.position--
-            else if (oldState != newState && newPosition <= it.position && newState == it.state)
+            else if (oldState != newState && newPosition <= it.position && newState == it.state) {
                 it.position++
+            }
             else if (oldState != newState && oldPosition < it.position && oldState == it.state)
                 it.position--
         }
     }
 
     fun updatePositions(oldPosition: Int, state: TaskState, sprint: Sprint) {
-        tasks.filter {
-            it.sprint != null && it.sprint!!.id == sprint.id
-                    && it.state == state && it.position > oldPosition
+        tasks.filter { it.sprint == sprint && it.state == state && it.position > oldPosition
         }.forEach {
             it.position--
         }

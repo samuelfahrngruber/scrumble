@@ -17,8 +17,6 @@ import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.enums.TaskState
 import com.spogss.scrumble.viewItem.CustomDragItem
 import com.woxthebox.draglistview.BoardView
-import kotlinx.android.synthetic.main.fragment_my_tasks.*
-import kotlinx.android.synthetic.main.fragment_scrum_board.*
 
 
 class ScrumBoardFragment: Fragment() {
@@ -31,17 +29,10 @@ class ScrumBoardFragment: Fragment() {
         mView = inflater.inflate(R.layout.fragment_scrum_board, container, false)
 
         val noCurrentTextView = mView.findViewById<TextView>(R.id.text_view_no_current_project)
-        if(ScrumbleController.isCurrentProjectSpecified()) {
-            if (ScrumbleController.isCurrentSprintSpecified()) {
-                noCurrentTextView.visibility = View.GONE
-                setupBoardView()
-            }
-            else {
-                noCurrentTextView.visibility = View.VISIBLE
-                noCurrentTextView.text = resources.getString(R.string.error_no_current_sprint)
-            }
-        }
-        else noCurrentTextView.visibility = View.VISIBLE
+        if(ScrumbleController.isCurrentProjectSpecified())
+            setupBoardView()
+        else
+            noCurrentTextView.visibility = View.VISIBLE
 
         val fab = mView.findViewById(R.id.fab_add_task) as FloatingActionButton
         fab.setOnClickListener {
@@ -59,16 +50,6 @@ class ScrumBoardFragment: Fragment() {
 
     private fun setupBoardView() {
         val boardView = mView.findViewById(R.id.board_view) as BoardView
-        val noCurrentTextView = mView.findViewById<TextView>(R.id.text_view_no_current_project)
-
-        if (ScrumbleController.isCurrentSprintSpecified())
-            noCurrentTextView.visibility = View.GONE
-        else {
-            boardView.visibility = View.GONE
-            noCurrentTextView.visibility = View.VISIBLE
-            noCurrentTextView.text = resources.getString(R.string.error_no_current_sprint)
-            return
-        }
 
         boardView.setSnapToColumnsWhenScrolling(true)
         boardView.setSnapToColumnWhenDragging(true)
@@ -81,15 +62,18 @@ class ScrumBoardFragment: Fragment() {
 
         boardView.clearBoard()
         items.clear()
+
         addColumn(TaskState.SPRINT_BACKLOG, boardView)
         addColumn(TaskState.IN_PROGRESS, boardView)
         addColumn(TaskState.TO_VERIFY, boardView)
         addColumn(TaskState.DONE, boardView)
+
+        toggleShowBoardView()
     }
 
     private fun addColumn(taskState: TaskState, boardView: BoardView) {
         val tempItems = mutableListOf<Pair<Int, Task>>()
-        ScrumbleController.tasks.filter { it.sprint != null && it.sprint!!.id == ScrumbleController.currentProject!!.currentSprint!!.id && it.state == taskState  }
+        ScrumbleController.tasks.filter { it.sprint == ScrumbleController.currentProject!!.currentSprint && it.state == taskState  }
                 .sortedBy { it.position }.forEach { tempItems.add(Pair(it.id, it)) }
         items.add(tempItems)
 
@@ -100,17 +84,36 @@ class ScrumBoardFragment: Fragment() {
     }
 
     fun refresh() {
+        if(!ScrumbleController.isCurrentProjectSpecified()) return
+
         val boardView = mView.findViewById(R.id.board_view) as BoardView
 
         items.clear()
         for(idx in 0 until boardView.columnCount) {
             val tempItems = mutableListOf<Pair<Int, Task>>()
-            ScrumbleController.tasks.filter { it.sprint != null && it.sprint!!.id == ScrumbleController.currentProject!!.currentSprint!!.id && it.state == TaskState.values()[idx + 1] }
+            ScrumbleController.tasks.filter { it.sprint == ScrumbleController.currentProject!!.currentSprint && it.state == TaskState.values()[idx + 1] }
                     .sortedBy { it.position }.forEach { tempItems.add(Pair(it.id, it)) }
             items.add(tempItems)
 
-            boardView.getAdapter(idx).itemList = tempItems.toList()
+            (boardView.getAdapter(idx) as CustomDragItemAdapter).setItems(tempItems)
             boardView.getAdapter(idx).notifyDataSetChanged()
+        }
+
+        toggleShowBoardView()
+    }
+
+    private fun toggleShowBoardView() {
+        val boardView = mView.findViewById(R.id.board_view) as BoardView
+        val noCurrentTextView = mView.findViewById<TextView>(R.id.text_view_no_current_project)
+
+        if (ScrumbleController.isCurrentSprintSpecified()) {
+            noCurrentTextView.visibility = View.GONE
+            boardView.visibility = View.VISIBLE
+        }
+        else {
+            boardView.visibility = View.GONE
+            noCurrentTextView.visibility = View.VISIBLE
+            noCurrentTextView.text = resources.getString(R.string.error_no_current_sprint)
         }
     }
 
@@ -118,6 +121,7 @@ class ScrumBoardFragment: Fragment() {
         override fun onItemDragEnded(fromColumn: Int, fromRow: Int, toColumn: Int, toRow: Int){
             if(fromRow != toRow || fromColumn != toColumn) {
                 val task = items[toColumn][toRow].second
+                //val task = ScrumbleController.tasks.filter { it.state == TaskState.values()[fromColumn + 1] && it.sprint == ScrumbleController.currentProject!!.currentSprint }.first { it.position == fromRow }
                 val newState = TaskState.values()[toColumn + 1]
 
                 if(task.state != newState || task.position != toRow)
@@ -127,6 +131,10 @@ class ScrumBoardFragment: Fragment() {
                 task.position = toRow
 
                 ScrumbleController.updateTask(task.id, task, { }, { MiscUIController.showError(context!!, it) })
+
+                items.forEach {
+                    it.sortBy { pair -> pair.second.position }
+                }
             }
         }
 

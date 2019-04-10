@@ -70,6 +70,10 @@ class CustomDragItemAdapter: DragItemAdapter<Pair<Int, Task>, CustomDragItemAdap
         return mItemList[position].first.toLong()
     }
 
+    fun setItems(items: MutableList<Pair<Int, Task>>) {
+        itemList = items
+    }
+
     inner class ViewHolder(itemView: View) : DragItemAdapter.ViewHolder(itemView, mGrabHandleId, mDragOnLongPress) {
         val text = itemView.findViewById<View>(R.id.column_item_text_view) as TextView
         val cardView = itemView.findViewById<View>(R.id.card_view_item) as CardView

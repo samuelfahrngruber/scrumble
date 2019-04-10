@@ -39,7 +39,7 @@ dependencies {
     //async
     implementation 'org.jetbrains.anko:anko-common:0.9'
     //khttp
-    implementation 'com.github.jkcclemens:khttp:0.1.0'
+    implementation 'io.karn:khttp-android:0.1.0'
     //gson
     implementation 'com.google.code.gson:gson:2.8.5'
     //dragView

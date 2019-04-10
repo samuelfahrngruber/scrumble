@@ -15,12 +15,13 @@ import com.spogss.scrumble.adapter.CustomOverviewHeaderAdapter
 import com.spogss.scrumble.controller.*
 import com.spogss.scrumble.data.Project
 import com.spogss.scrumble.data.Sprint
+import com.spogss.scrumble.data.Task
 import com.spogss.scrumble.enums.TaskState
 import kotlinx.android.synthetic.main.fragment_projects.*
 
 
 class ProjectsFragment : Fragment() {
-    lateinit var customOverviewHeaderAdapter: CustomOverviewHeaderAdapter
+    private lateinit var customOverviewHeaderAdapter: CustomOverviewHeaderAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -70,7 +71,7 @@ class ProjectsFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-     fun setupTextViews() {
+     private fun setupTextViews() {
         if(product_owner_text_view == null) return
 
         val sprint = ScrumbleController.currentProject!!.currentSprint
@@ -184,7 +185,6 @@ class ProjectsFragment : Fragment() {
             when (actionItem.id) {
                 R.id.fab_add_project -> {
                     PopupController.setupProjectPopup(context!!) {
-                        speed_dial.close()
                         UIToScrumbleController.addProject(it, view!!, context!!) {
                             (context as MainActivity).finish()
                             (context as MainActivity).startActivity((context as MainActivity).intent)
@@ -194,7 +194,6 @@ class ProjectsFragment : Fragment() {
                 R.id.fab_add_sprint -> {
                     if (ScrumbleController.isCurrentProjectSpecified())
                         PopupController.setupSprintPopup(context!!, {
-                            speed_dial.close()
                             UIToScrumbleController.addSprint(it, view!!, customOverviewHeaderAdapter, context!!) { sprint ->
                                 if (ScrumbleController.currentProject!!.currentSprint == sprint) {
                                     sprint_text_view.setText(sprint.toNumberString())
@@ -209,7 +208,6 @@ class ProjectsFragment : Fragment() {
                 R.id.fab_add_team_member -> {
                     if (ScrumbleController.isCurrentProjectSpecified())
                         PopupController.setupTeamMemberPopup(context!!) {
-                            speed_dial.close()
                             UIToScrumbleController.addTeamMember(it, customOverviewHeaderAdapter, context!!)
                         }
                     else
@@ -219,5 +217,17 @@ class ProjectsFragment : Fragment() {
             }
             retVal
         }
+    }
+
+    fun refresh() {
+        if(!ScrumbleController.isCurrentProjectSpecified()) return
+
+        setupTextViews()
+
+        customOverviewHeaderAdapter.backlog = ScrumbleController.tasks
+                .filter { it.state == TaskState.PRODUCT_BACKLOG } as MutableList<Task>
+
+        customOverviewHeaderAdapter.notifyDataSetChanged()
+        customOverviewHeaderAdapter.updateDataSets()
     }
 }

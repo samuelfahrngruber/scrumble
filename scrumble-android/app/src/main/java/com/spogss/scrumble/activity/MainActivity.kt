@@ -9,6 +9,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.spogss.scrumble.R
 import com.spogss.scrumble.controller.MiscUIController
@@ -29,32 +30,51 @@ class MainActivity : AppCompatActivity() {
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         var res = true
-        selectedFragment = fragments[0]
         when (item.itemId) {
             R.id.navigation_my_tasks -> {
-                setupTitle("${ScrumbleController.currentUser.name.capitalize()}'${if(!ScrumbleController.currentUser.name.endsWith("s")) "s" else ""} Tasks")
+                setupTitle("${ScrumbleController.currentUser.name.capitalize()}'${if (!ScrumbleController.currentUser.name.endsWith("s")) "s" else ""} Tasks")
+
+                if(selectedFragment != fragments[0]) {
+                    supportFragmentManager.beginTransaction().hide(selectedFragment).show(fragments[0]).commit();
+                    selectedFragment = fragments[0]
+
+                    (selectedFragment as MyTasksFragment).refresh()
+                }
             }
             R.id.navigation_scrum_board -> {
-                selectedFragment = fragments[1]
-                setupTitle(resources.getString(R.string.scrum_board))
+                if(selectedFragment != fragments[1]) {
+                    supportFragmentManager.beginTransaction().hide(selectedFragment).show(fragments[1]).commit();
+                    selectedFragment = fragments[1]
+                    setupTitle(resources.getString(R.string.scrum_board))
+
+                    (selectedFragment as ScrumBoardFragment).refresh()
+                }
             }
             R.id.navigation_daily_scrum -> {
-                selectedFragment = fragments[2]
-                setupTitle(resources.getString(R.string.daily_scrum))
+                if(selectedFragment != fragments[2]) {
+                    supportFragmentManager.beginTransaction().hide(selectedFragment).show(fragments[2]).commit();
+                    selectedFragment = fragments[2]
+                    setupTitle(resources.getString(R.string.daily_scrum))
+
+                    (selectedFragment as DailyScrumFragment).refresh()
+                }
             }
             R.id.navigation_project_overview -> {
-                selectedFragment = fragments[3]
-                setupTitle(
-                if(ScrumbleController.currentProject == null)
-                    resources.getString(R.string.projects)
-                else
-                    ScrumbleController.currentProject!!.name)
+                if(selectedFragment != fragments[3]) {
+                    supportFragmentManager.beginTransaction().hide(selectedFragment).show(fragments[3]).commit();
+                    selectedFragment = fragments[3]
+                    setupTitle(
+                            if (ScrumbleController.currentProject == null)
+                                resources.getString(R.string.projects)
+                            else
+                                ScrumbleController.currentProject!!.name)
+                }
             }
             else -> res = false
         }
-        val transaction = supportFragmentManager.beginTransaction()
+        /*val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frame_layout, selectedFragment)
-        transaction.commit()
+        transaction.commit()*/
 
         res
     }
@@ -94,8 +114,10 @@ class MainActivity : AppCompatActivity() {
                             image_progress.setProgress(65, 72)
                             ScrumbleController.loadTasks(ScrumbleController.currentProject!!.id, {
                                 image_progress.setProgress(72, 85)
+                                //Handler().postDelayed({ image_progress.setProgress(85, 99) }, 1800)
                                 ScrumbleController.loadDailyScrum(ScrumbleController.currentProject!!.id, {
-                                    image_progress.setProgress(85, 100); init(1300)
+                                    image_progress.setProgress(85, 100)
+                                    init(1300)
                                 }, { MiscUIController.showError(this, it)})
                             }, { MiscUIController.showError(this, it) })
                         }, { MiscUIController.showError(this, it) })
@@ -133,6 +155,13 @@ class MainActivity : AppCompatActivity() {
         fragments.add(ScrumBoardFragment())
         fragments.add(DailyScrumFragment())
         fragments.add(ProjectsFragment())
+
+        supportFragmentManager.beginTransaction().add(R.id.frame_layout, fragments[3], "4").hide(fragments[3]).commit()
+        supportFragmentManager.beginTransaction().add(R.id.frame_layout, fragments[2], "3").hide(fragments[2]).commit()
+        supportFragmentManager.beginTransaction().add(R.id.frame_layout, fragments[1], "2").hide(fragments[1]).commit()
+        supportFragmentManager.beginTransaction().add(R.id.frame_layout, fragments[0], "1").commit()
+
+        selectedFragment = fragments[0]
     }
 
     private fun setupTitle(newTitle: String) {

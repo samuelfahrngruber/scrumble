@@ -71,6 +71,7 @@
     <string name="remove">Remove</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
+    <string name="remove_task">Remove Task</string>
 
     <string name="move_to_product_backlog">To Product Backlog</string>
 
@@ -83,13 +84,13 @@
         <item>dailyscrums are generated daily?</item>
         <item>100% of scrumble customers are happy customers?</item>
         <item>dailyscrums are generated daily?</item>
-        <item>the dailyscrums of \"MISSING\" members are marked red?</item>
+        <item>the dailyscrums of MISSING members are marked red?</item>
         <item>a user can work on various projects?</item>
         <item>you can help to improve scrumble by answering the questionnaire?</item>
         <item>you can add multiple team members at once?</item>
         <!--<item>ORG\'s English is not the yellow from the egg?</item>-->
         <item>there is a scrumble desktop application too?</item>
-        <item>scrumble was developed by SPOGSS (5AHIFS 2018/19)</item>
+        <item>scrumble was developed by SPOGSS (5AHIFS 2018/19)?</item>
         <item>scrumble uses Kotlin, C#, MongoDB, OracleDB, JavaScript, Node.js and HTML?</item>
         <item>scrumble is hosted on Heroku?</item>
     </string-array>

@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object UIToScrumbleController {
+
     fun addTask(view: View, mainView: View, context: Context, callback: () -> Unit) {
         val checkedPosition = view.findViewById<ToggleSwitch>(R.id.popup_add_task_toggle_button).checkedPosition!!
         val name = view.findViewById<MaterialEditText>(R.id.popup_add_task_name).text.toString()
@@ -125,11 +126,13 @@ object UIToScrumbleController {
             val sdf = SimpleDateFormat("dd/MM/yyyy")
             today = sdf.parse(sdf.format(today))
 
-            if(PopupController.startCal.time <= today)
+            /*if(PopupController.startCal.time <= today)
                 ScrumbleController.loadDailyScrum(ScrumbleController.currentProject!!.id, {}, { MiscUIController.showError(context, it) })
-
-            if(currentSprintSwitch.checked == IconSwitch.Checked.RIGHT)
+            */
+            if(currentSprintSwitch.checked == IconSwitch.Checked.RIGHT) {
                 ScrumbleController.currentProject!!.currentSprint = sprint
+                ScrumbleController.updateProject(ScrumbleController.currentProject!!.id, ScrumbleController.currentProject!!, {}, { msg -> MiscUIController.showError(context, msg) })
+            }
 
             callback(sprint)
 
@@ -143,9 +146,6 @@ object UIToScrumbleController {
         val sprintNumberEditText = view.findViewById<MaterialEditText>(R.id.popup_add_sprint_number)
         val selectListTask = view.findViewById<RecyclerView>(R.id.popup_add_sprint_tasks)
         val currentSprintSwitch = view.findViewById<IconSwitch>(R.id.popup_add_sprint_current_sprint)
-
-        val loadDailyScums = sprint.startDate > PopupController.startCal.time
-                            || sprint.deadline < PopupController.endCal.time
 
         sprint.number = sprintNumberEditText.text.toString().toInt()
         sprint.startDate = PopupController.startCal.time
@@ -178,10 +178,8 @@ object UIToScrumbleController {
                     it.task
                 }
 
-        ScrumbleController.updateSprint(sprint.id, sprint, {
-            if(loadDailyScums)
-                ScrumbleController.loadDailyScrum(ScrumbleController.currentProject!!.id, {}, { MiscUIController.showError(context, it) })
-        }, { MiscUIController.showError(context, it) })
+        ScrumbleController.updateSprint(sprint.id, sprint, {}, { MiscUIController.showError(context, it) })
+
         tasksToAUpdate.forEach { task ->
             ScrumbleController.updateTask(task!!.id, task, {}, { MiscUIController.showError(context, it) })
         }
@@ -198,16 +196,22 @@ object UIToScrumbleController {
 
         val project = Project(-1, name, productOwner)
         MiscUIController.startLoadingAnimation(mainView, context)
-        ScrumbleController.addProject(project, {id ->
+        ScrumbleController.addProject(project, { id ->
             project.id = id
 
-            ScrumbleController.addTeamMembers(project.id, team, {
+            if(team.size > 0) {
+                ScrumbleController.addTeamMembers(project.id, team, {
+                    SharedPreferencesController.saveCurrentProjectToSharedPreferences(project.id, context as MainActivity)
+                    callback()
+                }, {
+                    MiscUIController.showError(context, it)
+                    MiscUIController.stopLoadingAnimation(mainView, context)
+                })
+            }
+            else {
                 SharedPreferencesController.saveCurrentProjectToSharedPreferences(project.id, context as MainActivity)
                 callback()
-            }, {
-                MiscUIController.showError(context, it)
-                MiscUIController.stopLoadingAnimation(mainView, context)
-            })
+            }
         }, {
             MiscUIController.showError(context, it)
             MiscUIController.startLoadingAnimation(mainView, context)
@@ -222,6 +226,7 @@ object UIToScrumbleController {
         ScrumbleController.users.sortBy { it.name }
         customOverviewHeaderAdapter.notifyDataSetChanged()
 
-        ScrumbleController.addTeamMembers(ScrumbleController.currentProject!!.id, team, {}, { MiscUIController.showError(context, it) })
+        if(team.size > 0)
+            ScrumbleController.addTeamMembers(ScrumbleController.currentProject!!.id, team, {}, { MiscUIController.showError(context, it) })
     }
 }
