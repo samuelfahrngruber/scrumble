@@ -74,7 +74,7 @@ class ProjectsFragment : Fragment() {
      private fun setupTextViews() {
         if(product_owner_text_view == null) return
 
-        val sprint = ScrumbleController.currentProject!!.currentSprint
+        var sprint = ScrumbleController.currentProject!!.currentSprint
 
         product_owner_text_view.setText(ScrumbleController.currentProject!!.productOwner.toString())
 
@@ -104,12 +104,13 @@ class ProjectsFragment : Fragment() {
 
         sprint_info_image.setOnClickListener {
             if(ScrumbleController.isCurrentSprintSpecified()) {
+                sprint = ScrumbleController.currentProject!!.currentSprint!!
                 PopupController.setupSprintPopup(context!!, { view ->
                     UIToScrumbleController.updateSprint(sprint!!, view, customOverviewHeaderAdapter, context!!)
                     { isCurrent ->
                         if (isCurrent) {
-                            sprint_text_view.setText(sprint.toNumberString())
-                            sprint_text_view2.setText(sprint.timeSpan())
+                            sprint_text_view.setText(sprint!!.toNumberString())
+                            sprint_text_view2.setText(sprint!!.timeSpan())
                             ScrumbleController.currentProject!!.currentSprint = sprint
                         } else {
                             sprint_text_view.setText("")

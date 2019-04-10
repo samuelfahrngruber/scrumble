@@ -93,11 +93,15 @@ object UIToScrumbleController {
     }
 
     fun addSprint(view: View, mainView: View, customOverviewHeaderAdapter: CustomOverviewHeaderAdapter, context: Context, callback: (sprint: Sprint) -> Unit) {
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
         val sprintNumber = view.findViewById<MaterialEditText>(R.id.popup_add_sprint_number).text.toString().toInt()
         val selectListTask = view.findViewById<RecyclerView>(R.id.popup_add_sprint_tasks)
         val currentSprintSwitch = view.findViewById<IconSwitch>(R.id.popup_add_sprint_current_sprint)
 
-        val sprint = Sprint(-1, sprintNumber, PopupController.startCal.time, PopupController.endCal.time, ScrumbleController.currentProject!!)
+        val startDate = formatter.parse(formatter.format(PopupController.startCal.time))
+        val deadline = formatter.parse(formatter.format(PopupController.endCal.time))
+        val sprint = Sprint(-1, sprintNumber, startDate, deadline, ScrumbleController.currentProject!!)
 
         var maxPos = if(ScrumbleController.isCurrentSprintSpecified())
             ScrumbleController.tasks.filter { it.sprint != null &&
@@ -122,11 +126,12 @@ object UIToScrumbleController {
                 ScrumbleController.updateTask(task.id, task, { }, { MiscUIController.showError(context, it) })
             }
 
+            /*
             var today = Date()
             val sdf = SimpleDateFormat("dd/MM/yyyy")
             today = sdf.parse(sdf.format(today))
 
-            /*if(PopupController.startCal.time <= today)
+            if(PopupController.startCal.time <= today)
                 ScrumbleController.loadDailyScrum(ScrumbleController.currentProject!!.id, {}, { MiscUIController.showError(context, it) })
             */
             if(currentSprintSwitch.checked == IconSwitch.Checked.RIGHT) {
