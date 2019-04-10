@@ -34,10 +34,10 @@ If you want to provide feedback and help to improve our application, you can fil
 
 ### Potential Features
 * Token authentication
-* finish dailyscrum for desktop application (automatic updates, tasks etc.)
+* finish dailyscrum for Desktop application (automatic updates, tasks etc.)
 * implement analysis tools for statistics (charts etc.)
-* host own mongoDB and oracleDB (to be permanent)
-* deploy android app on Google Play Store
+* host own MongoDB and OracleDB (to be permanent)
+* deploy Android app on Google Play Store
 
 We would be glad if you implemented any of these features. Feel free to do so
 
