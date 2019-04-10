@@ -32,6 +32,14 @@ An accurate description of the Desktop and Android Application can be found [her
 
 If you want to provide feedback and help to improve our application, you can fill out a questionnaire [here](https://www.umfrageonline.com/s/1c390c6)
 
+### Potential Features
+* Token authentication
+* finish dailyscrum for desktop application (automatic updates, tasks etc.)
+* implement analysis tools for statistics (charts etc.)
+* host own mongoDB and oracleDB (to be permanent)
+* deploy android app on Google Play Store
+We would be glad if you implemented any of these features. Feel free to do so
+
 ## Reports
 
 ### October
