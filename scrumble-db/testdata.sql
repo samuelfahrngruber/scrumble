@@ -1,66 +1,66 @@
-Insert into sc_user values(null,'Webi','webi1234');
-Insert into sc_user values(null,'Samuel','sam1234');
-Insert into sc_user values(null,'Paul','paul1234');
-Insert into sc_user values(null,'Simon','simon1234');
-Insert into sc_user values(null,'Martin','tino1234');
-Insert into sc_user values(null,'Nico','nico1234');
+INSERT INTO SC_USER VALUES(NULL,'Webi','webi1234');
+INSERT INTO SC_USER VALUES(NULL,'Samuel','sam1234');
+INSERT INTO SC_USER VALUES(NULL,'Paul','paul1234');
+INSERT INTO SC_USER VALUES(NULL,'Simon','simon1234');
+INSERT INTO SC_USER VALUES(NULL,'Martin','tino1234');
+INSERT INTO SC_USER VALUES(NULL,'Nico','nico1234');
 
-Insert into sc_project values(null,'Scrumble',24,null);
-Insert into sc_project values(null,'Sportify',27,null);
-Insert into sc_project values(null,'Caplin-DA',28,null);
-Insert into sc_project values(null,'SQL-Developer Ocepek',23,null);
+INSERT INTO SC_PROJECT VALUES(NULL,'Scrumble',24,NULL);
+INSERT INTO SC_PROJECT VALUES(NULL,'Sportify',27,NULL);
+INSERT INTO SC_PROJECT VALUES(NULL,'Caplin-DA',28,NULL);
+INSERT INTO SC_PROJECT VALUES(NULL,'SQL-Developer Ocepek',23,NULL);
 
-Insert into sc_sprint values(null,1,sysdate ,sysdate + 100,22);
-Insert into sc_sprint values(null,2,sysdate + 101,sysdate + 200,22);
-Insert into sc_sprint values(null,1,sysdate - 100,sysdate - 1,23);
-Insert into sc_sprint values(null,2,sysdate - 200,sysdate - 101,23);
-Insert into sc_sprint values(null,1,sysdate - 100,sysdate - 50,24);
-Insert into sc_sprint values(null,2,sysdate - 50,sysdate - 1,24);
-Insert into sc_sprint values(null,1,sysdate - 1000,sysdate - 500,25);
-Insert into sc_sprint values(null,2,sysdate - 499,sysdate,25);
+INSERT INTO SC_SPRINT VALUES(NULL,1,SYSDATE ,SYSDATE + 100,22);
+INSERT INTO SC_SPRINT VALUES(NULL,2,SYSDATE + 101,SYSDATE + 200,22);
+INSERT INTO SC_SPRINT VALUES(NULL,1,SYSDATE - 100,SYSDATE - 1,23);
+INSERT INTO SC_SPRINT VALUES(NULL,2,SYSDATE - 200,SYSDATE - 101,23);
+INSERT INTO SC_SPRINT VALUES(NULL,1,SYSDATE - 100,SYSDATE - 50,24);
+INSERT INTO SC_SPRINT VALUES(NULL,2,SYSDATE - 50,SYSDATE - 1,24);
+INSERT INTO SC_SPRINT VALUES(NULL,1,SYSDATE - 1000,SYSDATE - 500,25);
+INSERT INTO SC_SPRINT VALUES(NULL,2,SYSDATE - 499,SYSDATE,25);
 
-Insert into sc_teammember values(23,22);
-Insert into sc_teammember values(24,22);
-Insert into sc_teammember values(25,22);
-Insert into sc_teammember values(26,22);
+INSERT INTO SC_TEAMMEMBER VALUES(23,22);
+INSERT INTO SC_TEAMMEMBER VALUES(24,22);
+INSERT INTO SC_TEAMMEMBER VALUES(25,22);
+INSERT INTO SC_TEAMMEMBER VALUES(26,22);
 
-Insert into sc_teammember values(23,23);
-Insert into sc_teammember values(24,23);
-Insert into sc_teammember values(25,23);
-Insert into sc_teammember values(26,23);
-Insert into sc_teammember values(27,23);
+INSERT INTO SC_TEAMMEMBER VALUES(23,23);
+INSERT INTO SC_TEAMMEMBER VALUES(24,23);
+INSERT INTO SC_TEAMMEMBER VALUES(25,23);
+INSERT INTO SC_TEAMMEMBER VALUES(26,23);
+INSERT INTO SC_TEAMMEMBER VALUES(27,23);
 
-Insert into sc_teammember values(23,24);
-Insert into sc_teammember values(24,24);
-Insert into sc_teammember values(28,24);
+INSERT INTO SC_TEAMMEMBER VALUES(23,24);
+INSERT INTO SC_TEAMMEMBER VALUES(24,24);
+INSERT INTO SC_TEAMMEMBER VALUES(28,24);
 
-Insert into sc_teammember values(23,25);
-Insert into sc_teammember values(25,25);
-Insert into sc_teammember values(27,25);
+INSERT INTO SC_TEAMMEMBER VALUES(23,25);
+INSERT INTO SC_TEAMMEMBER VALUES(25,25);
+INSERT INTO SC_TEAMMEMBER VALUES(27,25);
 
-Insert into sc_task values(null,23,26,'Testdata','Adding Testdata to Database',0,'TO_VERIFY',1,9,22);
-Insert into sc_task values(null,24,25,'WPF','Creating a beatiful WPF Application',0,'IN_PROGRESS',1,9,22);
-Insert into sc_task values(null,25,23,'Android','Creating a beautiful Android Application',0,'IN_PROGRESS',2,10,22);
-Insert into sc_task values(null,26,24,'Webservice','Creating a beautifully running Webservice to get a Döner from Sam',0,'IN_PROGRESS',3,10,22);
+INSERT INTO SC_TASK VALUES(NULL,23,26,'Testdata','Adding Testdata to Database',0,'TO_VERIFY',1,9,22);
+INSERT INTO SC_TASK VALUES(NULL,24,25,'WPF','Creating a beatiful WPF Application',0,'IN_PROGRESS',1,9,22);
+INSERT INTO SC_TASK VALUES(NULL,25,23,'Android','Creating a beautiful Android Application',0,'IN_PROGRESS',2,10,22);
+INSERT INTO SC_TASK VALUES(NULL,26,24,'Webservice','Creating a beautifully running Webservice to get a Döner from Sam',0,'IN_PROGRESS',3,10,22);
 
-Insert into sc_task values(null,23,27,'Scrumboard','Making a Scrum Board',0,'DONE',1,11,23);
-Insert into sc_task values(null,24,25,'Backend','Making a the backend',0,'DONE',2,11,23);
-Insert into sc_task values(null,25,23,'Frontend','Making the frontend',0,'DONE',1,12,23);
-Insert into sc_task values(null,27,26,'Webservice','Creating a beautifully running Webservice',0,'DONE',2,12,23);
+INSERT INTO SC_TASK VALUES(NULL,23,27,'Scrumboard','Making a Scrum Board',0,'DONE',1,11,23);
+INSERT INTO SC_TASK VALUES(NULL,24,25,'Backend','Making a the backend',0,'DONE',2,11,23);
+INSERT INTO SC_TASK VALUES(NULL,25,23,'Frontend','Making the frontend',0,'DONE',1,12,23);
+INSERT INTO SC_TASK VALUES(NULL,27,26,'Webservice','Creating a beautifully running Webservice',0,'DONE',2,12,23);
 
-Insert into sc_task values(null,23,28,'CRM System','Reworking the CRM System',0,'DONE',1,13,24);
-Insert into sc_task values(null,28,24,'Streamlink','Streamlink stuff',0,'DONE',1,14,24);
+INSERT INTO SC_TASK VALUES(NULL,23,28,'CRM System','Reworking the CRM System',0,'DONE',1,13,24);
+INSERT INTO SC_TASK VALUES(NULL,28,24,'Streamlink','Streamlink stuff',0,'DONE',1,14,24);
 
-Insert into sc_task values(null,23,26,'SQL_Developen','Develop SQL to make Ozepek happy',0,'DONE',1,15,25);
-Insert into sc_task values(null,26,27,'More SQL','MORE SQL',0,'DONE',2,15,25);
-Insert into sc_task values(null,27,26,'Even More SQL','MAXIMUM SQL Development',0,'DONE',1,16,25);
+INSERT INTO SC_TASK VALUES(NULL,23,26,'SQL_Developen','Develop SQL to make Ozepek happy',0,'DONE',1,15,25);
+INSERT INTO SC_TASK VALUES(NULL,26,27,'More SQL','MORE SQL',0,'DONE',2,15,25);
+INSERT INTO SC_TASK VALUES(NULL,27,26,'Even More SQL','MAXIMUM SQL Development',0,'DONE',1,16,25);
 
-Insert into sc_task values(null,23,25,'Backlog Entries','Creating a beautifully Backlog Entry',0,'PRODUCT_BACKLOG',null,null,22);
-Insert into sc_task values(null,24,27,'Backlog Entries','Creating a beautifully Backlog Entry',0,'PRODUCT_BACKLOG',null,null,23);
-Insert into sc_task values(null,28,23,'Backlog Entries','Creating a beautifully Backlog Entry',0,'PRODUCT_BACKLOG',null,null,24);
-Insert into sc_task values(null,27,23,'Backlog Entries','Creating a beautifully Backlog Entry',0,'PRODUCT_BACKLOG',null,null,25);
+INSERT INTO SC_TASK VALUES(NULL,23,25,'Backlog Entries','Creating a beautifully Backlog Entry',0,'PRODUCT_BACKLOG',NULL,NULL,22);
+INSERT INTO SC_TASK VALUES(NULL,24,27,'Backlog Entries','Creating a beautifully Backlog Entry',0,'PRODUCT_BACKLOG',NULL,NULL,23);
+INSERT INTO SC_TASK VALUES(NULL,28,23,'Backlog Entries','Creating a beautifully Backlog Entry',0,'PRODUCT_BACKLOG',NULL,NULL,24);
+INSERT INTO SC_TASK VALUES(NULL,27,23,'Backlog Entries','Creating a beautifully Backlog Entry',0,'PRODUCT_BACKLOG',NULL,NULL,25);
 
-Update sc_project set idcurrentsprint = 10 where id = 22;
-Update sc_project set idcurrentsprint = 12 where id = 23;
-Update sc_project set idcurrentsprint = 14 where id = 24;
-Update sc_project set idcurrentsprint = 16 where id = 25;
+UPDATE SC_PROJECT SET IDCURRENTSPRINT = 10 WHERE ID = 22;
+UPDATE SC_PROJECT SET IDCURRENTSPRINT = 12 WHERE ID = 23;
+UPDATE SC_PROJECT SET IDCURRENTSPRINT = 14 WHERE ID = 24;
+UPDATE SC_PROJECT SET IDCURRENTSPRINT = 16 WHERE ID = 25;
