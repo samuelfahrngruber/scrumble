@@ -1,5 +1,5 @@
 // packages
-const express = require('express'),
+let express = require('express'),
     oracleConnection = require('../data-layer/oracleDataAccess'),
     classParser = require('../data-layer/classParser'),
     classes = require('../data-layer/classes'),
@@ -48,19 +48,6 @@ router.get('/:userid', (req, res, next) => {
     else {
         next();
     } 
-});
-router.post('/:projectid/user', (req, res, next) => {
-    if(!isNaN(req.params.projectid)){
-    let query = "insert into sc_teammember values(:iduser, :idproject)",
-    param = [req.body.iduser, req.body.idproject];
-
-    oracleConnection.execute(query, param)
-        .then((result) => res.status(201).end())
-        .catch((err) => error.respondWith(res, err));
-    }
-    else {
-        next();
-    }
 });
 
 module.exports = router;

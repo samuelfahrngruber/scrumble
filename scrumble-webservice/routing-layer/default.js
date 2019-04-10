@@ -1,8 +1,8 @@
 // packages
-const express = require('express'),
+let express = require('express'),
+oracleConnection = require('../data-layer/oracleDataAccess'),
     router = express.Router(),
-    error = require('./misc/error'),
-    host = process.env.HOST;
+    error = require('./misc/error');
 
 // add routes
 router.get('/', function (req, res) {
@@ -16,20 +16,24 @@ router.get('/', function (req, res) {
 });
 
 router.post('/login', (req, res) => {
-    let query = "select * from sc_user where username = :username and password = :password",
-        param = [req.params.username, req.params.password];
+    let query = "select id from sc_user where username = lower(:name) and password = :password",
+        param = [req.body.name, req.body.password];
 
     oracleConnection.execute(query, param)
-        .then((result) => res.json(classParser(result.rows[0], classes.User)))
+        .then((result) => {
+            if(result.rows.length < 1)
+                throw Error("Unauthorized");
+            res.json({id: result.rows[0][0]});
+        })
         .catch((err) => error.respondWith(res, err));
 });
 
 router.post('/register', (req, res) => {
-    let query = "insert into sc_user values(null, lower(:username), :password)",
-        param = [req.params.username, req.params.password];
+    let query = "insert into sc_user values(null, lower(:name), :password)",
+        param = [req.body.name, req.body.password];
 
     oracleConnection.execute(query, param)
-        .then((result) => {
+        .then(() => {
             query = "select max(id) from sc_user order by id",
                 param = [];
 

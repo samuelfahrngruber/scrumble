@@ -19,16 +19,24 @@ const projectRouter = require('./routing-layer/project');
 const userRouter = require('./routing-layer/user');
 const taskRouter = require('./routing-layer/task');
 const sprintRouter = require('./routing-layer/sprint');
+const dailyScrumRouter = require('./routing-layer/dailyScrum');
+const changesRouter = require('./routing-layer/change');
 
+projectRouter.use('/:projectid/dailyScrum', dailyScrumRouter);
+taskRouter.use('/:taskid/dailyScrum', dailyScrumRouter);
+userRouter.use('/:userid/dailyScrum', dailyScrumRouter);
+sprintRouter.use('/:sprintid/dailyscrum', dailyScrumRouter);
 sprintRouter.use('/:sprintid/task', taskRouter);
 userRouter.use('/:userid/project', projectRouter);
 projectRouter.use('/:projectid/sprint', sprintRouter);
 projectRouter.use('/:projectid/task', taskRouter);
 projectRouter.use('/:projectid/user', userRouter);
+projectRouter.use('/:projectid/changes', changesRouter);
 defaultRouter.use('/project', projectRouter);
 defaultRouter.use('/user', userRouter);
 defaultRouter.use('/task', taskRouter);
 defaultRouter.use('/sprint', sprintRouter);
+defaultRouter.use('/dailyScrum', dailyScrumRouter);
 
 app.use('/scrumble', defaultRouter);
 
