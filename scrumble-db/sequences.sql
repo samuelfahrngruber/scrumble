@@ -1,11 +1,11 @@
-drop sequence sc_seq_user;
-drop sequence sc_seq_task;
-drop sequence sc_seq_project;
-drop sequence sc_seq_sprint;
-drop sequence sc_seq_projectlogentry;
+DROP SEQUENCE SC_SEQ_USER;
+DROP SEQUENCE SC_SEQ_TASK;
+DROP SEQUENCE SC_SEQ_PROJECT;
+DROP SEQUENCE SC_SEQ_SPRINT;
+DROP SEQUENCE SC_SEQ_PROJECTLOGENTRY;
 
-create sequence sc_seq_user;
-create sequence sc_seq_task;
-create sequence sc_seq_project;
-create sequence sc_seq_sprint;
-create sequence sc_seq_projectlogentry;
+CREATE SEQUENCE SC_SEQ_USER;
+CREATE SEQUENCE SC_SEQ_TASK;
+CREATE SEQUENCE SC_SEQ_PROJECT;
+CREATE SEQUENCE SC_SEQ_SPRINT;
+CREATE SEQUENCE SC_SEQ_PROJECTLOGENTRY;
