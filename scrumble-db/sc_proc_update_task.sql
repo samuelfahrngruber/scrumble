@@ -11,28 +11,28 @@ CREATE OR REPLACE PROCEDURE SC_PROC_UPDATE_TASK
 , NEWIDSPRINT IN NUMBER 
 , NEWIDPROJECT IN NUMBER 
 ) IS
-  OLDPOSITION number;
+  OLDPOSITION NUMBER;
   OLDSTATE VARCHAR2(50);
   
 BEGIN
-  Select sc_task.position into OLDPOSITION from sc_task where sc_task.id = newid;
-  Select sc_task.state into OLDSTATE from sc_task where sc_task.id = newid;
+  SELECT SC_TASK.POSITION INTO OLDPOSITION FROM SC_TASK WHERE SC_TASK.ID = NEWID;
+  SELECT SC_TASK.STATE INTO OLDSTATE FROM SC_TASK WHERE SC_TASK.ID = NEWID;
   
-  Update sc_task set sc_task.idresponsible = newidresponsible, sc_task.idverify = newidverify, sc_task.name = newname, sc_task.info = newinfo, sc_task.rejections = newrejections, 
-  sc_task.state = newstate, sc_task.position = newposition, sc_task.idsprint = newidsprint, sc_task.idproject = newidproject where sc_task.id = newid;
+  UPDATE SC_TASK SET SC_TASK.IDRESPONSIBLE = NEWIDRESPONSIBLE, SC_TASK.IDVERIFY = NEWIDVERIFY, SC_TASK.NAME = NEWNAME, SC_TASK.INFO = NEWINFO, SC_TASK.REJECTIONS = NEWREJECTIONS, 
+  SC_TASK.STATE = NEWSTATE, SC_TASK.POSITION = NEWPOSITION, SC_TASK.IDSPRINT = NEWIDSPRINT, SC_TASK.IDPROJECT = NEWIDPROJECT WHERE SC_TASK.ID = NEWID;
   
-  if OLDPOSITION != NEWPOSITION OR OLDSTATE != NEWSTATE then 
-    for currentTask in (Select id, position, state from sc_task where sc_task.id != newid and (sc_task.state = oldstate or sc_task.state = newstate) and sc_Task.idsprint = newidsprint) loop
-      if oldstate = newstate and oldposition > newposition and  oldposition > currentTask.position and newposition <= currentTask.position and newstate = currentTask.state then
-        Update sc_task set sc_task.POSITION = sc_task.position + 1 where sc_task.id = currentTask.id;
-      elsif oldstate = newstate and oldposition < newposition and oldposition < currentTask.position and newposition >= currentTask.position and newstate = currentTask.state then
-        Update sc_task set sc_task.POSITION = sc_task.position - 1 where sc_task.id = currentTask.id;
-      elsif oldstate != newstate and newposition <= currentTask.position  and newstate = currentTask.state then
-        Update sc_task set sc_task.POSITION = sc_task.position + 1 where sc_task.id = currentTask.id;
-      elsif oldstate != newstate and oldposition < currentTask.position  and oldstate = currentTask.state then
-        Update sc_task set sc_task.POSITION = sc_task.position - 1 where sc_task.id = currentTask.id;
-      end if;
-    end loop;
-  end if;
-  commit;
+  IF OLDPOSITION != NEWPOSITION OR OLDSTATE != NEWSTATE THEN 
+    FOR CURRENTTASK IN (SELECT ID, POSITION, STATE FROM SC_TASK WHERE SC_TASK.ID != NEWID AND (SC_TASK.STATE = OLDSTATE OR SC_TASK.STATE = NEWSTATE) AND SC_TASK.IDSPRINT = NEWIDSPRINT) LOOP
+      IF OLDSTATE = NEWSTATE AND OLDPOSITION > NEWPOSITION AND  OLDPOSITION > CURRENTTASK.POSITION AND NEWPOSITION <= CURRENTTASK.POSITION AND NEWSTATE = CURRENTTASK.STATE THEN
+        UPDATE SC_TASK SET SC_TASK.POSITION = SC_TASK.POSITION + 1 WHERE SC_TASK.ID = CURRENTTASK.ID;
+      ELSIF OLDSTATE = NEWSTATE AND OLDPOSITION < NEWPOSITION AND OLDPOSITION < CURRENTTASK.POSITION AND NEWPOSITION >= CURRENTTASK.POSITION AND NEWSTATE = CURRENTTASK.STATE THEN
+        UPDATE SC_TASK SET SC_TASK.POSITION = SC_TASK.POSITION - 1 WHERE SC_TASK.ID = CURRENTTASK.ID;
+      ELSIF OLDSTATE != NEWSTATE AND NEWPOSITION <= CURRENTTASK.POSITION  AND NEWSTATE = CURRENTTASK.STATE THEN
+        UPDATE SC_TASK SET SC_TASK.POSITION = SC_TASK.POSITION + 1 WHERE SC_TASK.ID = CURRENTTASK.ID;
+      ELSIF OLDSTATE != NEWSTATE AND OLDPOSITION < CURRENTTASK.POSITION  AND OLDSTATE = CURRENTTASK.STATE THEN
+        UPDATE SC_TASK SET SC_TASK.POSITION = SC_TASK.POSITION - 1 WHERE SC_TASK.ID = CURRENTTASK.ID;
+      END IF;
+    END LOOP;
+  END IF;
+  COMMIT;
 END SC_PROC_UPDATE_TASK;
