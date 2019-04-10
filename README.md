@@ -38,6 +38,7 @@ If you want to provide feedback and help to improve our application, you can fil
 * implement analysis tools for statistics (charts etc.)
 * host own MongoDB and OracleDB (to be permanent)
 * deploy Android app on Google Play Store
+* fix any bugs you encounter
 
 We would be glad if you implemented any of these features. Feel free to do so
 
