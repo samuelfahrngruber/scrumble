@@ -1,68 +1,66 @@
-drop table sc_user cascade constraints;
-drop table sc_Sprint cascade constraints;
-drop table sc_task cascade constraints;
-drop table sc_Project cascade constraints;
-drop table sc_Teammember cascade constraints;
-drop table sc_ProjectLogEntry cascade constraints;
+DROP TABLE SC_USER CASCADE CONSTRAINTS;
+DROP TABLE SC_SPRINT CASCADE CONSTRAINTS;
+DROP TABLE SC_TASK CASCADE CONSTRAINTS;
+DROP TABLE SC_PROJECT CASCADE CONSTRAINTS;
+DROP TABLE SC_TEAMMEMBER CASCADE CONSTRAINTS;
+DROP TABLE SC_PROJECTLOGENTRY CASCADE CONSTRAINTS;
 
-create Table sc_User(
- id number Primary Key,
- username varchar2(30) unique,
- password varchar2(30)
+CREATE TABLE SC_USER(
+ ID NUMBER PRIMARY KEY,
+ USERNAME VARCHAR2(30) UNIQUE,
+ PASSWORD VARCHAR2(30)
 );
 
-create Table sc_Task(
- id number Primary Key,
- idResponsible number,
- idVerify number,
- name varchar2(30),
- info varchar2(500),
- rejections number,
- state varchar2(20) check(State = 'PRODUCT_BACKLOG' OR State = 'SPRINT_BACKLOG' or State = 'IN_PROGRESS' or State = 'TO_VERIFY' or State = 'DONE'),
- position number,
- idSprint number,
- idProject number,
- constraint fk_userstory_responsible foreign key(idResponsible) references sc_User(id),
- constraint fk_userstory_verify foreign key(idVerify) references sc_User(id),
- check((idSprint is null and State = 'PRODUCT_BACKLOG') or (idSprint is not null and State != 'PRODUCT_BACKLOG'))
+CREATE TABLE SC_TASK(
+ ID NUMBER PRIMARY KEY,
+ IDRESPONSIBLE NUMBER,
+ IDVERIFY NUMBER,
+ NAME VARCHAR2(30),
+ INFO VARCHAR2(500),
+ REJECTIONS NUMBER,
+ STATE VARCHAR2(20) CHECK(STATE = 'PRODUCT_BACKLOG' OR STATE = 'SPRINT_BACKLOG' OR STATE = 'IN_PROGRESS' OR STATE = 'TO_VERIFY' OR STATE = 'DONE'),
+ POSITION NUMBER,
+ IDSPRINT NUMBER,
+ IDPROJECT NUMBER,
+ CONSTRAINT FK_USERSTORY_RESPONSIBLE FOREIGN KEY(IDRESPONSIBLE) REFERENCES SC_USER(ID),
+ CONSTRAINT FK_USERSTORY_VERIFY FOREIGN KEY(IDVERIFY) REFERENCES SC_USER(ID),
+ CHECK((IDSPRINT IS NULL AND STATE = 'PRODUCT_BACKLOG') OR (IDSPRINT IS NOT NULL AND STATE != 'PRODUCT_BACKLOG'))
 );
 
-create Table sc_Project(
- id number Primary Key,
- name varchar2(30),
- idProductowner number,
- idCurrentSprint number,
- constraint fk_project_user foreign key(idProductowner) references sc_User(id) 
+CREATE TABLE SC_PROJECT(
+ ID NUMBER PRIMARY KEY,
+ NAME VARCHAR2(30),
+ IDPRODUCTOWNER NUMBER,
+ IDCURRENTSPRINT NUMBER,
+ CONSTRAINT FK_PROJECT_USER FOREIGN KEY(IDPRODUCTOWNER) REFERENCES SC_USER(ID) 
 );
 
-create Table sc_Sprint(
-  id number Primary Key,
-  sprintNumber number,
-  startDate date,
-  deadline date,
-  idProject number,
-  constraint fk_Sprint_Project foreign key(idProject) references sc_Project(id)
+CREATE TABLE SC_SPRINT(
+  ID NUMBER PRIMARY KEY,
+  SPRINTNUMBER NUMBER,
+  STARTDATE DATE,
+  DEADLINE DATE,
+  IDPROJECT NUMBER,
+  CONSTRAINT FK_SPRINT_PROJECT FOREIGN KEY(IDPROJECT) REFERENCES SC_PROJECT(ID)
 );
 
-create Table sc_Teammember(
- idUser number,
- idProject number,
- constraint pk_Teammember primary key(idUser,idProject),
- constraint fk_Teammember_User foreign key(idUser) references sc_User(id),
- constraint fk_Teammember_Project foreign key(idProject) references sc_Project(id)
+CREATE TABLE SC_TEAMMEMBER(
+ IDUSER NUMBER,
+ IDPROJECT NUMBER,
+ CONSTRAINT PK_TEAMMEMBER PRIMARY KEY(IDUSER,IDPROJECT),
+ CONSTRAINT FK_TEAMMEMBER_USER FOREIGN KEY(IDUSER) REFERENCES SC_USER(ID),
+ CONSTRAINT FK_TEAMMEMBER_PROJECT FOREIGN KEY(IDPROJECT) REFERENCES SC_PROJECT(ID)
 );
 
-create Table sc_ProjectLogEntry(
-  id number primary key,
-  entrydate date,
-  text varchar2(200),
-  idProject number,
-  constraint fk_ProjectLogEntry_Project foreign key(idProject) references sc_project(id)
+CREATE TABLE SC_LASTUPDATE( 
+  IDPROJECT NUMBER PRIMARY KEY, 
+	 DATUM DATE, 
+  CONSTRAINT FK_PROJECT_LASTUPDATE FOREIGN KEY (IDPROJECT) REFERENCES SC_PROJECT (ID)
 );
 
-Alter Table sc_Project
-  add constraint fk_project_sprint foreign key(idCurrentSprint) references sc_Sprint(id);
-Alter Table sc_Task
-  add  constraint fk_userstory_sprint foreign key(idSprint) references sc_Sprint(id);
-Alter Table sc_Task
-  add  constraint fk_userstory_project foreign key(idproject) references sc_project(id);
+ALTER TABLE SC_PROJECT
+  ADD CONSTRAINT FK_PROJECT_SPRINT FOREIGN KEY(IDCURRENTSPRINT) REFERENCES SC_SPRINT(ID);
+ALTER TABLE SC_TASK
+  ADD  CONSTRAINT FK_USERSTORY_SPRINT FOREIGN KEY(IDSPRINT) REFERENCES SC_SPRINT(ID);
+ALTER TABLE SC_TASK
+  ADD  CONSTRAINT FK_USERSTORY_PROJECT FOREIGN KEY(IDPROJECT) REFERENCES SC_PROJECT(ID);

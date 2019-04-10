@@ -1,16 +1,16 @@
-create or replace PROCEDURE SC_PROC_DELETE_TASK 
+CREATE OR REPLACE PROCEDURE SC_PROC_DELETE_TASK 
 (
   OLDID IN NUMBER 
 ) IS
-  OLDPOSITION number;
+  OLDPOSITION NUMBER;
   OLDSTATE VARCHAR2(50);
-  OLDIDSPRINT number;
+  OLDIDSPRINT NUMBER;
   
 BEGIN
-  Select sc_task.position, sc_task.state, sc_task.idsprint into OLDPOSITION, OLDSTATE, OLDIDSPRINT from sc_task where sc_task.id = OLDID;
-  Delete from sc_task where sc_task.id = OLDID;
-  for currentTask in (Select id, position from sc_task where sc_task.id != OLDID and (sc_task.state = OLDSTATE) and sc_Task.idsprint = OLDIDSPRINT and sc_Task.position > OLDPOSITION) loop
-    Update sc_task set position = position - 1 where currentTask.id = id;
-  end loop;
-  commit;
+  SELECT SC_TASK.POSITION, SC_TASK.STATE, SC_TASK.IDSPRINT INTO OLDPOSITION, OLDSTATE, OLDIDSPRINT FROM SC_TASK WHERE SC_TASK.ID = OLDID;
+  DELETE FROM SC_TASK WHERE SC_TASK.ID = OLDID;
+  FOR CURRENTTASK IN (SELECT ID, POSITION FROM SC_TASK WHERE SC_TASK.ID != OLDID AND (SC_TASK.STATE = OLDSTATE) AND SC_TASK.IDSPRINT = OLDIDSPRINT AND SC_TASK.POSITION > OLDPOSITION) LOOP
+    UPDATE SC_TASK SET POSITION = POSITION - 1 WHERE CURRENTTASK.ID = ID;
+  END LOOP;
+  COMMIT;
 END SC_PROC_DELETE_TASK;
