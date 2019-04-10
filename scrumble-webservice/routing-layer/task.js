@@ -1,9 +1,10 @@
 // packages
-const express = require('express'),
+let express = require('express'),
     oracleConnection = require('../data-layer/oracleDataAccess'),
     classParser = require('../data-layer/classParser'),
     classes = require('../data-layer/classes'),
     error = require('./misc/error'),
+    changeJob = require('./misc/changeJob'),
     router = express.Router({
         mergeParams: true
     });
@@ -44,7 +45,7 @@ router.get('/', (req, res) => {
     oracleConnection.execute(query, param)
         .then((result) => {
             if (result.rows.length < 1)
-            throw new Error("NO CONTENT");
+                throw new Error("NO CONTENT");
             res.json(classParser(result.rows, classes.Task))
         })
         .catch((err) => error.respondWith(res, err));
@@ -108,8 +109,9 @@ router.post('/', (req, res, next) => {
     if (req.params.sprintid || req.params.projectid)
         next();
     else {
-        let query = "insert into sc_task values(null, :responsible, :verify, :name, :info, 0, :state, :position, :sprint, :project)",
-            param = [req.body.responsible, req.body.verify, req.body.name, req.body.info, req.body.state, req.body.position, req.body.sprint, req.body.project];
+        let query = "insert into sc_task values(null, :responsible, :verify, :name, :info, 0, :state, :position, :sprint, :project, :color)",
+            param = [req.body.responsible, req.body.verify, req.body.name, req.body.info, req.body.state, req.body.position, req.body.sprint, req.body.project, req.body.color],
+            object = getTaskObject(req, -1, 0);
 
         oracleConnection.execute(query, param)
             .then((result) => {
@@ -117,9 +119,14 @@ router.post('/', (req, res, next) => {
                     param = [];
 
                 oracleConnection.execute(query, param)
-                    .then((result) => res.status(201).json({
-                        id: result.rows[0][0]
-                    }))
+                    .then((result) => {
+                        let id = result.rows[0][0];
+                        object.id = id;
+                        changeJob.change(req.body.project, "TASK", "POST", object);
+                        res.status(201).json({
+                            id: id
+                        });
+                    })
                     .catch((err) => error.respondWith(res, err));
             })
             .catch((err) => error.respondWith(res, err));
@@ -129,11 +136,15 @@ router.put('/:taskid', (req, res, next) => {
     if (isNaN(req.params.taskid) || req.params.projectid || req.params.sprintid) {
         next();
     } else {
-        let query = "begin SC_PROC_UPDATE_TASK(:taskid, :responsible, :verify, :name, :info, :rejections, :state, :position, :sprint, :project); end;",
-            param = [req.params.taskid, req.body.responsible, req.body.verify, req.body.name, req.body.info, req.body.rejections, req.body.state, req.body.position, req.body.sprint, req.body.project];
+        let query = "begin SC_PROC_UPDATE_TASK(:taskid, :responsible, :verify, :name, :info, :rejections, :state, :position, :sprint, :project, :color); end;",
+            param = [req.params.taskid, req.body.responsible, req.body.verify, req.body.name, req.body.info, req.body.rejections, req.body.state, req.body.position, req.body.sprint, req.body.project, req.body.color],
+            object = getTaskObject(req, req.params.taskid, req.body.rejections);
 
         oracleConnection.execute(query, param)
-            .then((result) => res.status(200).end())
+            .then((result) => {
+                changeJob.change(req.body.project, "TASK", "PUT", object);
+                res.status(200).end()
+            })
             .catch((err) => error.respondWith(res, err));
     }
 });
@@ -141,14 +152,42 @@ router.delete('/:taskid', (req, res, next) => {
     if (isNaN(req.params.taskid) || req.params.projectid || req.params.sprintid) {
         next();
     } else {
-        let query = "delete from sc_task where id = :taskid",
-            param = [req.params.taskid];
+        let query = "SELECT idproject FROM sc_task WHERE id = :taskid",
+            param = [req.params.taskid],
+            object = {
+                id: Number(req.params.taskid)
+            };
 
         oracleConnection.execute(query, param)
-            .then((result) => res.status(200).end())
+            .then((result) => {
+                query = "begin SC_PROC_DELETE_TASK(:taskid); end;";
+
+                oracleConnection.execute(query, param)
+                    .then((oracleResult) => {
+                        changeJob.change(result.rows[0][0], "TASK", "DELETE", object);
+                        res.status(200).end()
+                    })
+                    .catch((err) => error.respondWith(res, err));
+            })
             .catch((err) => error.respondWith(res, err));
     }
 });
+
+function getTaskObject(req, id, rejections) {
+    return {
+        id: Number(id),
+        responsible: req.body.responsible,
+        verify: req.body.verify,
+        name: req.body.name,
+        info: req.body.info,
+        rejections: rejections,
+        state: req.body.state,
+        position: req.body.position,
+        sprint: req.body.sprint,
+        project: req.body.project,
+        color: req.body.color
+    };
+}
 
 
 module.exports = router;
