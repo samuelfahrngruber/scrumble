@@ -56,6 +56,12 @@ namespace ScrumbleLib.Connection
             ScrumbleConnection.GetUsersProjects(uw);
         }
 
+        public static void GetSprints()
+        {
+            ProjectWrapper pw = ProjectWrapper.GetInstance(currentProject.Id);
+            ScrumbleConnection.GetProjectSprints(pw);
+        }
+
         public static User GetUser(int id)
         {
             if (Users.Contains(id))
@@ -93,11 +99,20 @@ namespace ScrumbleLib.Connection
             return tw.WrappedValue;
         }
 
+        public static Project AddProject(Project project)
+        {
+            ProjectWrapper pw = ProjectWrapper.GetInstance(project);
+            ScrumbleConnection.Add(pw);
+            Projects.Add(pw.WrappedValue);
+            Scrumble.OnProjectAdded(pw.WrappedValue);
+            return pw.WrappedValue;
+        }
+
         public static Data.Task DeleteTask(int taskId)
         {
             TaskWrapper tw = TaskWrapper.GetInstance(taskId);
             ScrumbleConnection.Delete(tw);
-            Tasks.Remove(taskId);
+            //Tasks.Remove(taskId);
             Scrumble.OnTaskRemoved(tw.WrappedValue);
             return tw.WrappedValue;
         }
@@ -124,6 +139,16 @@ namespace ScrumbleLib.Connection
                 return false;
             currentUser = GetUser(uid);
             return true;
+        }
+
+        public static bool Register(string username, string password)
+        {
+            int uid = ScrumbleConnection.Register(username, password);
+            return uid >= 0;
+            //if (uid <= 0)
+            //    return false;
+            ////currentUser = GetUser(uid);
+            //return true;
         }
 
         public static void GetDailyScrumEntries()
@@ -155,6 +180,28 @@ namespace ScrumbleLib.Connection
         {
             ProjectWrapper pw = ProjectWrapper.GetInstance(currentProject.Id);
             ScrumbleConnection.GetChanges(pw, timestamp);
+        }
+
+        public static UserWrapper GetUserByName(string name)
+        {
+            return ScrumbleConnection.GetUserByName(name);
+        }
+
+        internal static Sprint AddSprint(Sprint s)
+        {
+            SprintWrapper sw = SprintWrapper.GetInstance(s);
+            ScrumbleConnection.Add(sw);
+            Sprints.Add(sw.WrappedValue);
+            Scrumble.OnSprintAdded(sw.WrappedValue);
+            return sw.WrappedValue;
+        }
+
+        internal static void Clear()
+        {
+            Projects.Clear();
+            Sprints.Clear();
+            Tasks.Clear();
+            Users.Clear();
         }
     }
 }

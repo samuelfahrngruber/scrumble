@@ -12,7 +12,7 @@ namespace ScrumbleLib.Data
         public int Id { get; set; }
         public string Name { get; set; }
         public User ProductOwner { get; set; }
-        public HashSet<User> Team { get; set; }
+        public IndexSet<User> Team { get; set; }
         public Sprint CurrentSprint { get; set; }
 
         public Project(int id, string name = default(string), User productOwner = default(User), Sprint currentSprint = default(Sprint))
@@ -20,7 +20,7 @@ namespace ScrumbleLib.Data
             this.Id = id;
             this.Name = name;
             this.ProductOwner = productOwner;
-            this.Team = new HashSet<User>();
+            this.Team = new IndexSet<User>();
             this.CurrentSprint = currentSprint;
         }
 
@@ -41,6 +41,11 @@ namespace ScrumbleLib.Data
         public bool RemoveMember(User member)
         {
             return Team.Remove(member);
+        }
+
+        public bool RemoveMember(int uid)
+        {
+            return Team.Remove(uid);
         }
     }
 }

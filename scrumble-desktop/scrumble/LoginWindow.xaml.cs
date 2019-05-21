@@ -24,6 +24,7 @@ namespace scrumble.Views
     {
         public LoginWindow()
         {
+            Scrumble.Clear();
             InitializeComponent();
             string username = Properties.Settings.Default["LoginUsername"] as string;
             string password = Properties.Settings.Default["LoginPassword"] as string;
@@ -82,14 +83,28 @@ namespace scrumble.Views
 
         private void setMyProjects()
         {
-            listBox_projects.ItemsSource = Scrumble.GetMyProjects(true);
+            List<object> items = new List<object>(Scrumble.GetMyProjects(true));
+            items.Add(new NewProject());
+            listBox_projects.ItemsSource = items;
         }
 
         private void attemptProjectSelection()
         {
-            ProjectWrapper m = listBox_projects.SelectedItem as ProjectWrapper;
+            object selection = listBox_projects.SelectedItem;
+            ProjectWrapper m = selection as ProjectWrapper;
             if (m != null)
                 attemptProjectSelection(m.Id);
+            if ((selection as NewProject) != null)
+                grid_newProjectName.Visibility = Visibility.Visible;
+        }
+
+        private void attemptProjectCreation()
+        {
+            Project p = null;
+            string projectname = textBox_newProjectName.Text;
+            p = new Project(-1, projectname);
+            int projid = Scrumble.AddProject(p);
+            attemptProjectSelection(p.Id);
         }
 
         private void attemptProjectSelection(int projectId)
@@ -134,7 +149,7 @@ namespace scrumble.Views
 
         private void button_confirmRegistration_Click(object sender, RoutedEventArgs e)
         {
-
+            attemptRegistration();
         }
 
         private void button_selectProject_Click(object sender, RoutedEventArgs e)
@@ -163,5 +178,63 @@ namespace scrumble.Views
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
         }
+
+        private void attemptRegistration(string username, string password, string confirmpw)
+        {
+            if (password == confirmpw && Scrumble.Register(username, password))
+            {
+                textBox_username.Text = username;
+                passwordBox_password.Password = password;
+                grid_registerBox.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                MessageBox.Show("Failed to create account!");
+                setLoginEnabled(true);
+            }
+        }
+
+        private void attemptRegistration()
+        {
+
+            string username = textBox_register_username.Text;
+            string password = passwordBox_register_password.Password;
+            string confirmPassword = passwordBox_register_confirmPW.Password;
+
+            attemptRegistration(username, password, confirmPassword);
+        }
+
+        private void register_keyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                attemptRegistration();
+            }
+        }
+
+        private void newProject_keyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                attemptProjectCreation();
+            }
+            
+        }
+
+        private void button_closeNewProject_Click(object sender, RoutedEventArgs e)
+        {
+            grid_newProjectName.Visibility = Visibility.Collapsed;
+        }
+
+        private void button_confirmNewProject_Click(object sender, RoutedEventArgs e)
+        {
+            attemptProjectCreation();
+        }
     }
+    public class NewProject
+    {
+
+    }
+
 }
+

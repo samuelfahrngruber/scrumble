@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:scrumble.Views"
+        xmlns:wrappernamespace="clr-namespace:ScrumbleLib.Connection.Wrapper;assembly=ScrumbleLib" 
         mc:Ignorable="d"
         Title="Login" Height="300" Width="400"
         WindowStyle="None"
@@ -67,9 +68,9 @@
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Username:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Password:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Confirm Password:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
-                                <TextBox FontFamily="Consolas" x:Name="textBox_register_username" Grid.Row="0" Grid.Column="1" FontSize="14" Padding="1" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalContentAlignment="Center"/>
-                                <PasswordBox x:Name="passwordBox_register_password" FontFamily="Consolas" FontSize="14" Padding="1" Grid.Row="1" Grid.Column="1" Margin="20,5" VerticalAlignment="Center" VerticalContentAlignment="Center"></PasswordBox>
-                                <PasswordBox x:Name="passwordBox_register_confirmPW" FontFamily="Consolas" FontSize="14" Padding="1" Grid.Row="2" Grid.Column="1" Margin="20,5" VerticalAlignment="Center" VerticalContentAlignment="Center"></PasswordBox>
+                                <TextBox FontFamily="Consolas" x:Name="textBox_register_username" Grid.Row="0" Grid.Column="1" FontSize="14" Padding="1" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalContentAlignment="Center" KeyDown="register_keyDown"/>
+                                <PasswordBox x:Name="passwordBox_register_password" FontFamily="Consolas" FontSize="14" Padding="1" Grid.Row="1" Grid.Column="1" Margin="20,5" VerticalAlignment="Center" VerticalContentAlignment="Center"  KeyDown="register_keyDown"></PasswordBox>
+                                <PasswordBox x:Name="passwordBox_register_confirmPW" FontFamily="Consolas" FontSize="14" Padding="1" Grid.Row="2" Grid.Column="1" Margin="20,5" VerticalAlignment="Center" VerticalContentAlignment="Center"  KeyDown="register_keyDown"></PasswordBox>
                             </Grid>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Button x:Name="button_closeRegister" Padding="2" Margin="20" Width="100" FontSize="15" FontWeight="Light" Content="Close" Click="button_closeRegister_Click" ></Button>
@@ -96,8 +97,8 @@
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                     <!-- Items Data Template -->
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
+                    <ListBox.Resources>
+                        <DataTemplate DataType="{x:Type wrappernamespace:ProjectWrapper}">
                             <!--<Rectangle Fill="{Binding}" Stroke="Black" Margin="3" StrokeThickness="1" Height="25" Width="25"/>-->
                             <Grid Margin="2" Width="80" Height="80">
                                 <Grid.ColumnDefinitions>
@@ -113,10 +114,37 @@
                                 <TextBlock Text="{Binding Path=SprintDeadline, StringFormat=d, TargetNullValue=-}" FontSize="10" Grid.Row="3" Grid.Column="1"></TextBlock>
                             </Grid>
                         </DataTemplate>
-                    </ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type local:NewProject}">
+                            <Border Margin="2" Width="80" Height="80" CornerRadius="8" Background="LightGreen">
+                                <TextBlock Text="New Project" FontSize="12" FontWeight="Light" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.Resources>
                 </ListBox>
+
+                <Grid Grid.Column="0" Grid.Row="1" x:Name="grid_newProjectName" Visibility="Collapsed">
+                    <Grid Background="Black" Opacity="0.5"/>
+                    <Border
+                MinWidth="300"
+                Background="White" 
+                CornerRadius="10" 
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center">
+                        <StackPanel>
+                            <TextBlock Text="New Project Name" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                            <Separator Margin="20,10"></Separator>
+                            <TextBox FontFamily="Consolas" x:Name="textBox_newProjectName" Grid.Row="0" Grid.Column="1" FontSize="14" Padding="1" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalContentAlignment="Center" KeyDown="newProject_keyDown"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button x:Name="button_closeNewProject" Padding="2" Margin="20" Width="100" FontSize="15" FontWeight="Light" Content="Close" Click="button_closeNewProject_Click"></Button>
+                                <Button x:Name="button_confirmNewProject" Padding="2" Margin="20" Width="100" FontSize="15" FontWeight="Light" Content="Create" Click="button_confirmNewProject_Click"></Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                </Grid>
+
                 <CheckBox x:Name="checkBox_autoSelectProject" Content="Remember my choice" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="11"/>
-                <Button x:Name="button_selectProject" FontWeight="Light" FontSize="15" Padding="2" Margin="10" HorizontalAlignment="Right" Width="150" Content="Select Project" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Click="button_selectProject_Click"></Button>
+                <Button x:Name="button_selectProject" FontWeight="Light" FontSize="15" Padding="2" Margin="10" HorizontalAlignment="Right" Width="150" Content="Next" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Click="button_selectProject_Click"></Button>
             </Grid>
         </Grid>
     </Border>

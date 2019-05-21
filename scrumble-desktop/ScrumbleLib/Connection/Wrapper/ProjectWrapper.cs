@@ -80,11 +80,6 @@ namespace ScrumbleLib.Connection.Wrapper
             return json;
         }
 
-        public void ApplyTeam()
-        {
-
-        }
-
         public void ApplyTeamJson(JArray projectTeamJson)
         {
             foreach (JObject user in projectTeamJson)
@@ -182,8 +177,28 @@ namespace ScrumbleLib.Connection.Wrapper
             }
         }
 
+        internal void FireTeamChanged()
+        {
+            OnPropertyChanged("Team");
+        }
+
+        public void RemoveMember(int userid)
+        {
+            WrappedValue.Team.Remove(userid);
+            ScrumbleConnection.RemoveMember(this, userid);
+            FireTeamChanged();
+        }
+
+        public void AddMember(UserWrapper user)
+        {
+            WrappedValue.Team.Add(user.WrappedValue);
+            ScrumbleConnection.AddMember(this, user);
+            FireTeamChanged();
+        }
+
         // todo
-        public HashSet<User> Team
+        [JsonIgnore]
+        public IndexSet<User> Team
         {
             get
             {

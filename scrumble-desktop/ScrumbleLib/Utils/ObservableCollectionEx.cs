@@ -45,5 +45,6 @@ namespace ScrumbleLib.Utils
             NotifyCollectionChangedEventArgs args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
             OnCollectionChanged(args);
         }
+
     }
 }

@@ -23,5 +23,10 @@ namespace ScrumbleLib.Data
             this.Start = start;
             this.Deadline = deadline;
         }
+
+        public override string ToString()
+        {
+            return "Sprint #" + Number + " (" + Start.ToShortDateString() + " - " + Deadline.ToShortDateString() + ")";
+        }
     }
 }

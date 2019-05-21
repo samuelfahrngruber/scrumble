@@ -19,6 +19,7 @@ using System.IO;
 using System.Reflection;
 using scrumble.DailyScrumTable;
 using scrumble.Views;
+using ScrumbleLib.Utils;
 
 namespace scrumble
 {
@@ -37,6 +38,8 @@ namespace scrumble
 
         private List<string> taskColors;
 
+        private int sprintEditor_sprintId;
+
         public MainWindow()
         {
             initializeCef();
@@ -52,6 +55,8 @@ namespace scrumble
             chromiumWebBrowser_scrumBoard.RegisterJsObject("scrumble_scrumboardInterface", scrumboardInterface);
 
             Window_Loaded(null, null);
+
+            Scrumble.forceInit();
 
             initializeInformation();
 
@@ -87,16 +92,20 @@ namespace scrumble
 
         private void initializeCef()
         {
+
             CefSharpSettings.LegacyJavascriptBindingEnabled = true;
             scrumboardInterface = ScrumboardInterface.Create(this);
 
-            CefSettings settings = new CefSettings();
-            settings.RegisterScheme(new CefCustomScheme()
+            if (!Cef.IsInitialized)
             {
-                SchemeName = "scrumboard",
-                SchemeHandlerFactory = new CefSharp.SchemeHandler.FolderSchemeHandlerFactory("./Scrumboard/html/")
-            });
-            Cef.Initialize(settings);
+                CefSettings settings = new CefSettings();
+                settings.RegisterScheme(new CefCustomScheme()
+                {
+                    SchemeName = "scrumboard",
+                    SchemeHandlerFactory = new CefSharp.SchemeHandler.FolderSchemeHandlerFactory("./Scrumboard/html/")
+                });
+                Cef.Initialize(settings);
+            }
         }
 
         private void initializeMenu()
@@ -106,11 +115,9 @@ namespace scrumble
 
         private void initializeProjectOverview()
         {
-
-            Scrumble.WrapperFactory.CreateProjectWrapper(22);
             section_ProjectOverview.Visibility = Visibility.Visible;
         }
-        
+
         private void initializeInformation()
         {
             Scrumble.Logger = this;
@@ -138,23 +145,21 @@ namespace scrumble
 
         private void initializeSelectedTask()
         {
-            Scrumble.WrapperFactory.CreateTaskWrapper(18);
-            setSelectedTask(18);
-            section_SelectedTask.Visibility = Visibility.Visible;
+            // section_SelectedTask.Visibility = Visibility.Visible;
 
             taskColors = new List<string>();
 
-            taskColors.Add("#FDD7FF");
-            taskColors.Add("#FF8EEC");
-            taskColors.Add("#8A79FF");
-            taskColors.Add("#4FA5FF");
-            taskColors.Add("#73FFE8");
-            taskColors.Add("#39FFB0");
-            taskColors.Add("#B5FF8D");
-            taskColors.Add("#FFF082");
-            taskColors.Add("#FFB841");
-            taskColors.Add("#FF8080");
-            taskColors.Add("#FF9EA6");
+            taskColors.Add("#fdddff");
+            taskColors.Add("#ffc1f5");
+            taskColors.Add("#c7beff");
+            taskColors.Add("#a5d1ff");
+            taskColors.Add("#c2fff5");
+            taskColors.Add("#bfffe6");
+            taskColors.Add("#c7ffa9");
+            taskColors.Add("#fff5ab");
+            taskColors.Add("#ffcdab");
+            taskColors.Add("#ffa0a0");
+            taskColors.Add("#ffd5d9");
             taskColors.Add("#FFFFFF");
 
             listBox_brushes.DataContext = taskColors;
@@ -168,6 +173,8 @@ namespace scrumble
 
         private void setSelectedTask(TaskWrapper tw)
         {
+            if (!section_SelectedTask.IsVisible)
+                Dispatcher.Invoke(() => { section_SelectedTask.Visibility = Visibility.Visible; });
             if (selectedTask != null)
                 selectedTask.PropertyChanged -= refreshSelectedTask;
             selectedTask = tw;
@@ -180,32 +187,50 @@ namespace scrumble
             currentProject = Scrumble.GetCurrentProject();
             refreshCurrentProject(null, null);
             currentProject.PropertyChanged += refreshCurrentProject;
-            //Scrumble.GetProductBacklog().CollectionChanged += refreshProductBacklog;
+            Scrumble.GetProductBacklog().CollectionChanged += refreshProductBacklog;
+            Scrumble.GetSprints().CollectionChanged += refreshSprints;
         }
 
-        private void refreshProductBacklog(object sender, NotifyCollectionChangedEventArgs e)
+        private async void refreshProductBacklog(object sender, NotifyCollectionChangedEventArgs e)
         {
-            refreshCurrentProject(null, null);
+            await Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+            {
+                listBox_productBacklog.Items.Refresh();
+            }));
+        }
+
+        private void refreshSprints(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            refreshsprints();
+        }
+
+        private async void refreshsprints()
+        {
+            await Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() => {
+                ObservableCollectionEx<SprintWrapper> sprints = Scrumble.GetSprints();
+                listBox_sprints.ItemsSource = sprints.OrderBy(item => item.Number);
+                listBox_sprints.Items.Refresh();
+            }));
         }
 
         private async void refreshSelectedTask(object sender, PropertyChangedEventArgs e)
         {
-            await Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action) (() =>
-            {
-                textBox_selectedTask_name.Text = selectedTask.Name;
-                textBox_selectedTask_description.Text = selectedTask.Info;
+            await Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(() =>
+           {
+               textBox_selectedTask_name.Text = selectedTask.Name;
+               textBox_selectedTask_description.Text = selectedTask.Info;
 
-                //textBlock_selectedTask_responsible.Text = selectedTask.WrappedValue.ResponsibleUser == null ? "-" : selectedTask.WrappedValue.ResponsibleUser.Username.ToString();
-                comboBox_selectedTask_responsible.ItemsSource = currentProject.Team;
-                comboBox_selectedTask_responsible.SelectedItem = selectedTask.WrappedValue.ResponsibleUser;
+               //textBlock_selectedTask_responsible.Text = selectedTask.WrappedValue.ResponsibleUser == null ? "-" : selectedTask.WrappedValue.ResponsibleUser.Username.ToString();
+               comboBox_selectedTask_responsible.ItemsSource = currentProject.Team.Values;
+               comboBox_selectedTask_responsible.SelectedItem = selectedTask.WrappedValue.ResponsibleUser;
 
-                //textBlock_selectedTask_verify.Text = selectedTask.WrappedValue.VerifyingUser == null ? "-" : selectedTask.WrappedValue.VerifyingUser.Username.ToString();
-                comboBox_selectedTask_verify.ItemsSource = currentProject.Team;
-                comboBox_selectedTask_verify.SelectedItem = selectedTask.WrappedValue.VerifyingUser;
+               //textBlock_selectedTask_verify.Text = selectedTask.WrappedValue.VerifyingUser == null ? "-" : selectedTask.WrappedValue.VerifyingUser.Username.ToString();
+               comboBox_selectedTask_verify.ItemsSource = currentProject.Team.Values;
+               comboBox_selectedTask_verify.SelectedItem = selectedTask.WrappedValue.VerifyingUser;
 
-                textBlock_selectedTask_rejections.Text = selectedTask.Rejections.ToString();
-                button_chooseTaskColor.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom(selectedTask.Color));
-            }));
+               textBlock_selectedTask_rejections.Text = selectedTask.Rejections.ToString();
+               button_chooseTaskColor.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom(selectedTask.Color));
+           }));
         }
 
         private async void refreshCurrentProject(object sender, PropertyChangedEventArgs e)
@@ -215,21 +240,46 @@ namespace scrumble
                 textBlock_projectOverview_name.Text = currentProject.Name;
                 textBlock_projectOverview_productOwner.Text = currentProject.WrappedValue.ProductOwner.ToString();
 
-                textBlock_projectOverview_currentSprint.Text = "#" + currentProject.WrappedValue.CurrentSprint.Number;
-                textBlock_projectOverview_currentSprintDeadline.Text = currentProject.WrappedValue.CurrentSprint.Deadline.ToString("dddd, dd.MM.yyyy");
 
-                listBox_teamMembers.ItemsSource = currentProject.WrappedValue.Team;
+                if (currentProject.CurrentSprint != null)
+                {
+                    textBlock_projectOverview_currentSprint.Text = "#" + currentProject.WrappedValue.CurrentSprint.Number;
+                    textBlock_projectOverview_currentSprintDeadline.Text = currentProject.WrappedValue.CurrentSprint.Deadline.ToString("dddd, dd.MM.yyyy");
 
-                comboBox_addTask_responsible.ItemsSource = currentProject.WrappedValue.Team;
-                comboBox_addTask_verify.ItemsSource = currentProject.WrappedValue.Team;
+                    toolBarTray_scrumBoard.Visibility = Visibility.Visible;
+                    chromiumWebBrowser_scrumBoard.Visibility = Visibility.Visible;
+                    textBlock_selectSprintFirst.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    textBlock_projectOverview_currentSprint.Text = "-";
+                    textBlock_projectOverview_currentSprintDeadline.Text = "-";
+
+                    toolBarTray_scrumBoard.Visibility = Visibility.Collapsed;
+                    chromiumWebBrowser_scrumBoard.Visibility = Visibility.Collapsed;
+                    textBlock_selectSprintFirst.Visibility = Visibility.Visible;
+                }
+
+                listBox_teamMembers.ItemsSource = currentProject.Team.Values;
+                listBox_teamMembers.Items.Refresh();
+
+                comboBox_productOwner.ItemsSource = currentProject.Team.Values;
+                comboBox_productOwner.SelectedItem = currentProject.WrappedValue.ProductOwner;
+
+                refreshsprints();
+
+                comboBox_addTask_responsible.ItemsSource = currentProject.WrappedValue.Team.Values;
+                comboBox_addTask_verify.ItemsSource = currentProject.WrappedValue.Team.Values;
 
                 listBox_productBacklog.ItemsSource = Scrumble.GetProductBacklog();
+                listBox_productBacklog.Items.Refresh();
             }));
         }
 
         private void setMyTasks()
         {
-            Dispatcher.BeginInvoke((Action)(() => { 
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
                 treeViewItem_myTasks_sprintBacklog.ItemsSource = Scrumble.GetMyTasks().Where(task => task.WrappedValue.State == TaskState.SPRINT_BACKLOG);
                 treeViewItem_myTasks_inProgress.ItemsSource = Scrumble.GetMyTasks().Where(task => task.WrappedValue.State == TaskState.IN_PROGRESS);
                 treeViewItem_myTasks_inTest.ItemsSource = Scrumble.GetMyTasks().Where(task => task.WrappedValue.State == TaskState.TO_VERIFY);
@@ -239,10 +289,15 @@ namespace scrumble
 
         private async void addTaskToScrumboard(TaskWrapper wrapper)
         {
-            if (chromiumWebBrowser_scrumBoard.CanExecuteJavascriptInMainFrame)
+            await Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)(async () =>
             {
-                JavascriptResponse response = await chromiumWebBrowser_scrumBoard.EvaluateScriptAsync("setTask(" + wrapper.ToJson() + ");");
-            }
+                if (chromiumWebBrowser_scrumBoard.IsInitialized
+                    && chromiumWebBrowser_scrumBoard.WebBrowser != null
+                    && chromiumWebBrowser_scrumBoard.CanExecuteJavascriptInMainFrame)
+                {
+                    JavascriptResponse response = await chromiumWebBrowser_scrumBoard.EvaluateScriptAsync("setTask(" + wrapper.ToJson() + ");");
+                }
+            }));
         }
 
         private async void removeTaskFromScrumboard(TaskWrapper wrapper)
@@ -291,40 +346,14 @@ namespace scrumble
         private void chromiumWebBrowser_scrumBoard_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
         {
             Dispatcher.Invoke(stopProgress);
-            Dispatcher.Invoke(() => { setSelectedTask(6); });
+            //Dispatcher.Invoke(() => { setSelectedTask(6); });
             Scrumble.GetScrumboard().CollectionChanged += new NotifyCollectionChangedEventHandler(ScrumboardChanged);
             Dispatcher.Invoke(() => { setScrumboardContent(); });
         }
 
         private void ScrumboardChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            //different kind of changes that may have occurred in collection
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (TaskWrapper task in e.NewItems)
-                {
-                    addTaskToScrumboard(task);
-                }
-            }
-            if (e.Action == NotifyCollectionChangedAction.Replace)
-            {
-                foreach (TaskWrapper task in e.NewItems)
-                {
-                    addTaskToScrumboard(task);
-                }
-            }
-            if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                foreach (TaskWrapper task in e.OldItems)
-                {
-                    //removeTaskFromScrumboard(task);
-                    removeTaskFromScrumboard(task);
-                }
-            }
-            if (e.Action == NotifyCollectionChangedAction.Move)
-            {
-                //your code
-            }
+
             setScrumboardContent();
         }
 
@@ -336,7 +365,7 @@ namespace scrumble
 
         private void setScrumboardContent(bool force)
         {
-            foreach(TaskWrapper task in Scrumble.GetScrumboard(force))
+            foreach (TaskWrapper task in Scrumble.GetScrumboard(force))
             {
                 addTaskToScrumboard(task);
             }
@@ -354,6 +383,10 @@ namespace scrumble
                 Run r = new Run();
                 r.Text = text + "\n";
                 r.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom(hexcolor));
+                if (textBlock_devConsole.Inlines.Count > 10)
+                {
+                    textBlock_devConsole.Inlines.Remove(textBlock_devConsole.Inlines.First());
+                }
                 textBlock_devConsole.Inlines.Add(r);
                 scrollViewer_devConsole.ScrollToEnd();
             });
@@ -406,15 +439,15 @@ namespace scrumble
             User responsible = comboBox_addTask_responsible.SelectedItem as User;
             User verify = comboBox_addTask_verify.SelectedItem as User;
 
-            ScrumbleLib.Data.Task t = new ScrumbleLib.Data.Task(-1, 
-                name, 
-                info, 
-                0, 
-                responsible, 
-                verify, 
-                Scrumble.GetCurrentProject().WrappedValue.CurrentSprint, 
-                Scrumble.GetCurrentProject().WrappedValue, 
-                TaskState.SPRINT_BACKLOG, 
+            ScrumbleLib.Data.Task t = new ScrumbleLib.Data.Task(-1,
+                name,
+                info,
+                0,
+                responsible,
+                verify,
+                Scrumble.GetCurrentProject().WrappedValue.CurrentSprint,
+                Scrumble.GetCurrentProject().WrappedValue,
+                TaskState.SPRINT_BACKLOG,
                 0,
                 "#FFFFFF"); // todo colorpicker
 
@@ -431,7 +464,7 @@ namespace scrumble
         private void treeView_myTasks_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             TaskWrapper tw = treeView_myTasks.SelectedItem as TaskWrapper;
-            if(tw != null)
+            if (tw != null)
             {
                 setSelectedTask(tw);
             }
@@ -448,10 +481,10 @@ namespace scrumble
 
         private void contextMenuItem_removeTeamMember_Click(object sender, RoutedEventArgs e)
         {
-            TaskWrapper tw = listBox_productBacklog.SelectedItem as TaskWrapper;
-            if (tw != null)
+            User u = listBox_teamMembers.SelectedItem as User;
+            if (u != null)
             {
-                setSelectedTask(tw);
+                Scrumble.GetCurrentProject().RemoveMember(u.Id);
             }
         }
 
@@ -527,7 +560,7 @@ namespace scrumble
 
         private void button_minusRejection_Click(object sender, RoutedEventArgs e)
         {
-            if(selectedTask.Rejections > 0)
+            if (selectedTask.Rejections > 0)
                 selectedTask.Rejections = selectedTask.Rejections - 1;
         }
 
@@ -563,5 +596,152 @@ namespace scrumble
             comboBox_selectedTask_responsible.SelectedValue = null;
         }
 
+        private void contextMenuItem_moveTaskToScrumboard_Click(object sender, RoutedEventArgs e)
+        {
+            TaskWrapper t = listBox_productBacklog.SelectedItem as TaskWrapper;
+            if (t != null && Scrumble.GetCurrentProject().CurrentSprint != null)
+            {
+                t.WrappedValue.State = TaskState.SPRINT_BACKLOG;
+                t.Sprint = Scrumble.GetCurrentProject().CurrentSprint;
+                t.OnStateChanged();
+            }
+            else
+            {
+                MessageBox.Show("Either no task selected or no current sprint");
+            }
+        }
+
+        private void button_addTeamMember_Click(object sender, RoutedEventArgs e)
+        {
+            attremptAddTeamMember();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox_addTeamMemberUsername_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                attremptAddTeamMember();
+            }
+        }
+
+        private void attremptAddTeamMember()
+        {
+            string username = textBox_addTeamMemberUsername.Text;
+            if (username != "")
+            {
+                UserWrapper uw = Scrumble.GetUserByName(username);
+                if (uw != null)
+                {
+                    currentProject.AddMember(uw);
+                    textBox_addTeamMemberUsername.Text = "";
+                }
+                else
+                {
+                    MessageBox.Show("User not found!");
+                }
+            }
+        }
+
+        private void contextMenuItem_editTask_Click(object sender, RoutedEventArgs e)
+        {
+            TaskWrapper tw = listBox_productBacklog.SelectedItem as TaskWrapper;
+            if (tw != null)
+            {
+                setSelectedTask(tw);
+            }
+        }
+
+        private void contextMenuItem_setCurrentSprint_Click(object sender, RoutedEventArgs e)
+        {
+            SprintWrapper sw = listBox_sprints.SelectedItem as SprintWrapper;
+            if (sw != null)
+            {
+                currentProject.CurrentSprint = sw.Id;
+            }
+        }
+
+        private void button_addSprint_Click(object sender, RoutedEventArgs e)
+        {
+            showSprintEditor();
+        }
+
+        private void button_sprintEditor_close_Click(object sender, RoutedEventArgs e)
+        {
+            grid_sprintEditor.Visibility = Visibility.Collapsed;
+        }
+
+        private void showSprintEditor(int sprintid = -1)
+        {
+            this.sprintEditor_sprintId = sprintid;
+            if (sprintid >= 0)
+            {
+                SprintWrapper sw = Scrumble.WrapperFactory.CreateSprintWrapper(sprintid);
+                datePicker_sprintEditor_deadline.SelectedDate = sw.Deadline;
+                datePicker_sprintEditor_start.SelectedDate = sw.Start;
+                textBox_sprintEditor_number.Text = "" + sw.Number;
+            }
+            grid_sprintEditor.Visibility = Visibility.Visible;
+        }
+
+        private void button_sprintEditor_confirm_Click(object sender, RoutedEventArgs e)
+        {
+
+            int sprintNumber = 0;
+            DateTime? start = datePicker_sprintEditor_start.SelectedDate;
+            DateTime? deadline = datePicker_sprintEditor_deadline.SelectedDate;
+            if (int.TryParse(textBox_sprintEditor_number.Text, out sprintNumber) == false
+                || sprintNumber <= 0
+                || start == null
+                || deadline == null
+                || deadline <= start)
+            {
+                MessageBox.Show("Wrong Input Data!");
+                return;
+            }
+
+            if (false)
+            {
+                MessageBox.Show("Failed to save changes!\nThe sprint data interferes with other sprints!");
+                return;
+            }
+
+            if (this.sprintEditor_sprintId < 1)
+            {
+                // create a sprint
+                Sprint s = new Sprint(-1, null, sprintNumber, (DateTime)start, (DateTime)deadline);
+                Scrumble.AddSprint(s);
+            }
+            else
+            {
+                // update a sprint
+                SprintWrapper sw = Scrumble.WrapperFactory.CreateSprintWrapper(this.sprintEditor_sprintId);
+                sw.WrappedValue.Deadline = (DateTime)deadline; // wrappedvalue, to not make a db call yet
+                sw.WrappedValue.Start = (DateTime)start; // --,,--
+                sw.Number = sprintNumber; // db call
+            }
+        }
+
+        private void contextMenuItem_editSprint_Click(object sender, RoutedEventArgs e)
+        {
+            SprintWrapper sw = listBox_sprints.SelectedItem as SprintWrapper;
+            if (sw != null)
+            {
+                showSprintEditor(sw.Id);
+            }
+        }
+
+        private void comboBox_productOwner_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            User u = comboBox_productOwner.SelectedItem as User;
+            if(u != null && u != currentProject.WrappedValue.ProductOwner)
+            {
+                currentProject.ProductOwner = u.Id;
+            }
+        }
     }
 }

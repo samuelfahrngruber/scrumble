@@ -101,6 +101,7 @@ namespace ScrumbleLib.Connection.Wrapper
             if (jsonObject.ContainsKey("position")) WrappedValue.Position = (int)jsonObject["position"];
             if (jsonObject.ContainsKey("color")) WrappedValue.Color = (string)jsonObject["color"];
             OnPropertyChanged("ALL");
+            OnStateChanged();
         }
 
         public void ApplyFields(int id, string name, string info, int rejections, int responsibleUser, int verifyingUser, int? sprint, int project, string state, int position, string color)
@@ -116,6 +117,8 @@ namespace ScrumbleLib.Connection.Wrapper
             WrappedValue.State = TaskStateParser.Parse(state);
             WrappedValue.Position = position;
             WrappedValue.Color = color;
+            OnPropertyChanged("ALL");
+            OnStateChanged();
         }
 
         public int Id
@@ -240,6 +243,11 @@ namespace ScrumbleLib.Connection.Wrapper
             }
         }
 
+        public void OnStateChanged()
+        {
+            Scrumble.OnTaskStateChanged(this);
+        }
+
         public string State
         {
             get
@@ -249,6 +257,7 @@ namespace ScrumbleLib.Connection.Wrapper
             set
             {
                 WrappedValue.State = TaskStateParser.Parse(value);
+                OnStateChanged();
                 OnPropertyChanged("State");
                 ScrumbleConnection.Update(this);
             }

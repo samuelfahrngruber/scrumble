@@ -7,7 +7,7 @@
         xmlns:dailyscrumtable="clr-namespace:scrumble.DailyScrumTable"
         xmlns:cefSharp="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         mc:Ignorable="d"
-        Title="scrumble" Height="700" Width="1244" Loaded="Window_Loaded">
+        Title="scrumble" Height="700" Width="1244" Loaded="Window_Loaded" Closed="Window_Closed">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
@@ -19,12 +19,11 @@
         </Grid.ColumnDefinitions>
         <Menu x:Name="menu_menuBar" FontSize="15" FontWeight="Light" Padding="2">
             <MenuItem Header="Project">
-                <MenuItem x:Name="menuItem_project_new" Header="New" />
-                <MenuItem x:Name="menuItem_project_switch" Header="Switch project..." Click="menuItem_project_switch_Click"/>
+                <MenuItem x:Name="menuItem_project_switch" Header="Change or Create Project..." Click="menuItem_project_switch_Click"/>
             </MenuItem>
             <MenuItem Header="Settings">
                 <MenuItem x:Name="menuItem_settings_logout" Header="Log out" Click="menuItem_settings_logout_Click" />
-                <MenuItem x:Name="menuItem_settings_preferences" Header="Preferences..."/>
+                <MenuItem x:Name="menuItem_settings_preferences" Header="Preferences..." IsEnabled="False"/>
             </MenuItem>
         </Menu>
         <Grid Grid.Row="1" Grid.Column="0">
@@ -43,70 +42,175 @@
             <GridSplitter Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="1" ShowsPreview="True" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
 
             <!-- Project Overview -->
-            <ScrollViewer Margin="0,0,5,0" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3">
-            <StackPanel x:Name="section_ProjectOverview" Margin="0,0,5,0"  Orientation="Vertical" >
-                <TextBlock Text="Project Overview" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
-                <Separator Margin="20, 0"></Separator>
-                <Grid Margin="5">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="1*"></RowDefinition>
-                        <RowDefinition Height="1*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Project Name: " FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalAlignment="Center"></TextBlock>
-                    <TextBlock x:Name="textBlock_projectOverview_name" Grid.Row="0" Grid.Column="1" FontWeight="Medium" Text="Scrumble" TextWrapping="Wrap"  VerticalAlignment="Center" FontSize="15"></TextBlock>
+            <Grid Margin="0,0,5,0" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3">
+                <ScrollViewer >
+                    <StackPanel x:Name="section_ProjectOverview" Margin="0,0,5,0"  Orientation="Vertical" >
+                        <TextBlock Text="Project Overview" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                        <Separator Margin="20, 0"></Separator>
+                        <Grid Margin="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"></RowDefinition>
+                                <RowDefinition Height="1*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="1*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Project Name: " FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock x:Name="textBlock_projectOverview_name" Grid.Row="0" Grid.Column="1" FontWeight="Medium" Text="Scrumble" TextWrapping="Wrap"  VerticalAlignment="Center" FontSize="15"></TextBlock>
 
-                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Product Owner: " FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalAlignment="Center"></TextBlock>
-                    <TextBlock x:Name="textBlock_projectOverview_productOwner" Grid.Row="1" Grid.Column="1" FontWeight="Medium" Text="BestProductOwner" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="15"></TextBlock>
+                            <TextBlock Grid.Column="0" Grid.Row="1" Text="Product Owner: " FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock x:Name="textBlock_projectOverview_productOwner" Grid.Row="1" Grid.Column="1" FontWeight="Medium" Text="BestProductOwner" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="15"></TextBlock>
 
+                            <!--<ComboBox x:Name="comboBox_productOwner" Grid.Row="1" Grid.Column="1" FontSize="15" Padding="2" Margin="0,5,15,5" VerticalAlignment="Stretch" FontWeight="Medium" VerticalContentAlignment="Center"/>-->
+                            <ComboBox Grid.Column="1" Grid.Row="1" x:Name="comboBox_productOwner" Margin="0,5,15,5" FontWeight="Medium" FontSize="15" HorizontalAlignment="Stretch" SelectionChanged="comboBox_productOwner_SelectionChanged"/>
 
+                        </Grid>
+
+                        <Separator Margin="20,0"></Separator>
+                        <TextBlock Text="Team Members" FontSize="17" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                        <ListBox x:Name="listBox_teamMembers" Margin="20,20,20,5" FontSize="15" FontWeight="Light" BorderThickness="0">
+                            <ListBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem x:Name="contextMenuItem_removeTeamMember" Header="Remove" Click="contextMenuItem_removeTeamMember_Click"/>
+                                </ContextMenu>
+                            </ListBox.ContextMenu>
+                        </ListBox>
+                        <Grid Margin="20,5,20,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="textBox_addTeamMemberUsername" FontSize="15" FontWeight="Light" VerticalContentAlignment="Center" KeyDown="textBox_addTeamMemberUsername_KeyDown"></TextBox>
+                            <Button x:Name="button_addTeamMember" BorderThickness="0" Background="White" Grid.Column="1" ToolTip="Add Member" Click="button_addTeamMember_Click">
+                                <Image Source="res/add.png" Height="25px" />
+                            </Button>
+                        </Grid>
+
+                        <Separator Margin="20,0"></Separator>
+                        <TextBlock Text="Product Backlog" FontSize="17" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                        <ListBox x:Name="listBox_productBacklog" Margin="20" FontSize="15" FontWeight="Light" BorderThickness="0" SelectionChanged="listBox_productBacklog_SelectionChanged">
+                            <ListBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem x:Name="contextMenuItem_moveTaskToScrumboard" Header="Add to Sprint Backlog" Click="contextMenuItem_moveTaskToScrumboard_Click"/>
+                                    <MenuItem x:Name="contextMenuItem_editTask" Header="Edit" Click="contextMenuItem_editTask_Click"/>
+                                </ContextMenu>
+                            </ListBox.ContextMenu>
+                        </ListBox>
+
+                        <Separator Margin="20,0"></Separator>
+                        <Grid Margin="20,15,20,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Sprint" FontSize="17" HorizontalAlignment="Center" FontWeight="Light"/>
+                            <Button x:Name="button_addSprint" BorderThickness="0" Background="White" Grid.Column="1" ToolTip="Add Member" Click="button_addSprint_Click" >
+                                <Image Source="res/add.png" Height="25px" />
+                            </Button>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"></RowDefinition>
+                                <RowDefinition Height="1*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="1*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Current Sprint: " FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock x:Name="textBlock_projectOverview_currentSprint" Grid.Row="0" Grid.Column="1" FontWeight="Medium" Text="#1" TextWrapping="Wrap"  VerticalAlignment="Center" FontSize="15"></TextBlock>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" Text="Sprint Deadline:" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="textBlock_projectOverview_currentSprintDeadline" FontWeight="Medium" Text="Mi., 31.10.2018" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="15"></TextBlock>
+
+                        </Grid>
+
+                        <TextBlock Text="All Sprints" FontSize="17" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+
+                        <ListBox x:Name="listBox_sprints" Margin="20" FontSize="15" FontWeight="Light" BorderThickness="0" SelectionChanged="listBox_productBacklog_SelectionChanged">
+                            <ListBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem x:Name="contextMenuItem_setCurrentSprint" Header="Set as current sprint" Click="contextMenuItem_setCurrentSprint_Click"/>
+                                    <MenuItem x:Name="contextMenuItem_editSprint" Header="Edit..." Click="contextMenuItem_editSprint_Click" />
+                                </ContextMenu>
+                            </ListBox.ContextMenu>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsCurrentSprint}" Value="true">
+                                            <Setter Property="ListBoxItem.BorderThickness" Value="1" />
+                                            <Setter Property="ListBoxItem.BorderBrush" Value="Black" />
+                                            <Setter Property="ListBoxItem.Background" Value="LightYellow" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <!--<Rectangle Fill="{Binding}" Stroke="Black" Margin="3" StrokeThickness="1" Height="25" Width="25"/>-->
+                                    <Grid Margin="2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="1*"></RowDefinition>
+                                            <RowDefinition Height="Auto"></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Text="Sprint #" FontSize="15" FontWeight="Medium" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"><Run Text="{Binding Path=Number}"></Run></TextBlock>
+                                        <TextBlock Text="Period: " FontSize="13" FontWeight="Light" Grid.Row="3" Grid.Column="0">
+                                        <Run  Text="{Binding Path=Start, StringFormat=d, TargetNullValue=-, Mode=OneWay}"></Run>
+                                        <Run Text=" - "></Run>
+                                        <Run Text="{Binding Path=Deadline, StringFormat=d, TargetNullValue=-, Mode=OneWay}"></Run>
+                                        </TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                    </StackPanel>
+                </ScrollViewer>
+                <Grid Grid.Column="0" Grid.Row="0" x:Name="grid_sprintEditor" Visibility="Collapsed">
+                    <Grid Background="Black" Opacity="0.5"/>
+                    <Border
+            Background="White" 
+            CornerRadius="10" 
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center">
+                        <StackPanel>
+                            <TextBlock Text="Sprint Info" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                            <Separator Margin="20,10"></Separator>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Number:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Start:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Deadline:" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"/>
+                                <TextBox x:Name="textBox_sprintEditor_number" Grid.Row="0" Grid.Column="1" FontSize="15" Padding="2" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalContentAlignment="Center"/>
+                                <DatePicker x:Name="datePicker_sprintEditor_start" Grid.Row="1" Grid.Column="1" FontSize="15" Padding="2" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" VerticalContentAlignment="Center"/>
+                                <DatePicker x:Name="datePicker_sprintEditor_deadline" Grid.Row="2" Grid.Column="1" FontSize="15" Padding="2" Margin="20,5" VerticalAlignment="Stretch" FontWeight="Light" VerticalContentAlignment="Center"/>
+                            </Grid>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button x:Name="button_sprintEditor_close" Padding="2" Margin="20" Width="100" FontSize="15" FontWeight="Light" Content="Close" Click="button_sprintEditor_close_Click" ></Button>
+                                <Button x:Name="button_sprintEditor_confirm" Padding="2" Margin="20" Width="100" FontSize="15" FontWeight="Light" Content="Save" Click="button_sprintEditor_confirm_Click" ></Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
                 </Grid>
+            </Grid>
 
-                <Separator Margin="20,0"></Separator>
-                <TextBlock Text="Team Members" FontSize="17" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
-                <ListBox x:Name="listBox_teamMembers" Margin="20" FontSize="15" FontWeight="Light" BorderThickness="0">
-                    <ListBox.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem x:Name="contextMenuItem_removeTeamMember" Header="Remove" Click="contextMenuItem_removeTeamMember_Click"/>
-                        </ContextMenu>
-                    </ListBox.ContextMenu>
-                </ListBox>
-
-                <Separator Margin="20,0"></Separator>
-                <TextBlock Text="Product Backlog" FontSize="17" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
-                <ListBox x:Name="listBox_productBacklog" Margin="20" FontSize="15" FontWeight="Light" BorderThickness="0" SelectionChanged="listBox_productBacklog_SelectionChanged"></ListBox>
-
-                <Separator Margin="20,0"></Separator>
-                <TextBlock Text="Sprint" FontSize="17" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="1*"></RowDefinition>
-                        <RowDefinition Height="1*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Current Sprint: " FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" VerticalAlignment="Center"></TextBlock>
-                    <TextBlock x:Name="textBlock_projectOverview_currentSprint" Grid.Row="0" Grid.Column="1" FontWeight="Medium" Text="#1" TextWrapping="Wrap"  VerticalAlignment="Center" FontSize="15"></TextBlock>
-
-                    <TextBlock Grid.Row="1" Grid.Column="0" FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" Text="Sprint Deadline:" VerticalAlignment="Center"></TextBlock>
-                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="textBlock_projectOverview_currentSprintDeadline" FontWeight="Medium" Text="Mi., 31.10.2018" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="15"></TextBlock>
-
-                </Grid>
-
-                <TextBlock Text="All Sprints" FontSize="17" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
-
-                <ListBox x:Name="listBox_sprints" Margin="20" FontSize="15" FontWeight="Light" BorderThickness="0" SelectionChanged="listBox_productBacklog_SelectionChanged"></ListBox>
-
-            </StackPanel>
-            </ScrollViewer>
 
             <!-- Scrum Board -->
-            <ToolBarTray Grid.Column="1" IsLocked="True">
+            <ToolBarTray x:Name="toolBarTray_scrumBoard" Grid.Column="1" IsLocked="True">
                 <ToolBar>
                     <Button x:Name="toolBarButton_addTask" ToolTip="Add Task" Click="toolBarButton_addTask_Click">
                         <Image Source="res/add.png" Height="25px" />
@@ -118,13 +222,14 @@
                         <Image Source="res/reload.png" Height="25px" />
                     </Button>
 
-                    <Button x:Name="toolBarButton_refreshBoard2" ToolTip="Refresh Scrumboard" Click="toolBarButton_refreshBoard2_Click">
+                    <Button Visibility="Collapsed" x:Name="toolBarButton_refreshBoard2" ToolTip="Refresh Scrumboard" Click="toolBarButton_refreshBoard2_Click">
                         <Image Source="res/reload.png" Height="25px" />
                     </Button>
                 </ToolBar>
             </ToolBarTray>
             <!--WebBrowser x:Name="webBrowser_scrumBoard" Grid.Column="1" Grid.Row="0" Source="http://scrumblr.ca/scrumble"/-->
             <cefSharp:ChromiumWebBrowser x:Name="chromiumWebBrowser_scrumBoard" Grid.Column="1" Grid.Row="1" IsBrowserInitializedChanged="chromiumWebBrowser_scrumBoard_IsBrowserInitializedChanged" Address="scrumboard://index.html" FrameLoadEnd="chromiumWebBrowser_scrumBoard_FrameLoadEnd" Visibility="Visible" />
+            <TextBlock x:Name="textBlock_selectSprintFirst" Grid.Column="1" Grid.Row="1" FontSize="17" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Light" Text="Select a Sprint First!"  Visibility="Collapsed" />
 
             <Grid Grid.Column="1" Grid.Row="1" x:Name="InputBox" Visibility="Collapsed">
                 <Grid Background="Black" Opacity="0.5"/>
@@ -236,7 +341,7 @@
                         </TreeViewItem>
                     </TreeView>
                 </StackPanel>
-                <Grid x:Name="section_SelectedTask" Grid.Row="1" Grid.Column="0">
+                <Grid x:Name="section_SelectedTask" Grid.Row="1" Grid.Column="0" Visibility="Hidden">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"></ColumnDefinition>
                         <ColumnDefinition Width="1*"></ColumnDefinition>
@@ -254,8 +359,8 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Selected Task" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
                     <Separator Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="20, 0"></Separator>
-                    <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="textBox_selectedTask_name" Text="hello" FontSize="18" Margin="20, 20, 20, 5" Padding="5" HorizontalAlignment="Stretch" FontWeight="Medium" LostFocus="textBox_selectedTask_name_LostFocus"/>
-                    <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Padding="5" AcceptsReturn="True" x:Name="textBox_selectedTask_description" Text="this user story only says hello. it does absolutely nothing else" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" LostFocus="textBox_selectedTask_description_LostFocus"/>
+                    <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="textBox_selectedTask_name" Text="-" FontSize="18" Margin="20, 20, 20, 5" Padding="5" HorizontalAlignment="Stretch" FontWeight="Medium" LostFocus="textBox_selectedTask_name_LostFocus"/>
+                    <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Padding="5" AcceptsReturn="True" x:Name="textBox_selectedTask_description" Text="-" FontSize="15" Margin="20,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap" LostFocus="textBox_selectedTask_description_LostFocus"/>
                     <TextBlock Grid.Row="4" Grid.Column="0" Text="Responsible: "  FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"></TextBlock>
                     <!--<TextBlock x:Name="textBlock_selectedTask_responsible" FontWeight="Medium" Text="Sam" Grid.Row="4" Grid.Column="1" FontSize="15" Margin="5" HorizontalAlignment="Stretch" TextWrapping="Wrap"/>-->
                     <Grid  Margin="5,5,20,5" Grid.Row="4" Grid.Column="1">
@@ -285,7 +390,7 @@
 
                     <TextBlock Grid.Row="6" Grid.Column="0" Text="Rejections: " FontSize="15" Margin="20,5" HorizontalAlignment="Stretch" FontWeight="Light" TextWrapping="Wrap"></TextBlock>
                     <StackPanel  Grid.Row="6" Grid.Column="1" Orientation="Horizontal">
-                        <TextBlock  x:Name="textBlock_selectedTask_rejections" FontWeight="Medium" Text="3" Grid.Row="6" Grid.Column="0" FontSize="15" Margin="5" HorizontalAlignment="Stretch" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock  x:Name="textBlock_selectedTask_rejections" FontWeight="Medium" Text="-" Grid.Row="6" Grid.Column="0" FontSize="15" Margin="5" HorizontalAlignment="Stretch" TextWrapping="Wrap"></TextBlock>
                         <Button x:Name="button_plusRejection" Grid.Row="0" Grid.Column="3" Width="30" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Background="White" BorderThickness="0" Click="button_plusRejection_Click" >
                             <Image Source="res/add.png" Height="25px" />
                         </Button>
@@ -338,8 +443,8 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="1*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Column="0" Grid.Row="0" Text="Information" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
-                <TabControl Margin="5" FontWeight="Light" FontSize="15" Grid.Column="0" Grid.Row="1" VerticalAlignment="Stretch" TabStripPlacement="Top">
+                <TextBlock Visibility="Collapsed" Grid.Column="0" Grid.Row="0" Text="Information" FontSize="20" Margin="5, 15, 5, 5" HorizontalAlignment="Center" FontWeight="Light"/>
+                <TabControl Margin="5,10,5,5" FontWeight="Light" FontSize="15" Grid.Column="0" Grid.Row="1" VerticalAlignment="Stretch" TabStripPlacement="Top">
                     <TabItem Padding="5" Header="Daily Scrum Table">
                         <dailyscrumtable:DailyScrumTable x:Name="dailyScrumTable_DSTable"></dailyscrumtable:DailyScrumTable>
                     </TabItem>

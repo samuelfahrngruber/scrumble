@@ -16,6 +16,7 @@ namespace ScrumbleLib.Connection.Change
         public string Object { get; set; }
         public string Method { get; set; }
         public JObject Change { get; set; }
+        public JArray Changes { get; set; }
 
         public ScrumbleChange()
         {
@@ -33,7 +34,8 @@ namespace ScrumbleLib.Connection.Change
             this.Project = (int)jo["project"];
             this.Object = (string)jo["object"];
             this.Method = (string)jo["method"];
-            this.Change = (JObject)jo["change"];
+            this.Change = jo["change"] as JObject;
+            if (Change == null) this.Changes = jo["change"] as JArray;
         }
 
         public static ScrumbleChange FromJson(string json)
@@ -66,8 +68,29 @@ namespace ScrumbleLib.Connection.Change
         
         private void ApplyPost()
         {
-            // maybe improve lol
-            ApplyPut();
+            switch (Object)
+            {
+                case "TASK":
+                    TaskWrapper tw = TaskWrapper.GetInstance((int)Change["id"]);
+                    tw.ApplyJson(Change);
+                    Scrumble.OnTaskAdded(tw);
+                    break;
+                case "PROJECT":
+                    ProjectWrapper pw = ProjectWrapper.GetInstance((int)Change["id"]);
+                    pw.ApplyJson(Change);
+                    Scrumble.OnProjectAdded(pw);
+                    break;
+                case "SPRINT":
+                    SprintWrapper sw = SprintWrapper.GetInstance((int)Change["id"]);
+                    sw.ApplyJson(Change);
+                    Scrumble.OnSprintAdded(sw);
+                    break;
+                case "DAILYSCRUM":
+                    //DailyScrumEntryWrapper dsew = DailyScrumEntryWrapper.GetInstance(new DailyScrumEntry());
+                    //dsew.ApplyJson(Change);
+                    //Scrumble.DailyScrumEntries.
+                    break;
+            }
         }
 
         private void ApplyPut()
@@ -99,7 +122,7 @@ namespace ScrumbleLib.Connection.Change
             switch (Object)
             {
                 case "TASK":                  
-                    Scrumble.DeleteTask((int)Change["id"]);
+                    Scrumble.OnTaskRemoved((int)Change["id"]);
                     break;
                 case "USER":
                     Scrumble.OnMemberRemoved((int)Change["id"]);

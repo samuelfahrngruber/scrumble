@@ -15,8 +15,10 @@ namespace ScrumbleLib.Connection
 {
     internal static class ScrumbleConnection
     {
-        //private const string webserviceUrl = "http://192.168.193.59:8080/";
+        //private const string webserviceUrl = "http://192.168.193.102:8080/";
+        //private const string webserviceUrl = "http://ssmagic:8080/";
         private const string webserviceUrl = "https://scrumble-api.herokuapp.com/";
+
         private static HttpClient client = new HttpClient();
         private static string getUrlForType(Type t)
         {
@@ -42,6 +44,39 @@ namespace ScrumbleLib.Connection
         public static int Login(string username, string password)
         {
             string url = webserviceUrl + "scrumble/login";
+
+            int result = -2;
+
+            JObject jsono = new JObject();
+            jsono.Add("name", username);
+            jsono.Add("password", password);
+            string json = jsono.ToString();
+
+            HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            Scrumble.Log("POST: " + url, "#FFFF00");
+            Scrumble.Log(json, "#FFFF00");
+
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                json = response.Content.ReadAsStringAsync().Result;
+                jsono = JObject.Parse(json);
+                result = (int)jsono.GetValue("id");
+            }
+            else
+                result = -1;
+
+            Scrumble.Log("Result:", "#FFFF00");
+            Scrumble.Log(json, "#FFFF00");
+
+            return result;
+        }
+
+        public static int Register(string username, string password)
+        {
+            string url = webserviceUrl + "scrumble/register";
 
             int result = -2;
 
@@ -161,6 +196,66 @@ namespace ScrumbleLib.Connection
             return wrapper;
         }
 
+        public static UserWrapper GetUserByName(string name)
+        {
+            string url = getUrlForType(typeof(User)) + "?name=" + name;
+            string json = "";
+
+            Scrumble.Log("GET - USERBYNAME - " + name + ":", "#00FF00");
+
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+            if (response.IsSuccessStatusCode)
+                json = response.Content.ReadAsStringAsync().Result;
+            else
+                return null;
+
+            Scrumble.Log("Result:", "#00FF00");
+            Scrumble.Log(json, "#00FF00");
+
+            UserWrapper uw = Scrumble.UserFromJson(json);
+
+            return uw;
+        }
+
+        public static ProjectWrapper RemoveMember(ProjectWrapper wrapper, int userid)
+        {
+            string url = getUrlForWrapper(wrapper) + "/user/" + userid;
+
+            Scrumble.Log("DELETE: " + url, "#fc622a");
+
+            HttpResponseMessage response = client.DeleteAsync(url).Result;
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception("invalid DELETE at " + url + "for id " + wrapper.Id);
+
+            Scrumble.Log("Successfully deleted", "#fc622a");
+            return wrapper;
+        }
+
+        public static ProjectWrapper AddMember(ProjectWrapper project, UserWrapper user)
+        {
+            string url = getUrlForWrapper(project) + "/user/";
+            string json = "[" + user.ToJson() + "]"; // workaround cuz array
+
+            HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            Scrumble.Log("POST: " + url, "#FFFF00");
+            Scrumble.Log(json, "#FFFF00");
+
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
+
+            if (response.IsSuccessStatusCode)
+                json = response.Content.ReadAsStringAsync().Result;
+            else
+                throw new Exception("invalid POST at " + url + "for id " + user.Id);
+
+            Scrumble.Log("Result:", "#FFFF00");
+            Scrumble.Log(json, "#FFFF00");
+
+            return project;
+        }
+
         internal static ProjectWrapper GetDailyScrumEntries(ProjectWrapper pw)
         {
             List<DailyScrumEntry> scrumboard = new List<DailyScrumEntry>();
@@ -186,13 +281,12 @@ namespace ScrumbleLib.Connection
 
             string url = getUrlForWrapper(pw) + "/changes?timestamp=" + timestamp.ToUniversalTime().ToString("O") ;
             string json = "";
+
             HttpResponseMessage response = client.GetAsync(url).Result;
             if (response.IsSuccessStatusCode)
                 json = response.Content.ReadAsStringAsync().Result;
             else
                 throw new Exception("invalid get at " + url + "for id " + pw.Id);
-            Scrumble.Log("GET - Changes:", "#00FF00");
-            Scrumble.Log(json, "#00FF00");
 
 
             if(json != null && json != "")
@@ -257,6 +351,23 @@ namespace ScrumbleLib.Connection
             Scrumble.Log(json, "#00FF00");
 
             Scrumble.TasksFromJson(json);
+
+            return wrapper;
+        }
+
+        public static ProjectWrapper GetProjectSprints(ProjectWrapper wrapper)
+        {
+            string url = getUrlForWrapper(wrapper) + "/sprint";
+            string json = "";
+            HttpResponseMessage response = client.GetAsync(url).Result;
+            if (response.IsSuccessStatusCode)
+                json = response.Content.ReadAsStringAsync().Result;
+            else
+                throw new Exception("invalid get at " + url + "for id " + wrapper.Id);
+            Scrumble.Log("GET - Project-Tasks:", "#00FF00");
+            Scrumble.Log(json, "#00FF00");
+
+            Scrumble.SprintsFromJson(json);
 
             return wrapper;
         }

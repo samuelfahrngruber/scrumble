@@ -136,6 +136,17 @@ namespace ScrumbleLib.Connection.Wrapper
             }
         }
 
+        [JsonIgnore]
+        public bool IsCurrentSprint
+        {
+            get
+            {
+                return WrappedValue.Project != null && Scrumble.currentProject.CurrentSprint != null 
+                    ? Scrumble.currentProject.CurrentSprint == Id
+                    : false;
+            }
+        }
+
         public int Number
         {
             get
@@ -150,6 +161,7 @@ namespace ScrumbleLib.Connection.Wrapper
             }
         }
 
+        [JsonProperty("startdate")]
         public DateTime Start
         {
             get
@@ -176,6 +188,11 @@ namespace ScrumbleLib.Connection.Wrapper
                 OnPropertyChanged("Deadline");
                 ScrumbleConnection.Update(this);
             }
+        }
+
+        public override string ToString()
+        {
+            return WrappedValue.ToString();
         }
     }
 }

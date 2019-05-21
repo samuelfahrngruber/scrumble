@@ -62,5 +62,10 @@ namespace ScrumbleLib.Utils
         {
             return data.Remove(item.Id);
         }
+
+        public void Clear()
+        {
+            data.Clear();
+        }
     }
 }
